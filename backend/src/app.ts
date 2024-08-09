@@ -2,7 +2,6 @@ import { connect, disconnect } from '@helpers/database'
 import authRoutes from '@routes/auth'
 import cloudRoutes from '@routes/cloud'
 import linkRoutes from '@routes/link'
-import validate from '@validation/validate'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import dotenv from 'dotenv'
@@ -24,9 +23,6 @@ app.use(express.urlencoded({ extended: true }))
 app.use(authRoutes)
 app.use(cloudRoutes)
 app.use(linkRoutes)
-
-// Custom middleware
-app.use(validate)
 
 const start = async () => {
 	await connect()

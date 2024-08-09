@@ -2,32 +2,34 @@ import { Router } from 'express'
 
 import {
 	createBucket,
+	createFile,
 	deleteBucket,
-	getPasteContent,
-	listPastes,
-	removePaste,
-	uploadPaste,
+	deleteFile,
+	getFileContent,
+	listFiles,
 } from '@controllers/cloud'
 import auth from '@middleware/auth'
 import {
-	bucketRules,
-	deletePasteRules,
-	fetchPasteRules,
-	listPastesRules,
-	uploadPasteRules,
+	createBucketRules,
+	createFileRules,
+	deleteBucketRules,
+	deleteFileRules,
+	getFileContentRules,
+	listFilesRules,
 } from '@validation/rules'
+import validate from '@validation/validate'
 
 const router = Router()
 
 // Objects
-router.post('/upload', uploadPasteRules, uploadPaste)
-router.delete('/files/:key', deletePasteRules, removePaste)
-router.get('/files/:token', fetchPasteRules, getPasteContent)
-router.get('/files', listPastesRules, listPastes)
+router.post('/files', createFileRules, validate, createFile)
+router.delete('/files/:file_id', deleteFileRules, validate, deleteFile)
+router.get('/files/:file_id', getFileContentRules, validate, getFileContent)
+router.get('/files', listFilesRules, validate, listFiles)
 
 // Buckets
-router.post('/bucket', bucketRules, createBucket)
-router.delete('/bucket', bucketRules, deleteBucket)
+router.post('/buckets', createBucketRules, validate, createBucket)
+router.delete('/buckets/:bucket_id', deleteBucketRules, validate, deleteBucket)
 
 router.use(auth)
 
