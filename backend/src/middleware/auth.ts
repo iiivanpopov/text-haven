@@ -1,5 +1,5 @@
+import { verifyJWT } from '@helpers/jwt'
 import type { NextFunction, Request, Response } from 'express'
-import { verifyJWT } from '../helpers/jwt'
 
 const auth = (req: Request, res: Response, next: NextFunction) => {
 	if (req.method == 'OPTIONS') return next()

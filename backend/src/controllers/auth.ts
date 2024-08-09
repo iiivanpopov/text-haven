@@ -1,7 +1,7 @@
+import { prisma } from '@helpers/database'
+import { createJWT } from '@helpers/jwt'
 import bcrypt from 'bcryptjs'
 import type { Request, Response } from 'express'
-import { prisma } from '../helpers/database'
-import { createJWT } from '../helpers/jwt'
 
 export const registration = async (req: Request, res: Response) => {
 	const { password, name } = req.body
@@ -27,7 +27,7 @@ export const login = async (req: Request, res: Response) => {
 
 	try {
 		const validPassword = bcrypt.compareSync(password, candidate.password)
-		if (!validPassword) return res.status(400).json({ message: 'Invalid auth data' })
+		if (!validPassword) return res.status(400).json({ message: 'Password or login are invalid' })
 
 		const token = createJWT(candidate.id, candidate.user_name)
 
@@ -39,6 +39,6 @@ export const login = async (req: Request, res: Response) => {
 		res.status(200).json({ message: 'Logged in successfully' })
 	} catch (error) {
 		console.log(error)
-		res.status(500).json({ message: 'Failed to create user' })
+		res.status(500).json({ message: 'Failed to log in' })
 	}
 }

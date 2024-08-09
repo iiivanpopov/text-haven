@@ -8,19 +8,19 @@
 		"build": "bun build ./src/app.ts --outdir ./dist --target node"
 	},
 	"devDependencies": {
-		"@types/bun": "latest"
+		"@types/bcryptjs": "^2.4.6",
+		"@types/cookie-parser": "^1.4.7",
+		"@types/cors": "^2.8.17",
+		"@types/express": "^4.17.21",
+		"@types/jsonwebtoken": "^9.0.6"
 	},
 	"peerDependencies": {
 		"typescript": "^5.0.0"
 	},
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.623.0",
+		"@aws-sdk/s3-request-presigner": "^3.627.0",
 		"@prisma/client": "5.17.0",
-		"@types/bcryptjs": "^2.4.6",
-		"@types/cookie-parser": "^1.4.7",
-		"@types/cors": "^2.8.17",
-		"@types/express": "^4.17.21",
-		"@types/jsonwebtoken": "^9.0.6",
 		"bcryptjs": "^2.4.3",
 		"cookie-parser": "^1.4.6",
 		"cors": "^2.8.5",

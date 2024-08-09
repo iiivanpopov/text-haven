@@ -19,6 +19,17 @@
 		"noUnusedParameters": false,
 		"noPropertyAccessFromIndexSignature": false,
 
-		"useUnknownInCatchVariables": false
+		"useUnknownInCatchVariables": false,
+
+		"baseUrl": "./src",
+
+		"paths": {
+			"@controllers/*": ["./controllers/*"],
+			"@helpers/*": ["./helpers/*"],
+			"@middleware/*": ["./middleware/*"],
+			"@routes/*": ["./routes/*"],
+			"@validation/*": ["./validation/*"],
+			"@encryption/*": ["./encryption/*"]
+		}
 	}
 }

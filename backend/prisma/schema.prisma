@@ -12,9 +12,3 @@ model User {
   user_name String
   password  String
 }
-
-model File {
-  id        Int      @id @default(autoincrement())
-  url       String
-  createdAt DateTime @default(now())
-}

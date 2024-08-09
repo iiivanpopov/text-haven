@@ -1,6 +1,6 @@
+import { login, registration } from '@controllers/authControllers'
+import { authRules } from '@validation/rules'
 import { Router } from 'express'
-import { login, registration } from '../controllers/authControllers'
-import { authRules } from '../validation/rules'
 
 const router = Router()
 
