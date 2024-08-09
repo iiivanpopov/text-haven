@@ -8,7 +8,38 @@ datasource db {
 }
 
 model User {
-  id        Int    @id @default(autoincrement())
-  user_name String
-  password  String
+  id       Int             @id @default(autoincrement())
+  name     String          @unique
+  password String
+  files    File[]
+  buckets  Bucket[]
+  links    TemporaryLink[]
+}
+
+model Bucket {
+  id         Int      @id @default(autoincrement())
+  bucketname String   @unique
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+  createdAt  DateTime @default(now())
+  files      File[]
+}
+
+model File {
+  id        Int      @id @default(autoincrement())
+  filename  String   @unique
+  userId    Int
+  bucketId  Int
+  user      User     @relation(fields: [userId], references: [id])
+  bucket    Bucket   @relation(fields: [bucketId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model TemporaryLink {
+  id         Int      @id @default(autoincrement())
+  link       String
+  userId     Int
+  expiration Int
+  user       User     @relation(fields: [userId], references: [id])
+  createdAt  DateTime @default(now())
 }
