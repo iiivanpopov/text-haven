@@ -1,15 +1,13 @@
-import { bucketExists, objectExists } from '@helpers/cloud'
+import { prisma } from '@helpers/database'
+import { bucketExists, objectExists } from '@helpers/existenceCheck'
 import { s3 } from '@helpers/s3'
 import type { Request, Response } from 'express'
 
 export const createFile = async (req: Request, res: Response) => {
 	const { bucket, file_id, data } = req.body
+	const user_id = req.user.id
 
-	if (!(await bucketExists(bucket))) {
-		return res.status(404).json({ message: 'Bucket does not exist' })
-	}
-
-	if (await objectExists(bucket, file_id)) {
+	if (await objectExists(bucket, file_id, user_id)) {
 		return res.status(400).json({ message: 'File already exists' })
 	}
 
@@ -18,7 +16,20 @@ export const createFile = async (req: Request, res: Response) => {
 			Bucket: bucket,
 			Key: file_id,
 			Body: data,
-			ContentType: 'text/plain',
+		})
+		const bucketRecord = await prisma.bucket.findFirst({
+			where: {
+				bucketname: bucket,
+				userId: user_id,
+			},
+		})
+
+		await prisma.file.create({
+			data: {
+				filename: `${bucket}:${file_id}`,
+				userId: user_id,
+				bucketId: bucketRecord?.id!,
+			},
 		})
 
 		res.status(201).json({ message: 'File successfully created' })
@@ -30,18 +41,17 @@ export const createFile = async (req: Request, res: Response) => {
 
 export const deleteFile = async (req: Request, res: Response) => {
 	const bucket = req.body.bucket
-	const key = req.params.file_id
-
-	if (!(await bucketExists(bucket))) {
-		return res.status(404).json({ message: 'Bucket does not exist' })
-	}
-
-	if (!(await objectExists(bucket, key))) {
-		return res.status(404).json({ message: 'File does not exist' })
-	}
+	const file_id = req.params.file_id
+	const user_id = req.user.id
 
 	try {
-		await s3.deleteObject({ Bucket: bucket, Key: key })
+		await s3.deleteObject({ Bucket: bucket, Key: file_id })
+		await prisma.file.delete({
+			where: {
+				filename: `${bucket}:${file_id}`,
+				userId: user_id,
+			},
+		})
 
 		res.status(204).send()
 	} catch (error) {
@@ -52,18 +62,10 @@ export const deleteFile = async (req: Request, res: Response) => {
 
 export const getFileContent = async (req: Request, res: Response) => {
 	const bucket = req.body.bucket
-	const key = req.params.file_id
-
-	if (!(await bucketExists(bucket))) {
-		return res.status(404).json({ message: 'Bucket does not exist' })
-	}
-
-	if (!(await objectExists(bucket, key))) {
-		return res.status(404).json({ message: 'File does not exist' })
-	}
+	const file_id = req.params.file_id
 
 	try {
-		const response = await s3.getObject({ Bucket: bucket, Key: key })
+		const response = await s3.getObject({ Bucket: bucket, Key: file_id })
 		const content = await response.Body?.transformToString()
 
 		res.status(200).json({ content })
@@ -75,14 +77,22 @@ export const getFileContent = async (req: Request, res: Response) => {
 
 export const listFiles = async (req: Request, res: Response) => {
 	const { bucket } = req.body
-
-	if (!(await bucketExists(bucket))) {
-		return res.status(404).json({ message: 'Bucket does not exist' })
-	}
+	const user_id = req.user.id
 
 	try {
-		const response = await s3.listObjectsV2({ Bucket: bucket })
-		const fileNames = response.Contents?.map(obj => obj.Key) || []
+		const files = await prisma.file.findMany({
+			where: {
+				bucket: {
+					bucketname: bucket,
+					userId: user_id,
+				},
+			},
+			select: {
+				filename: true,
+			},
+		})
+
+		const fileNames = files.map(({ filename }) => filename.split(':')[1])
 
 		res.status(200).json({ files: fileNames })
 	} catch (error) {
@@ -93,13 +103,20 @@ export const listFiles = async (req: Request, res: Response) => {
 
 export const createBucket = async (req: Request, res: Response) => {
 	const bucket = req.body.bucket
+	const user_id = req.user.id
 
-	if (await bucketExists(bucket)) {
-		return res.status(400).json({ message: 'Bucket already exists' })
+	if (await bucketExists(bucket, user_id)) {
+		return res.status(404).json({ message: 'Bucket already exists' })
 	}
 
 	try {
 		await s3.createBucket({ Bucket: bucket })
+		await prisma.bucket.create({
+			data: {
+				userId: user_id,
+				bucketname: bucket,
+			},
+		})
 
 		res.status(201).json({ message: 'Bucket successfully created' })
 	} catch (error) {
@@ -110,10 +127,7 @@ export const createBucket = async (req: Request, res: Response) => {
 
 export const deleteBucket = async (req: Request, res: Response) => {
 	const bucket = req.params.bucket_id
-
-	if (!(await bucketExists(bucket))) {
-		return res.status(404).json({ message: 'Bucket does not exist' })
-	}
+	const user_id = req.user.id
 
 	try {
 		const response = await s3.listObjectsV2({ Bucket: bucket })
@@ -128,6 +142,12 @@ export const deleteBucket = async (req: Request, res: Response) => {
 		}
 		await s3.deleteBucket({ Bucket: bucket })
 
+		await prisma.bucket.delete({
+			where: {
+				bucketname: bucket,
+				userId: user_id,
+			},
+		})
 		res.status(204).send()
 	} catch (error) {
 		console.error(error)

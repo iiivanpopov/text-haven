@@ -1,3 +1,4 @@
+import '@helpers/cleanupTempLinks'
 import { connect, disconnect } from '@helpers/database'
 import authRoutes from '@routes/auth'
 import cloudRoutes from '@routes/cloud'

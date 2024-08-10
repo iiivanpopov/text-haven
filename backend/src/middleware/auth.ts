@@ -6,13 +6,13 @@ const auth = (req: Request, res: Response, next: NextFunction) => {
 
 	try {
 		const token = req.cookies.token
-		if (!token) return res.status(403).json({ message: 'Not authenticated' })
+		if (!token) return res.status(401).json({ message: 'Not authenticated' })
 		const decoded = verifyJWT(token)
 		req.user = decoded
 		next()
 	} catch (error) {
 		console.log(error)
-		return res.status(403).json({ message: 'Not authenticated' })
+		return res.status(401).json({ message: 'Not authenticated' })
 	}
 }
 
