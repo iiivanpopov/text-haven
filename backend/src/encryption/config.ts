@@ -1,11 +1,10 @@
-import crypto from 'crypto'
-
-if (!process.env.ALGORITHM) throw new Error('Missing crypto algorithm')
+if (!process.env.ALGORITHM || !process.env.ENCRYPTION_KEY || !process.env.IV)
+	throw new Error('Missing crypto variables')
 
 const config = {
 	algorithm: process.env.ALGORITHM,
-	key: crypto.randomBytes(32),
-	iv: crypto.randomBytes(16),
+	key: Buffer.from(process.env.ENCRYPTION_KEY, 'hex'),
+	iv: Buffer.from(process.env.IV, 'hex'),
 }
 
 export default config

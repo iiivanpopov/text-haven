@@ -5,6 +5,7 @@
 	"scripts": {
 		"start:dev": "bun run --hot ./src/app.ts",
 		"start:prod": "node ./dist/app.js",
+		"start:migration:prod": "bunx prisma migrate deploy && bun run start:prod",
 		"build": "bun build ./src/app.ts --outdir ./dist --target node"
 	},
 	"devDependencies": {

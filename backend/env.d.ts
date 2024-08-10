@@ -13,9 +13,11 @@ declare namespace NodeJS {
 		DATABASE_URL: string
 
 		// EXPRESS
-		PORT: string | number
+		PORT: string | number // Server port
 
 		// CRYPTO
 		ALGORITHM: crypto.CipherGCMTypes
+		ENCRYPTION_KEY: string
+		IV: string // Initializing vector
 	}
 }
