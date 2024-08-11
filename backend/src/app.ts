@@ -1,12 +1,14 @@
-import '@helpers/cleanupTempLinks'
-import { connect, disconnect } from '@helpers/database'
-import authRoutes from '@routes/auth'
-import cloudRoutes from '@routes/cloud'
-import linkRoutes from '@routes/link'
-import cookieParser from 'cookie-parser'
+import { isHttpError } from '@curveball/http-errors'
+import { authRoutes, cloudRoutes, linkRoutes } from '@routes'
+import { connect, disconnect } from '@services/database'
+import '@utils/cleanupTempLinks'
 import cors from 'cors'
 import dotenv from 'dotenv'
-import express from 'express'
+import express, {
+	type NextFunction,
+	type Request,
+	type Response,
+} from 'express'
 
 dotenv.config()
 
@@ -16,14 +18,22 @@ const PORT = process.env.PORT
 const app = express()
 
 app.use(express.json())
-app.use(cookieParser())
 app.use(cors())
 app.use(express.urlencoded({ extended: true }))
 
-// Routes
 app.use(authRoutes)
 app.use(cloudRoutes)
 app.use(linkRoutes)
+
+app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
+	console.error(error)
+
+	res.status(isHttpError(error) ? error.httpStatus : 500).json({
+		error: {
+			message: error.message || 'Internal Server Error',
+		},
+	})
+})
 
 const start = async () => {
 	await connect()
