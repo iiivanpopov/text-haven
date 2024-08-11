@@ -24,12 +24,12 @@
 		"baseUrl": "./src",
 
 		"paths": {
-			"@controllers/*": ["./controllers/*"],
-			"@helpers/*": ["./helpers/*"],
+			"@controllers": ["./controllers/index"],
 			"@middleware/*": ["./middleware/*"],
-			"@routes/*": ["./routes/*"],
+			"@routes": ["./routes/index"],
+			"@services/*": ["./services/*"],
 			"@validation/*": ["./validation/*"],
-			"@encryption/*": ["./encryption/*"]
+			"@utils/*": ["./utils/*"]
 		}
 	}
 }

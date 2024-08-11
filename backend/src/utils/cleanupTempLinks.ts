@@ -1,4 +1,4 @@
-import { prisma } from '@helpers/database'
+import { prisma } from '@services/database'
 import cron from 'node-cron'
 
 cron.schedule('0 0 * * *', async () => {

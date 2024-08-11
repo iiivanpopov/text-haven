@@ -54,7 +54,7 @@ export const createFileRules = [
 
 export const deleteFileRules = [bucketNameValidation, paramFileIdValidation]
 
-export const getFileContentRules = [bucketNameValidation, paramFileIdValidation]
+export const getFileRules = [bucketNameValidation, paramFileIdValidation]
 
 export const listFilesRules = [bucketNameValidation]
 

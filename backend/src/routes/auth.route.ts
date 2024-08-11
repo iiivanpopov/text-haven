@@ -1,4 +1,4 @@
-import { login, registration } from '@controllers/auth'
+import { login, registration } from '@controllers'
 import { authRules } from '@validation/rules'
 import validate from '@validation/validate'
 import { Router } from 'express'
