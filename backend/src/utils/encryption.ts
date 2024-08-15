@@ -1,8 +1,5 @@
 import crypto from 'crypto'
 
-if (!process.env.ALGORITHM || !process.env.ENCRYPTION_KEY || !process.env.IV)
-	throw new Error('Missing crypto variables')
-
 const algorithm = process.env.ALGORITHM
 const key = Buffer.from(process.env.ENCRYPTION_KEY, 'hex')
 const iv = Buffer.from(process.env.IV, 'hex')

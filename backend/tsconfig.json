@@ -7,8 +7,9 @@
 		"allowJs": true,
 
 		"moduleResolution": "bundler",
+		"esModuleInterop": true,
 		"allowImportingTsExtensions": true,
-		"verbatimModuleSyntax": true,
+		"verbatimModuleSyntax": false,
 		"noEmit": true,
 
 		"strict": true,
@@ -22,14 +23,17 @@
 		"useUnknownInCatchVariables": false,
 
 		"baseUrl": "./src",
-
 		"paths": {
 			"@controllers": ["./controllers/index"],
-			"@middleware/*": ["./middleware/*"],
+			"@services": ["./services/index"],
+			"@utils": ["./utils/index"],
 			"@routes": ["./routes/index"],
-			"@services/*": ["./services/*"],
+			"@dtos": ["./dtos/index"],
+
+			"@exceptions/*": ["./exceptions/*"],
 			"@validation/*": ["./validation/*"],
-			"@utils/*": ["./utils/*"]
+			"@middleware/*": ["./middleware/*"],
+			"@hooks/*": ["./hooks/*"]
 		}
 	}
 }

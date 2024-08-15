@@ -1,43 +1,31 @@
-import { isHttpError } from '@curveball/http-errors'
-import { authRoutes, cloudRoutes, linkRoutes } from '@routes'
-import { connect, disconnect } from '@services/database'
-import '@utils/cleanupTempLinks'
+import errorMiddleware from '@middleware/error.middleware'
+import router from '@routes'
+import { connect, disconnect } from '@utils'
+import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import dotenv from 'dotenv'
-import express, {
-	type NextFunction,
-	type Request,
-	type Response,
-} from 'express'
+import express from 'express'
 
 dotenv.config()
 
-if (!process.env.PORT) throw new Error('Missing server port')
 const PORT = process.env.PORT
 
 const app = express()
 
 app.use(express.json())
+app.use(cookieParser())
 app.use(cors())
-app.use(express.urlencoded({ extended: true }))
+// app.use(cors({ credentials: true, origin: process.env.CLIENT_URL }))
 
-app.use(authRoutes)
-app.use(cloudRoutes)
-app.use(linkRoutes)
+app.use('/api', router)
 
-app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
-	console.error(error)
-
-	res.status(isHttpError(error) ? error.httpStatus : 500).json({
-		error: {
-			message: error.message || 'Internal Server Error',
-		},
-	})
-})
+app.use(errorMiddleware)
 
 const start = async () => {
-	await connect()
-	app.listen(PORT, () => console.log(`Listening ${PORT}`))
+	if (process.env.NODE_ENV != 'test') {
+		await connect()
+		app.listen(PORT, () => console.log(`Listening ${PORT}`))
+	}
 }
 
 start()
@@ -46,3 +34,5 @@ process.on('SIGINT', async () => {
 	await disconnect()
 	process.exit(0)
 })
+
+export default app

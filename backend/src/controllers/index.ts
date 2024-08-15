@@ -1,3 +1,2 @@
-export * from './auth.controller'
 export * from './cloud.controller'
-export * from './link.controller'
+export * from './user.controller'
