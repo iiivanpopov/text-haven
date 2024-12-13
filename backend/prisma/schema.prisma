@@ -8,55 +8,44 @@ datasource db {
 }
 
 model User {
-  id String @id @default(uuid())
-
-  email          String  @unique
-  password       String
-  role           Role    @default(USER)
-  isActivated    Boolean @default(false)
-  activationLink String
-
-  Files   File[]
-  Folders Folder[]
-  Token   Token?
+  id       String   @id @default(cuid())
+  email    String   @unique
+  password String
+  role     Role     @default(USER)
+  Files    File[]
+  Folders  Folder[]
+  Token    Token?
 }
 
 model Token {
-  id           String @id @default(uuid())
+  id           String @id @default(cuid())
   refreshToken String @unique
   userId       String @unique
   User         User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Folder {
-  id     String @id @default(uuid())
-  userId String
-
-  name String
-
-  Files File[]
-
-  parentId String?
-  parent   Folder?  @relation("FolderToParent", fields: [parentId], references: [id])
-  children Folder[] @relation("FolderToParent")
-
+  id        String   @id @default(cuid())
+  userId    String
+  name      String   @default("Untitled")
+  Files     File[]
+  parentId  String?
+  parent    Folder?  @relation("FolderToParent", fields: [parentId], references: [id])
+  Folders   Folder[] @relation("FolderToParent")
   User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
 }
 
 model File {
-  id       String @id @default(uuid())
-  userId   String
-  folderId String
-
-  name      String    @default("Untitled")
-  expiresAt DateTime?
-  exposure  Exposure  @default(PRIVATE)
-  token     String
-
+  id        String   @id @default(cuid())
+  userId    String
+  folderId  String
+  exposure  Exposure @default(PRIVATE)
+  name      String   @default("Untitled")
+  expiresAt DateTime
   User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   Folder    Folder   @relation(fields: [folderId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
 }
 
 enum Role {

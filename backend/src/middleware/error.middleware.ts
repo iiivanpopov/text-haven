@@ -1,17 +1,17 @@
-import ApiError from '@exceptions/api-error'
+import ApiError from '@exceptions/ApiError'
+import logger from '@utils/logger'
 import type { NextFunction, Request, Response } from 'express'
 
 export default function (
 	err: Error,
-	req: Request,
+	_req: Request,
 	res: Response,
-	next: NextFunction
+	_next: NextFunction
 ) {
-	console.log(err)
+	logger.error(err)
 	if (err instanceof ApiError) {
-		return res
-			.status(err.status)
-			.json({ message: err.message, errors: err.errors })
+		res.status(err.status).json({ message: err.message, errors: err.errors })
+		return
 	}
 	res.status(500).json({ message: 'Unexpected error' })
 }

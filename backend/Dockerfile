@@ -1,23 +1,20 @@
-FROM imbios/bun-node:latest-18-alpine AS base
+FROM oven/bun:latest AS base
 WORKDIR /usr/src/app
 
-FROM base AS install
-RUN mkdir -p /temp/prod
-COPY package.json bun.lockb /temp/prod/
-RUN cd /temp/prod && bun install --frozen-lockfile --production
-
 FROM base AS build
-COPY --from=install /temp/prod/node_modules node_modules
-COPY . .
-RUN bunx prisma generate
-RUN bun run build
+COPY package.json ./
+RUN bun i --production
+COPY . ./
+RUN bunx prisma generate && bun run build:prod
 
-FROM base AS release
-COPY --from=build /usr/src/app/node_modules node_modules
-COPY --from=build /usr/src/app/dist/app.js ./dist/
+FROM oven/bun:latest AS release
+WORKDIR /usr/src/app
+
+COPY --from=build /usr/src/app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=build /usr/src/app/dist ./dist
 COPY --from=build /usr/src/app/package.json ./
-COPY prisma prisma
+COPY prisma ./prisma
 
-EXPOSE ${PORT}
+EXPOSE $PORT
 
 CMD ["bun", "run", "start:migration:prod"]

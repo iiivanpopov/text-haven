@@ -1,23 +1,22 @@
-import ApiError from '@exceptions/api-error'
-import { TokenService } from '@services'
+import ApiError from '@exceptions/ApiError'
+import { jwtService } from '@services/jwt.service'
 import type { NextFunction, Request, Response } from 'express'
 
-const tokenService = new TokenService()
-
-export default function (req: Request, res: Response, next: NextFunction) {
+export default function (req: Request, _res: Response, next: NextFunction) {
 	try {
 		const authorizationHeader = req.headers.authorization
-		if (!authorizationHeader) next(ApiError.Unauthorized())
+		if (!authorizationHeader) return next(ApiError.Unauthorized())
 
 		const accessToken = authorizationHeader?.split(' ')[1]
-		if (!accessToken) next(ApiError.Unauthorized())
+		if (!accessToken) return next(ApiError.Unauthorized())
 
-		const userData = tokenService.validateAccessToken(accessToken!)
-		if (!userData) next(ApiError.Unauthorized())
+		const userData = jwtService.validateAccessToken(accessToken!)
+		if (!userData) return next(ApiError.Unauthorized())
 
 		req.user = userData
 		next()
 	} catch (error) {
+		console.error(error)
 		next(ApiError.Unauthorized())
 	}
 }

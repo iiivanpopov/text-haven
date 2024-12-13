@@ -6,32 +6,26 @@ declare namespace NodeJS {
 		AWS_REGION: string
 		MAIN_BUCKET: string
 
-		// AUTH
+		// JWT
 		JWT_SECRET_KEY: string
 		JWT_EXPIRATION_TIME: string
-
 		REFRESH_SECRET_KEY: string
 		REFRESH_EXPIRATION_TIME: string
 
-		// MAIL SERVICE
-		SMTP_HOST: string
-		SMTP_PORT: number
-		SMTP_USER: string
-		SMTP_PASSWORD: string
+		// Database
+		DB_NAME: string
+		DB_USERNAME: string
+		DB_PASSWORD: string
 
-		API_URL: string
-		CLIENT_URL: string
-
-		// DATABASE
+		DB_HOST: string
+		DB_PORT: number
 		DATABASE_URL: string
-		DATABASE_URL_TEST: string
 
-		// EXPRESS
-		PORT: string | number // Server port
+		// Express
+		PORT: string
 
-		// CRYPTO
-		ALGORITHM: crypto.CipherGCMTypes
-		ENCRYPTION_KEY: string
-		IV: string // Initializing vector
+		// Redis
+		REDIS_PORT: string
+		REDIS_HOST: string
 	}
 }
