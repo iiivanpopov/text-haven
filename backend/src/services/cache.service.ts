@@ -39,38 +39,38 @@ class CacheService {
 	}
 
 	async delKeys(keys: string[]): Promise<void> {
-		for (const key of keys) {
-			await this.del(key)
-		}
+		await Promise.all(keys.map(key => this.del(key)))
 	}
 
 	async clearUserCaches(userIds: string[]): Promise<void> {
-		for (const id of userIds) {
-			await Promise.all([
-				this.del(USER_FILES_KEY(id)),
-				this.del(USER_FOLDERS_KEY(id)),
-			])
-		}
+		await Promise.all(
+			userIds.map(id =>
+				Promise.all([
+					this.del(USER_FILES_KEY(id)),
+					this.del(USER_FOLDERS_KEY(id)),
+				])
+			)
+		)
 	}
 
-	async clearCacheRecursive(folderId: string | null): Promise<void> {
-		if (!folderId) return
+	async clearCacheIterative(folderId: string | null): Promise<void> {
+		let currentFolderId = folderId
 
-		await this.del(FOLDER_KEY(folderId))
+		while (currentFolderId) {
+			await this.del(FOLDER_KEY(currentFolderId))
 
-		const parentFolder = await this.prisma.folder.findUnique({
-			where: { id: folderId },
-			select: { parentId: true },
-		})
+			const parentFolder = await this.prisma.folder.findUnique({
+				where: { id: currentFolderId },
+				select: { parentId: true },
+			})
 
-		if (parentFolder?.parentId) {
-			await this.clearCacheRecursive(parentFolder.parentId)
+			currentFolderId = parentFolder?.parentId || null
 		}
 	}
 
 	async clearFolderCaches(folderIds: string[]): Promise<void> {
 		for (const id of folderIds) {
-			await this.clearCacheRecursive(id)
+			await this.clearCacheIterative(id)
 		}
 	}
 

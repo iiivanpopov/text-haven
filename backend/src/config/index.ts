@@ -1,5 +1,4 @@
 import { env } from 'bun'
-import redis_cfg from './redis'
 
 export default {
 	// AWS
@@ -14,11 +13,14 @@ export default {
 	REFRESH_SECRET_KEY: env.REFRESH_SECRET_KEY || '',
 	REFRESH_EXPIRATION_TIME: env.REFRESH_EXPIRATION_TIME || '30d',
 
-	// Database
+	// DATABASE
 	DATABASE_URL: env.DATABASE_URL || '',
 
-	// Express
+	// HTTP SERVER
 	PORT: parseInt(env.PORT || '3013', 10),
 
-	...redis_cfg,
+	// REDIS
+	REDIS_PORT: parseInt(env.REDIS_PORT || '6379', 10),
+	REDIS_HOST: env.REDIS_HOST || 'localhost',
+	CACHE_EXPIRE_TIME: 60 * 60 * 24,
 }

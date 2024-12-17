@@ -5,43 +5,23 @@ import type { NextFunction, Request, Response } from 'express'
 class UserController {
 	constructor(private userService: UserService) {}
 
-	updateRole = async (req: Request, res: Response, next: NextFunction) => {
-		try {
-			const { role, id } = req.body
-
-			const user = await this.userService.updateRole(id, role)
-			res.status(200).json({ user })
-		} catch (error) {
-			next(error)
+	private checkUserPermission(userId: string, id: string) {
+		if (userId !== id) {
+			throw ApiError.Forbidden()
 		}
 	}
 
-	updatePassword = async (req: Request, res: Response, next: NextFunction) => {
+	updateUser = async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const userId = req.user.id
-			const { password, id } = req.body
+			const { id, email, password } = req.body
 
-			if (userId != id) {
-				throw ApiError.Forbidden()
-			}
+			this.checkUserPermission(userId, id)
 
-			const user = await this.userService.updatePassword(id, password)
-			res.status(200).json({ user })
-		} catch (error) {
-			next(error)
-		}
-	}
-
-	updateEmail = async (req: Request, res: Response, next: NextFunction) => {
-		try {
-			const userId = req.user.id
-			const { email, id } = req.body
-
-			if (userId != id) {
-				throw ApiError.Forbidden()
-			}
-
-			const user = await this.userService.updateEmail(id, email)
+			const user = await this.userService.updateUser(id, {
+				email,
+				password,
+			})
 			res.status(200).json({ user })
 		} catch (error) {
 			next(error)

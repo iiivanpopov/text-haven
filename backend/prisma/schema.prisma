@@ -34,6 +34,8 @@ model Folder {
   Folders   Folder[] @relation("FolderToParent")
   User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([userId, name])
 }
 
 model File {
@@ -46,6 +48,8 @@ model File {
   User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   Folder    Folder   @relation(fields: [folderId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([userId, folderId, name])
 }
 
 enum Role {

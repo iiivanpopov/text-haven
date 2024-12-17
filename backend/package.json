@@ -1,13 +1,19 @@
 {
 	"name": "pastebin",
-	"module": "./src/app.ts",
+	"version": "1.0.0",
+	"description": "Pastebin API",
 	"type": "module",
+	"private": true,
 	"scripts": {
-		"start:dev": "bun run --watch ./src/index.ts",
-		"start:prod": "bun ./dist/bundle.js",
-		"start:migration:prod": "bunx prisma migrate deploy && bun run start:prod",
+		"dev": "bun run --watch ./src/index.ts",
+		"start": "bun ./dist/bundle.js",
+		"start:migrate": "bunx prisma migrate deploy && bun run start",
+		"build": "bun build ./src/index.ts --outfile ./dist/bundle.js --minify --target bun",
 		"build:dev": "bun build ./src/index.ts --outfile ./dist/bundle.js --minify --sourcemap=inline --target bun",
-		"build:prod": "bun build ./src/index.ts --outfile ./dist/bundle.js --minify --target bun"
+		"prisma:generate": "bunx prisma generate",
+		"prisma:migrate": "bunx prisma migrate dev",
+		"prisma:studio": "bunx prisma studio",
+		"clean": "rm -rf dist"
 	},
 	"devDependencies": {
 		"@types/cookie-parser": "^1.4.8",
@@ -30,5 +36,8 @@
 		"ioredis": "^5.4.1",
 		"jsonwebtoken": "^9.0.2",
 		"node-cron": "^3.0.3"
-	}
+	},
+	"license": "MIT",
+	"main": "./dist/bundle.js",
+	"module": "./src/index.ts"
 }

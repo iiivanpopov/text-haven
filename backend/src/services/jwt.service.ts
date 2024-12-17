@@ -50,16 +50,32 @@ export default class JwtService {
 
 	async saveToken(userId: string, refreshToken: string): Promise<Token> {
 		const tokenData = await prisma.token.findFirst({ where: { userId } })
-		if (tokenData) {
-			return await prisma.token.update({
-				where: { userId },
-				data: { ...tokenData, refreshToken },
-			})
-		}
-		const token = await prisma.token.create({
+
+		const updatedTokenData = tokenData
+			? await this.updateToken(userId, refreshToken, tokenData)
+			: await this.createToken(userId, refreshToken)
+
+		return updatedTokenData
+	}
+
+	private async updateToken(
+		userId: string,
+		refreshToken: string,
+		tokenData: Token
+	): Promise<Token> {
+		return await prisma.token.update({
+			where: { userId },
+			data: { ...tokenData, refreshToken },
+		})
+	}
+
+	private async createToken(
+		userId: string,
+		refreshToken: string
+	): Promise<Token> {
+		return await prisma.token.create({
 			data: { userId, refreshToken },
 		})
-		return token
 	}
 
 	async removeToken(refreshToken: string): Promise<Token> {

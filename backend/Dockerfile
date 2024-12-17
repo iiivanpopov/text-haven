@@ -1,10 +1,11 @@
 FROM oven/bun:latest AS base
 WORKDIR /usr/src/app
 
-FROM base AS build
 COPY package.json ./
 RUN bun i --production
-COPY . ./
+
+FROM base AS build
+COPY . .
 RUN bunx prisma generate && bun run build:prod
 
 FROM oven/bun:latest AS release

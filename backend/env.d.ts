@@ -12,19 +12,18 @@ declare namespace NodeJS {
 		REFRESH_SECRET_KEY: string
 		REFRESH_EXPIRATION_TIME: string
 
-		// Database
+		// DATABASE
 		DB_NAME: string
 		DB_USERNAME: string
 		DB_PASSWORD: string
-
 		DB_HOST: string
 		DB_PORT: number
 		DATABASE_URL: string
 
-		// Express
+		// EXPRESS
 		PORT: string
 
-		// Redis
+		// REDIS
 		REDIS_PORT: string
 		REDIS_HOST: string
 	}

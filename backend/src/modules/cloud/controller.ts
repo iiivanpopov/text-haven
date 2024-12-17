@@ -1,5 +1,5 @@
-import UpdateFileDto from '@dtos/updateFile.dto'
-import UpdateFolderDto from '@dtos/updateFolder.dto'
+import FileDto from '@dtos/file.dto'
+import FolderDto from '@dtos/folder.dto'
 import type { NextFunction, Request, Response } from 'express'
 import CloudService from './service'
 
@@ -139,9 +139,9 @@ class CloudController {
 	updateFolder = async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const { id } = req.params
-			const folderData = new UpdateFolderDto(req.body)
+			const folderDto = new FolderDto(req.body)
 
-			const folder = await this.cloudService.updateFolder(id, folderData)
+			const folder = await this.cloudService.updateFolder(id, folderDto)
 			res.status(200).json({ folder })
 		} catch (error) {
 			next(error)
@@ -151,9 +151,9 @@ class CloudController {
 	updateFile = async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const { id } = req.params
-			const folderData = new UpdateFileDto(req.body)
+			const fileDto = new FileDto(req.body)
 
-			const file = await this.cloudService.updateFile(id, folderData)
+			const file = await this.cloudService.updateFile(id, fileDto)
 			res.status(200).json({ file })
 		} catch (error) {
 			next(error)

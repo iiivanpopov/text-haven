@@ -56,10 +56,6 @@ class CloudService {
 			where: { userId },
 		})
 
-		if (!folders) {
-			throw ApiError.NotFound('Folders not found')
-		}
-
 		await this.cacheService.set<Folder[]>(USER_FOLDERS_KEY(userId), folders)
 		return folders
 	}
@@ -84,16 +80,20 @@ class CloudService {
 	}
 
 	async deleteFolderRecursive(id: string): Promise<void> {
-		const subfolders = await this.prisma.folder.findMany({
-			where: { parentId: id },
-			include: { Files: true },
-		})
-		const folderIds = subfolders.map(subfolder => subfolder.id)
-		if (folderIds.length) {
-			await Promise.all(folderIds.map(id => this.deleteFolderRecursive(id)))
+		const stack = [id]
+
+		while (stack.length > 0) {
+			const currentId = stack.pop()!
+
+			const subfolders = await this.prisma.folder.findMany({
+				where: { parentId: currentId },
+				include: { Files: true },
+			})
+
+			subfolders.forEach(subfolder => stack.push(subfolder.id))
+
+			await this.prisma.folder.delete({ where: { id: currentId } })
 		}
-		await this.prisma.folder.delete({ where: { id: id } })
-		await this.prisma.file.deleteMany({ where: { folderId: id } })
 	}
 
 	async deleteFolder(id: string): Promise<Folder> {
@@ -104,7 +104,7 @@ class CloudService {
 
 		await this.deleteFolderRecursive(id)
 
-		await this.cacheService.clearCacheRecursive(id)
+		await this.cacheService.clearCacheIterative(id)
 		await this.cacheService.del(USER_FOLDERS_KEY(folder.userId))
 		await this.cacheService.del(USER_FILES_KEY(folder.userId))
 
@@ -135,7 +135,7 @@ class CloudService {
 			if (!parentFolder) {
 				throw ApiError.BadRequest('Parent folder not found')
 			}
-			await this.cacheService.clearCacheRecursive(parentId)
+			await this.cacheService.clearCacheIterative(parentId)
 		}
 
 		await this.cacheService.del(USER_FOLDERS_KEY(userId))
@@ -183,7 +183,7 @@ class CloudService {
 			},
 		})
 
-		await this.cacheService.clearCacheRecursive(folderId)
+		await this.cacheService.clearCacheIterative(folderId)
 		await this.cacheService.del(USER_FILES_KEY(file.userId))
 		await this.cacheService.del(USER_FOLDERS_KEY(file.userId))
 
@@ -203,7 +203,7 @@ class CloudService {
 		await this.cacheService.del(FILE_KEY(id))
 		await this.cacheService.del(USER_FILES_KEY(file.userId))
 		await this.cacheService.del(USER_FOLDERS_KEY(file.userId))
-		await this.cacheService.clearCacheRecursive(file.folderId)
+		await this.cacheService.clearCacheIterative(file.folderId)
 
 		await this.storageService.deleteFile(id)
 
@@ -266,13 +266,13 @@ class CloudService {
 		id: string,
 		folder: Partial<Omit<Folder, 'id' | 'userId'>>
 	): Promise<Folder> {
-		const oldFile = await this.prisma.file.findUnique({ where: { id } })
-		if (!oldFile) {
-			throw ApiError.BadRequest('File not found')
+		const oldFolder = await this.prisma.folder.findUnique({ where: { id } })
+		if (!oldFolder) {
+			throw ApiError.BadRequest('Folder not found')
 		}
 
-		await this.cacheService.clearCacheRecursive(id)
-		await this.cacheService.del(USER_FOLDERS_KEY(oldFile.userId))
+		await this.cacheService.clearCacheIterative(id)
+		await this.cacheService.del(USER_FOLDERS_KEY(oldFolder.userId))
 
 		const updatedFolder = await this.prisma.folder.update({
 			where: { id },
@@ -291,7 +291,7 @@ class CloudService {
 			throw ApiError.BadRequest('File not found')
 		}
 
-		await this.cacheService.clearCacheRecursive(oldFile.folderId)
+		await this.cacheService.clearCacheIterative(oldFile.folderId)
 		await this.cacheService.del(FILE_KEY(id))
 		await this.cacheService.del(USER_FILES_KEY(oldFile.userId))
 		await this.cacheService.del(USER_FOLDERS_KEY(oldFile.userId))

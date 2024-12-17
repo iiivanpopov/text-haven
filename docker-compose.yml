@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   db:
     image: postgres:alpine
@@ -9,6 +11,13 @@ services:
       - '5432:5432'
     volumes:
       - postgres:/var/lib/postgresql/data
+    networks:
+      - backend-network
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USER}']
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   redis:
     image: redis:alpine
@@ -17,18 +26,27 @@ services:
       - '6379:6379'
     volumes:
       - redis:/data
+    networks:
+      - backend-network
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   pgadmin:
     image: dpage/pgadmin4:latest
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@example.com
-      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
     ports:
       - '5050:80'
     depends_on:
       - db
     volumes:
       - pgadmin:/var/lib/pgadmin
+    networks:
+      - backend-network
 
   backend:
     build:
@@ -47,12 +65,17 @@ services:
       PORT: ${PORT}
       REFRESH_SECRET_KEY: ${REFRESH_SECRET_KEY}
       REFRESH_EXPIRATION_TIME: ${REFRESH_EXPIRATION_TIME}
-      REDIS_HOST: ${REDIS_HOST}
-      REDIS_PORT: ${REDIS_PORT}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     ports:
       - '${PORT}:${PORT}'
+    networks:
+      - backend-network
 
 volumes:
   postgres:
   redis:
   pgadmin:
+
+networks:
+  backend-network:
