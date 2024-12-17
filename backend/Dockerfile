@@ -6,7 +6,7 @@ RUN bun i --production
 
 FROM base AS build
 COPY . .
-RUN bunx prisma generate && bun run build:prod
+RUN bunx prisma generate && bun run build
 
 FROM oven/bun:latest AS release
 WORKDIR /usr/src/app
@@ -18,4 +18,4 @@ COPY prisma ./prisma
 
 EXPOSE $PORT
 
-CMD ["bun", "run", "start:migration:prod"]
+CMD ["bun", "run", "start:migrate"]
