@@ -37,6 +37,7 @@ class CloudService {
 				select: { id: true },
 			})
 			subfolders.forEach(subfolder => stack.push(subfolder.id))
+
 			await this.prisma.folder.delete({ where: { id: currentId } })
 		}
 	}
@@ -151,8 +152,8 @@ class CloudService {
 		const folder = await this.prisma.folder.findFirst({ where: { id } })
 		if (!folder) throw ApiError.BadRequest('Folder not found')
 
-		await this.deleteFolderRecursive(id)
 		await this.handleCacheClear(folder.userId, id)
+		await this.deleteFolderRecursive(id)
 		return folder
 	}
 

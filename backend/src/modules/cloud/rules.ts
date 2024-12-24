@@ -25,7 +25,7 @@ export const createFileRules = [
 		.withMessage("Exposure type can't be empty")
 		.isIn(['PRIVATE', 'PUBLIC'])
 		.withMessage('Exposure type must be either "PRIVATE" or "PUBLIC"'),
-	body('expiresAt').optional(),
+	body('expiresAt').optional().isISO8601().withMessage('Invalid date format'),
 ]
 
 export const createFolderRules = [
@@ -36,5 +36,17 @@ export const createFolderRules = [
 		.withMessage("Name can't be empty")
 		.isString()
 		.withMessage('Name must be a string'),
-	body('parentId').optional(),
+	body('exposure')
+		.exists()
+		.withMessage('Exposure type is required')
+		.notEmpty()
+		.withMessage("Exposure type can't be empty")
+		.isIn(['PRIVATE', 'PUBLIC'])
+		.withMessage('Exposure type must be either "PRIVATE" or "PUBLIC"'),
+	body('parentId')
+		.optional()
+		.notEmpty()
+		.withMessage("Parent id can't be empty")
+		.isString()
+		.withMessage('Parent id must be a string'),
 ]
