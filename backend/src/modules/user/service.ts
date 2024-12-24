@@ -1,14 +1,11 @@
 import type { PrismaClient } from '@prisma/client'
 import Crypto from '@services/crypto.service'
-import JwtService from '@services/jwt.service'
+import JwtService, { jwtService } from '@services/jwt.service'
 import { prisma } from '@utils/prisma'
 
 class UserService {
-	private prisma: PrismaClient
-
-	constructor(private jwtService: JwtService) {
-		this.prisma = prisma
-	}
+	private prisma: PrismaClient = prisma
+	private jwtService: JwtService = jwtService
 
 	async updateUser(id: string, data: { email?: string; password?: string }) {
 		if (data.password) {

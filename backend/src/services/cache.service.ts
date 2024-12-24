@@ -1,5 +1,6 @@
 import config from '@config'
 import { PrismaClient } from '@prisma/client'
+import { prisma } from '@utils/prisma'
 import Redis from 'ioredis'
 
 export const FOLDER_KEY = (id: string) => `folder:${id}`
@@ -7,11 +8,13 @@ export const FILE_KEY = (id: string) => `file:${id}`
 export const USER_FOLDERS_KEY = (userId: string) => `user_folders:${userId}`
 export const USER_FILES_KEY = (userId: string) => `user_files:${userId}`
 
-class CacheService {
+export default class CacheService {
 	private redis: Redis
+	private prisma: PrismaClient
 
-	constructor(private prisma: PrismaClient) {
+	constructor() {
 		this.redis = new Redis({ host: config.REDIS_HOST, port: config.REDIS_PORT })
+		this.prisma = prisma
 	}
 
 	async get<T>(key: string): Promise<T | null> {
@@ -39,38 +42,33 @@ class CacheService {
 	}
 
 	async delKeys(keys: string[]): Promise<void> {
-		await Promise.all(keys.map(key => this.del(key)))
+		if (!keys.length) return
+		await this.redis.del(keys)
 	}
 
 	async clearUserCaches(userIds: string[]): Promise<void> {
-		await Promise.all(
-			userIds.map(id =>
-				Promise.all([
-					this.del(USER_FILES_KEY(id)),
-					this.del(USER_FOLDERS_KEY(id)),
-				])
-			)
-		)
+		for (const id of userIds) {
+			await this.del(USER_FILES_KEY(id))
+			await this.del(USER_FOLDERS_KEY(id))
+		}
 	}
 
-	async clearCacheIterative(folderId: string | null): Promise<void> {
-		let currentFolderId = folderId
-
-		while (currentFolderId) {
-			await this.del(FOLDER_KEY(currentFolderId))
+	async clearCacheRecursive(folderId: string | null): Promise<void> {
+		while (folderId) {
+			await this.del(FOLDER_KEY(folderId))
 
 			const parentFolder = await this.prisma.folder.findUnique({
-				where: { id: currentFolderId },
+				where: { id: folderId },
 				select: { parentId: true },
 			})
 
-			currentFolderId = parentFolder?.parentId || null
+			folderId = parentFolder?.parentId || null
 		}
 	}
 
 	async clearFolderCaches(folderIds: string[]): Promise<void> {
 		for (const id of folderIds) {
-			await this.clearCacheIterative(id)
+			await this.clearCacheRecursive(id)
 		}
 	}
 
@@ -81,4 +79,4 @@ class CacheService {
 	}
 }
 
-export default CacheService
+export const cacheService = new CacheService()

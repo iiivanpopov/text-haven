@@ -14,14 +14,13 @@ class UserController {
 	updateUser = async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const userId = req.user.id
-			const { id, email, password } = req.body
+			const { id } = req.params
+			const { email, password } = req.body
 
 			this.checkUserPermission(userId, id)
 
-			const user = await this.userService.updateUser(id, {
-				email,
-				password,
-			})
+			const user = await this.userService.updateUser(id, { email, password })
+
 			res.status(200).json({ user })
 		} catch (error) {
 			next(error)

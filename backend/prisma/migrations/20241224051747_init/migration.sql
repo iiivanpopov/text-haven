@@ -29,6 +29,7 @@ CREATE TABLE "Folder" (
     "userId" TEXT NOT NULL,
     "name" TEXT NOT NULL DEFAULT 'Untitled',
     "parentId" TEXT,
+    "exposure" "Exposure" NOT NULL DEFAULT 'PRIVATE',
     "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Folder_pkey" PRIMARY KEY ("id")
@@ -55,6 +56,12 @@ CREATE UNIQUE INDEX "Token_refreshToken_key" ON "Token"("refreshToken");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Token_userId_key" ON "Token"("userId");
+
+-- CreateIndex
+CREATE INDEX "Folder_userId_name_idx" ON "Folder"("userId", "name");
+
+-- CreateIndex
+CREATE INDEX "File_userId_folderId_name_idx" ON "File"("userId", "folderId", "name");
 
 -- AddForeignKey
 ALTER TABLE "Token" ADD CONSTRAINT "Token_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

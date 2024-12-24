@@ -5,11 +5,9 @@ import JwtService from '@services/jwt.service'
 import { prisma } from '@utils/prisma'
 
 class AuthService {
-	private prisma: PrismaClient
+	private prisma: PrismaClient = prisma
 
-	constructor(private jwtService: JwtService) {
-		this.prisma = prisma
-	}
+	constructor(private jwtService: JwtService) {}
 
 	async registration(email: string, password: string) {
 		const candidate = await this.prisma.user.findUnique({ where: { email } })

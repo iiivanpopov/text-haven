@@ -30,6 +30,7 @@ model Folder {
   name      String   @default("Untitled")
   Files     File[]
   parentId  String?
+  exposure  Exposure @default(PRIVATE)
   parent    Folder?  @relation("FolderToParent", fields: [parentId], references: [id])
   Folders   Folder[] @relation("FolderToParent")
   User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)

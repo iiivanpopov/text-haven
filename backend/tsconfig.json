@@ -22,7 +22,6 @@
 		"allowUnreachableCode": false,
 		"baseUrl": "./src",
 		"paths": {
-			"@/*": ["./../*"],
 			"@services/*": ["./services/*"],
 			"@dtos/*": ["./dtos/*"],
 			"@utils/*": ["./utils/*"],

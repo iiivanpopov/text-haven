@@ -1,4 +1,4 @@
-import { Exposure } from '@prisma/client'
+import type { Exposure } from '@prisma/client'
 
 export default class FileDto {
 	name: string

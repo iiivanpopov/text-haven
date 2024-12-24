@@ -1,10 +1,10 @@
 import config from '@config'
 import logger from '@utils/logger'
 import { prisma } from '@utils/prisma'
-import type { IncomingMessage, Server, ServerResponse } from 'http'
+import type { Server } from 'http'
 import app from './app'
 
-let server: Server<typeof IncomingMessage, typeof ServerResponse>
+let server: Server
 
 prisma.$connect().then(() => {
 	server = app.listen(config.PORT, () =>
