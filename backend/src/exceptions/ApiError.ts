@@ -13,7 +13,7 @@ class ApiError extends Error {
 		this.errors = errors
 	}
 
-	static BadRequest(message: string = 'Bad request', errors: Errors = []) {
+	static BadRequest(message = 'Bad request', errors: Errors = []) {
 		return new ApiError(400, message, errors)
 	}
 
@@ -25,11 +25,11 @@ class ApiError extends Error {
 		return new ApiError(403, 'Forbidden')
 	}
 
-	static NotFound(message: string = 'Not found') {
+	static NotFound(message = 'Not found') {
 		return new ApiError(404, message)
 	}
 
-	static Internal(message: string = 'Unexpected error') {
+	static Internal(message = 'Unexpected error') {
 		return new ApiError(500, message)
 	}
 }

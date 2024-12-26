@@ -10,7 +10,7 @@ export default function (req: Request, _res: Response, next: NextFunction) {
 		const accessToken = authorizationHeader?.split(' ')[1]
 		if (!accessToken) return next(ApiError.Unauthorized())
 
-		const userData = jwtService.validateAccessToken(accessToken!)
+		const userData = jwtService.validateAccessToken(accessToken)
 		if (!userData) return next(ApiError.Unauthorized())
 
 		req.user = userData

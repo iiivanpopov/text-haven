@@ -1,5 +1,5 @@
 import config from '@config'
-import { PrismaClient } from '@prisma/client'
+import type { PrismaClient } from '@prisma/client'
 import { prisma } from '@utils/prisma'
 import Redis from 'ioredis'
 

@@ -1,6 +1,5 @@
 import ApiError from '@exceptions/ApiError'
 import type { PrismaClient } from '@prisma/client'
-import Crypto from '@services/crypto.service'
 import JwtService from '@services/jwt.service'
 import { prisma } from '@utils/prisma'
 
@@ -15,7 +14,7 @@ class AuthService {
 			throw ApiError.BadRequest(`User with ${email} already exists`)
 		}
 
-		const hash_password = await Crypto.hash(password)
+		const hash_password = await Bun.password.hash(password)
 		const user = await this.prisma.user.create({
 			data: { email, password: hash_password },
 		})
@@ -27,7 +26,7 @@ class AuthService {
 		const user = await this.prisma.user.findUnique({ where: { email } })
 		if (!user) throw ApiError.NotFound('Password or user is incorrect')
 
-		const isPassEquals = await Crypto.verify(password, user.password)
+		const isPassEquals = await Bun.password.verify(password, user.password)
 		if (!isPassEquals)
 			throw ApiError.BadRequest('Password or user is incorrect')
 
