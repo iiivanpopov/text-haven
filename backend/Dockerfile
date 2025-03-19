@@ -1,21 +1,26 @@
-FROM oven/bun:latest AS base
+FROM oven/bun:alpine AS base
 WORKDIR /usr/src/app
 
-COPY package.json ./
-RUN bun i --production
+FROM base AS install
+RUN mkdir -p /temp/dev
+COPY package.json bun.lock /temp/dev/
+RUN cd /temp/dev && bun install --frozen-lockfile
 
-FROM base AS build
+FROM base AS prerelease
+COPY --from=install /temp/dev/node_modules node_modules
 COPY . .
-RUN bunx prisma generate && bun run build
 
-FROM oven/bun:latest AS release
-WORKDIR /usr/src/app
+RUN bunx prisma generate
+RUN bun run build
 
-COPY --from=build /usr/src/app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=build /usr/src/app/dist ./dist
-COPY --from=build /usr/src/app/package.json ./
-COPY prisma ./prisma
+FROM base AS release
+COPY --from=prerelease /usr/src/app/generated generated
+COPY --from=prerelease /usr/src/app/dist dist
+COPY --from=prerelease /usr/src/app/prisma prisma
+COPY --from=prerelease /usr/src/app/package.json .
 
-EXPOSE $PORT
+USER bun
 
-CMD ["bun", "run", "start:migrate"]
+EXPOSE 3013
+
+ENTRYPOINT ["sh", "-c", "bun prisma:migrate && bun start"]

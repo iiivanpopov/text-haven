@@ -28,7 +28,8 @@
 			"@config": ["./config/index"],
 			"@exceptions/*": ["./exceptions/*"],
 			"@middleware/*": ["./middleware/*"],
-			"@modules/*": ["./modules/*"]
+			"@modules/*": ["./modules/*"],
+			"@generated/*": ["./../generated/*"]
 		}
 	}
 }

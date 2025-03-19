@@ -21,9 +21,7 @@ class Logger {
 				`[${timestamp}] [ERROR]: ${error.message}\nStack: ${error.stack}`
 			)
 		} else {
-			console.error(
-				`[${timestamp}] [ERROR]: Unknown error: ${JSON.stringify(error)}`
-			)
+			console.error(`[${timestamp}] [ERROR]: Unknown error`)
 		}
 	}
 }

@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   db:
     image: postgres:alpine
@@ -14,10 +16,10 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
+    restart: unless-stopped
 
   redis:
     image: redis:alpine
-    restart: unless-stopped
     ports:
       - '6379:6379'
     volumes:
@@ -27,49 +29,26 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
-
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@example.com
-      PGADMIN_DEFAULT_PASSWORD: admin
-    ports:
-      - '5050:80'
-    depends_on:
-      - db
-    volumes:
-      - pgadmin:/var/lib/pgadmin
+    restart: unless-stopped
 
   backend:
     build:
       context: ./backend
     depends_on:
-      redis:
-        condition: service_healthy
       db:
         condition: service_healthy
+      redis:
+        condition: service_healthy
+    env_file:
+      - ./backend/.env
     environment:
       DATABASE_URL: postgres://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
-      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
-      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-      AWS_REGION: ${AWS_REGION}
-      MAIN_BUCKET: ${MAIN_BUCKET}
-      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
-      JWT_EXPIRATION_TIME: ${JWT_EXPIRATION_TIME}
-      REFRESH_SECRET_KEY: ${REFRESH_SECRET_KEY}
-      REFRESH_EXPIRATION_TIME: ${REFRESH_EXPIRATION_TIME}
-      PORT: ${PORT}
       REDIS_HOST: redis
       REDIS_PORT: 6379
     ports:
       - '${PORT}:${PORT}'
-    healthcheck:
-      test: ['CMD', 'redis-cli', '-h', 'redis', 'ping']
-      interval: 30s
-      timeout: 10s
-      retries: 5
+    restart: unless-stopped
 
 volumes:
   postgres:
   redis:
-  pgadmin:

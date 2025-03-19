@@ -6,7 +6,7 @@ import {
 	type File,
 	type Folder,
 	type PrismaClient,
-} from '@prisma/client'
+} from '@generated/prisma_client'
 import CacheService, {
 	cacheService,
 	FILE_KEY,
