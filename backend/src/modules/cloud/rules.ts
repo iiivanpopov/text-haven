@@ -1,18 +1,25 @@
 import { body } from 'express-validator'
 
-export const createFileRules = [
-	body('folderId')
+const stringField = (fieldName: string, displayName: string) =>
+	body(fieldName)
 		.exists()
-		.withMessage('Folder id is required')
+		.withMessage(`${displayName} is required`)
 		.notEmpty()
-		.withMessage("Folder id can't be empty"),
-	body('name')
-		.exists()
-		.withMessage('Name is required')
-		.notEmpty()
-		.withMessage("Name can't be empty")
+		.withMessage(`${displayName} can't be empty`)
 		.isString()
-		.withMessage('Name must be a string'),
+		.withMessage(`${displayName} must be a string`)
+
+const optionalStringField = (fieldName: string, displayName: string) =>
+	body(fieldName)
+		.optional()
+		.notEmpty()
+		.withMessage(`${displayName} can't be empty`)
+		.isString()
+		.withMessage(`${displayName} must be a string`)
+
+export const createFileRules = [
+	stringField('folderId', 'Folder id'),
+	stringField('name', 'Name'),
 	body('content')
 		.exists()
 		.withMessage('Content is required')
@@ -29,13 +36,7 @@ export const createFileRules = [
 ]
 
 export const createFolderRules = [
-	body('name')
-		.exists()
-		.withMessage('Name is required')
-		.notEmpty()
-		.withMessage("Name can't be empty")
-		.isString()
-		.withMessage('Name must be a string'),
+	stringField('name', 'Name'),
 	body('exposure')
 		.exists()
 		.withMessage('Exposure type is required')
@@ -43,10 +44,5 @@ export const createFolderRules = [
 		.withMessage("Exposure type can't be empty")
 		.isIn(['PRIVATE', 'PUBLIC'])
 		.withMessage('Exposure type must be either "PRIVATE" or "PUBLIC"'),
-	body('parentId')
-		.optional()
-		.notEmpty()
-		.withMessage("Parent id can't be empty")
-		.isString()
-		.withMessage('Parent id must be a string'),
+	optionalStringField('parentId', 'Parent id'),
 ]
