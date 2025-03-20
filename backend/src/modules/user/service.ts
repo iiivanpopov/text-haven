@@ -1,5 +1,5 @@
 import ApiError from '@exceptions/ApiError'
-import type { PrismaClient } from '@prisma/client'
+import type { PrismaClient } from '@generated/prisma_client'
 import JwtService, { jwtService } from '@services/jwt.service'
 import { prisma } from '@utils/prisma'
 

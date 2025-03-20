@@ -1,21 +1,18 @@
 import ApiError from '@exceptions/ApiError'
-import type { PrismaClient } from '@prisma/client'
 import JwtService from '@services/jwt.service'
 import { prisma } from '@utils/prisma'
 
 class AuthService {
-	private prisma: PrismaClient = prisma
-
 	constructor(private jwtService: JwtService) {}
 
 	async registration(email: string, password: string) {
-		const candidate = await this.prisma.user.findUnique({ where: { email } })
+		const candidate = await prisma.user.findUnique({ where: { email } })
 		if (candidate) {
 			throw ApiError.BadRequest(`User with ${email} already exists`)
 		}
 
 		const hash_password = await Bun.password.hash(password)
-		const user = await this.prisma.user.create({
+		const user = await prisma.user.create({
 			data: { email, password: hash_password },
 		})
 
@@ -23,7 +20,7 @@ class AuthService {
 	}
 
 	async login(email: string, password: string) {
-		const user = await this.prisma.user.findUnique({ where: { email } })
+		const user = await prisma.user.findUnique({ where: { email } })
 		if (!user) throw ApiError.NotFound('Password or user is incorrect')
 
 		const isPassEquals = await Bun.password.verify(password, user.password)
@@ -54,7 +51,7 @@ class AuthService {
 			throw ApiError.Unauthorized()
 		}
 
-		const user = await this.prisma.user.findUnique({
+		const user = await prisma.user.findUnique({
 			where: { id: userData.id },
 		})
 		if (!user) {

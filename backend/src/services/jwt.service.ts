@@ -1,7 +1,7 @@
 import config from '@config'
 import UserDto from '@dtos/user.dto'
 import ApiError from '@exceptions/ApiError'
-import type { Role, Token, User } from '@prisma/client'
+import type { Role, Token, User } from '@generated/prisma_client'
 import logger from '@utils/logger'
 import { prisma } from '@utils/prisma'
 import { sign, verify } from 'jsonwebtoken'

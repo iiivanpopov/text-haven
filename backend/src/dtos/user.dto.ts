@@ -1,4 +1,4 @@
-import type { Role } from '@prisma/client'
+import type { Role } from '@generated/prisma_client'
 
 export default class UserDto {
 	email: string

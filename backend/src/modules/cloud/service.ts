@@ -7,14 +7,8 @@ import {
 	type Folder,
 	type PrismaClient,
 } from '@generated/prisma_client'
-import CacheService, {
-	cacheService,
-	FILE_KEY,
-	FOLDER_KEY,
-	USER_FILES_KEY,
-	USER_FOLDERS_KEY,
-} from '@services/cache.service'
 import type StorageService from '@services/storage.service'
+import cache, { Cache } from '@utils/caching'
 import logger from '@utils/logger'
 import { prisma } from '@utils/prisma'
 
@@ -22,7 +16,6 @@ type FolderHierarchy = Folder & { Files: File[]; Folders: Folder[] }
 
 class CloudService {
 	private prisma: PrismaClient = prisma
-	private cacheService: CacheService = cacheService
 
 	constructor(private storageService: StorageService) {}
 
@@ -30,14 +23,13 @@ class CloudService {
 		if (!id) return
 
 		const stack = [id]
-		while (stack.length > 0) {
-			const currentId = stack.pop()
+		while (stack.length) {
+			const currentId = stack.pop()!
 			const subfolders = await this.prisma.folder.findMany({
 				where: { parentId: currentId },
 				select: { id: true },
 			})
-			subfolders.forEach(subfolder => stack.push(subfolder.id))
-
+			stack.push(...subfolders.map(subfolder => subfolder.id))
 			await this.prisma.folder.delete({ where: { id: currentId } })
 		}
 	}
@@ -48,12 +40,11 @@ class CloudService {
 		fileId?: string
 	): Promise<void> {
 		const cacheClearPromises = [
-			this.cacheService.del(USER_FILES_KEY(userId)),
-			this.cacheService.del(USER_FOLDERS_KEY(userId)),
+			cache.remove(Cache.USER_FILES_KEY(userId)),
+			cache.remove(Cache.USER_FOLDERS_KEY(userId)),
 		]
-		if (folderId)
-			cacheClearPromises.push(this.cacheService.clearCacheRecursive(folderId))
-		if (fileId) cacheClearPromises.push(this.cacheService.del(FILE_KEY(fileId)))
+		if (folderId) cacheClearPromises.push(cache.clearCacheRecursive(folderId))
+		if (fileId) cacheClearPromises.push(cache.remove(Cache.FILE_KEY(fileId)))
 		await Promise.all(cacheClearPromises)
 	}
 
@@ -64,7 +55,7 @@ class CloudService {
 		})
 		if (!records.length) return
 
-		logger.log(`Clearing ${records.length} records`)
+		logger.log(`Clearing ${records.length} expired files`)
 
 		const fileIds = records.map(record => record.id)
 		const userIds = [...new Set(records.map(record => record.userId))]
@@ -73,63 +64,69 @@ class CloudService {
 		await Promise.allSettled([
 			this.storageService.deleteFiles(fileIds),
 			this.prisma.file.deleteMany({ where: { id: { in: fileIds } } }),
-			this.cacheService.clearUserCaches(userIds),
-			this.cacheService.clearFolderCaches(folderIds),
-			this.cacheService.clearFileCaches(fileIds),
+			cache.clearUserCaches(userIds),
+			cache.clearFolderCaches(folderIds),
+			cache.clearFileCaches(fileIds),
 		])
 
-		logger.log(`Cleared ${records.length} records`)
+		logger.log(`Cleared ${records.length} expired files`)
 	}
 
 	async getFolders(
 		userId: string,
 		options: { uid?: string; parentId?: string }
 	): Promise<FolderHierarchy[]> {
-		const cached = await this.cacheService.get<FolderHierarchy[]>(
-			USER_FOLDERS_KEY(userId)
+		const cached = await cache.get<FolderHierarchy[]>(
+			Cache.USER_FOLDERS_KEY(userId)
 		)
 		if (cached) {
 			return cached
-				.map(folder => {
-					if (folder.Files.length > 0) {
-						folder.Files = folder.Files.filter(
-							file =>
-								file.userId === userId || file.exposure !== Exposure.PRIVATE
-						)
-					}
-					if (folder.userId === userId || folder.exposure === Exposure.PUBLIC) {
-						return folder
-					}
-					return undefined
-				})
-				.filter(folder => folder !== undefined)
+				.map(folder => ({
+					...folder,
+					Files: folder.Files.filter(
+						file => file.userId === userId || file.exposure === Exposure.PUBLIC
+					),
+				}))
+				.filter(
+					folder =>
+						folder.userId === userId || folder.exposure === Exposure.PUBLIC
+				)
 		}
 
 		const { parentId, uid } = options
-		const include: { Files: boolean | any; Folders: boolean | any } = {
+
+		const where: {
+			userId?: string
+			parentId?: string
+			exposure?: Exposure
+		} = {
+			userId,
+			parentId,
+		}
+
+		const include = {
 			Files: true,
 			Folders: true,
 		}
-		const where: any = { userId }
 
-		if (parentId) where.parentId = parentId
 		if (uid && uid !== userId) {
-			where.userId = uid
-			where.exposure = Exposure.PUBLIC
-			include.Files = { where: { exposure: Exposure.PUBLIC } }
-			include.Folders = { where: { exposure: Exposure.PUBLIC } }
+			Object.assign(where, {
+				userId: uid,
+				exposure: Exposure.PUBLIC,
+			})
+			Object.assign(include, {
+				Files: { where: { exposure: Exposure.PUBLIC } },
+				Folders: { where: { exposure: Exposure.PUBLIC } },
+			})
 		}
 
 		const folders = await this.prisma.folder.findMany({ where, include })
-		await this.cacheService.set<FolderHierarchy[]>(
-			USER_FOLDERS_KEY(userId),
-			folders
-		)
+		await cache.set(Cache.USER_FOLDERS_KEY(userId), folders)
 		return folders
 	}
 
 	async getFolder(userId: string, id: string): Promise<Folder> {
-		const cached = await this.cacheService.get<Folder>(FOLDER_KEY(id))
+		const cached = await cache.get<Folder>(Cache.FOLDER_KEY(id))
 		if (
 			cached &&
 			(cached.userId === userId || cached.exposure === Exposure.PUBLIC)
@@ -141,10 +138,10 @@ class CloudService {
 			include: { Files: true },
 		})
 		if (!folder) throw ApiError.NotFound('Folder not found')
-		if (userId !== folder.userId && folder.exposure === Exposure.PRIVATE)
+		if (folder.userId !== userId && folder.exposure === Exposure.PRIVATE)
 			throw ApiError.Forbidden()
 
-		await this.cacheService.set<Folder>(FOLDER_KEY(id), folder)
+		await cache.set(Cache.FOLDER_KEY(id), folder)
 		return folder
 	}
 
@@ -173,10 +170,10 @@ class CloudService {
 				where: { id: parentId },
 			})
 			if (!parentFolder) throw ApiError.BadRequest('Parent folder not found')
-			await this.cacheService.clearCacheRecursive(parentId)
+			await cache.clearCacheRecursive(parentId)
 		}
 
-		await this.cacheService.del(USER_FOLDERS_KEY(userId))
+		await cache.remove(Cache.USER_FOLDERS_KEY(userId))
 		return this.prisma.folder.create({
 			data: { name, userId, parentId, exposure },
 		})
@@ -205,7 +202,7 @@ class CloudService {
 		})
 		await this.handleCacheClear(userId, folderId)
 		await this.storageService.createFile(file.id, content)
-		await this.cacheService.set<File>(FILE_KEY(file.id), file)
+		await cache.set(Cache.FILE_KEY(file.id), file)
 		return file
 	}
 
@@ -222,21 +219,16 @@ class CloudService {
 		userId: string,
 		options: { folderId?: string; uid?: string }
 	): Promise<File[]> {
-		const cached = await this.cacheService.get<File[]>(USER_FILES_KEY(userId))
+		const cached = await cache.get<File[]>(Cache.USER_FILES_KEY(userId))
 		if (cached) {
-			return cached
-				.map(file => {
-					if (file.userId === userId || file.exposure !== Exposure.PRIVATE) {
-						return file
-					}
-					return undefined
-				})
-				.filter(file => file !== undefined)
+			return cached.filter(
+				file => file.userId === userId || file.exposure !== Exposure.PRIVATE
+			)
 		}
 
 		const { folderId, uid } = options
-		const where: any = { userId }
-		if (folderId) where.folderId = folderId
+		const where: any = { userId, folderId }
+
 		if (uid && userId !== uid) {
 			where.userId = uid
 			where.exposure = Exposure.PUBLIC
@@ -246,30 +238,29 @@ class CloudService {
 	}
 
 	async getFile(id: string, userId: string): Promise<File> {
-		const cached = await this.cacheService.get<File>(FILE_KEY(id))
+		const cached = await cache.get<File>(Cache.FILE_KEY(id))
 		if (
 			cached &&
-			(userId === cached.userId || cached.exposure === Exposure.PUBLIC)
-		) {
+			(cached.userId === userId || cached.exposure === Exposure.PUBLIC)
+		)
 			return cached
-		}
 
 		const file = await this.prisma.file.findFirst({ where: { id } })
 		if (!file) throw ApiError.BadRequest('File not found')
-		if (userId !== file.userId && file.exposure === Exposure.PRIVATE)
+		if (file.userId !== userId && file.exposure === Exposure.PRIVATE)
 			throw ApiError.Forbidden()
 
-		await this.cacheService.set<File>(FILE_KEY(id), file)
+		await cache.set(Cache.FILE_KEY(id), file)
 		return file
 	}
 
 	async getFileContent(id: string, userId: string): Promise<string> {
 		const file = await this.prisma.file.findUnique({
 			where: { id },
-			select: { name: true, userId: true, exposure: true },
+			select: { userId: true, exposure: true },
 		})
 		if (!file) throw ApiError.NotFound(`File with id ${id} not found.`)
-		if (userId !== file.userId && file.exposure === Exposure.PRIVATE)
+		if (file.userId !== userId && file.exposure === Exposure.PRIVATE)
 			throw ApiError.Forbidden()
 
 		return this.storageService.getFileContent(id)
@@ -281,7 +272,7 @@ class CloudService {
 		if (!oldFolder) throw ApiError.BadRequest('Folder not found')
 
 		await this.handleCacheClear(oldFolder.userId, id)
-		return this.prisma.folder.update({ where: { id }, data: { ...updateData } })
+		return this.prisma.folder.update({ where: { id }, data: updateData })
 	}
 
 	async updateFile(id: string, payload: any): Promise<File> {
@@ -290,7 +281,7 @@ class CloudService {
 		if (!oldFile) throw ApiError.BadRequest('File not found')
 
 		await this.handleCacheClear(oldFile.userId, oldFile.folderId, id)
-		return this.prisma.file.update({ where: { id }, data: { ...updateData } })
+		return this.prisma.file.update({ where: { id }, data: updateData })
 	}
 
 	async updateFileContent(id: string, content: string): Promise<File> {
