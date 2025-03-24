@@ -1,21 +1,5 @@
 import { body } from 'express-validator'
-
-const stringField = (fieldName: string, displayName: string) =>
-	body(fieldName)
-		.exists()
-		.withMessage(`${displayName} is required`)
-		.notEmpty()
-		.withMessage(`${displayName} can't be empty`)
-		.isString()
-		.withMessage(`${displayName} must be a string`)
-
-const optionalStringField = (fieldName: string, displayName: string) =>
-	body(fieldName)
-		.optional()
-		.notEmpty()
-		.withMessage(`${displayName} can't be empty`)
-		.isString()
-		.withMessage(`${displayName} must be a string`)
+import { optionalStringField, stringField } from '../shared/validators'
 
 export const createFileRules = [
 	stringField('folderId', 'Folder id'),

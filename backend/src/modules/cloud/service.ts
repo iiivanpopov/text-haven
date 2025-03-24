@@ -1,23 +1,24 @@
 import FileDto from '@dtos/file.dto'
 import FolderDto from '@dtos/folder.dto'
 import ApiError from '@exceptions/ApiError'
+import Cache from '@modules/shared/services/cache.service'
+import type StorageService from '@modules/shared/services/storage.service'
 import {
 	Exposure,
 	type File,
 	type Folder,
 	type PrismaClient,
-} from '@generated/prisma_client'
-import type StorageService from '@services/storage.service'
-import cache, { Cache } from '@utils/caching'
+} from '@prisma/client'
 import logger from '@utils/logger'
-import { prisma } from '@utils/prisma'
 
 type FolderHierarchy = Folder & { Files: File[]; Folders: Folder[] }
 
-class CloudService {
-	private prisma: PrismaClient = prisma
-
-	constructor(private storageService: StorageService) {}
+export default class CloudService {
+	constructor(
+		private storageService: StorageService,
+		private prisma: PrismaClient,
+		private cache: Cache
+	) {}
 
 	private async deleteFolderRecursive(id: string): Promise<void> {
 		if (!id) return
@@ -40,11 +41,13 @@ class CloudService {
 		fileId?: string
 	): Promise<void> {
 		const cacheClearPromises = [
-			cache.remove(Cache.USER_FILES_KEY(userId)),
-			cache.remove(Cache.USER_FOLDERS_KEY(userId)),
+			this.cache.remove(Cache.USER_FILES_KEY(userId)),
+			this.cache.remove(Cache.USER_FOLDERS_KEY(userId)),
 		]
-		if (folderId) cacheClearPromises.push(cache.clearCacheRecursive(folderId))
-		if (fileId) cacheClearPromises.push(cache.remove(Cache.FILE_KEY(fileId)))
+		if (folderId)
+			cacheClearPromises.push(this.cache.clearCacheRecursive(folderId))
+		if (fileId)
+			cacheClearPromises.push(this.cache.remove(Cache.FILE_KEY(fileId)))
 		await Promise.all(cacheClearPromises)
 	}
 
@@ -64,9 +67,9 @@ class CloudService {
 		await Promise.allSettled([
 			this.storageService.deleteFiles(fileIds),
 			this.prisma.file.deleteMany({ where: { id: { in: fileIds } } }),
-			cache.clearUserCaches(userIds),
-			cache.clearFolderCaches(folderIds),
-			cache.clearFileCaches(fileIds),
+			this.cache.clearUserCaches(userIds),
+			this.cache.clearFolderCaches(folderIds),
+			this.cache.clearFileCaches(fileIds),
 		])
 
 		logger.log(`Cleared ${records.length} expired files`)
@@ -76,7 +79,7 @@ class CloudService {
 		userId: string,
 		options: { uid?: string; parentId?: string }
 	): Promise<FolderHierarchy[]> {
-		const cached = await cache.get<FolderHierarchy[]>(
+		const cached = await this.cache.get<FolderHierarchy[]>(
 			Cache.USER_FOLDERS_KEY(userId)
 		)
 		if (cached) {
@@ -121,12 +124,12 @@ class CloudService {
 		}
 
 		const folders = await this.prisma.folder.findMany({ where, include })
-		await cache.set(Cache.USER_FOLDERS_KEY(userId), folders)
+		await this.cache.set(Cache.USER_FOLDERS_KEY(userId), folders)
 		return folders
 	}
 
 	async getFolder(userId: string, id: string): Promise<Folder> {
-		const cached = await cache.get<Folder>(Cache.FOLDER_KEY(id))
+		const cached = await this.cache.get<Folder>(Cache.FOLDER_KEY(id))
 		if (
 			cached &&
 			(cached.userId === userId || cached.exposure === Exposure.PUBLIC)
@@ -141,7 +144,7 @@ class CloudService {
 		if (folder.userId !== userId && folder.exposure === Exposure.PRIVATE)
 			throw ApiError.Forbidden()
 
-		await cache.set(Cache.FOLDER_KEY(id), folder)
+		await this.cache.set(Cache.FOLDER_KEY(id), folder)
 		return folder
 	}
 
@@ -170,10 +173,10 @@ class CloudService {
 				where: { id: parentId },
 			})
 			if (!parentFolder) throw ApiError.BadRequest('Parent folder not found')
-			await cache.clearCacheRecursive(parentId)
+			await this.cache.clearCacheRecursive(parentId)
 		}
 
-		await cache.remove(Cache.USER_FOLDERS_KEY(userId))
+		await this.cache.remove(Cache.USER_FOLDERS_KEY(userId))
 		return this.prisma.folder.create({
 			data: { name, userId, parentId, exposure },
 		})
@@ -202,7 +205,7 @@ class CloudService {
 		})
 		await this.handleCacheClear(userId, folderId)
 		await this.storageService.createFile(file.id, content)
-		await cache.set(Cache.FILE_KEY(file.id), file)
+		await this.cache.set(Cache.FILE_KEY(file.id), file)
 		return file
 	}
 
@@ -219,7 +222,7 @@ class CloudService {
 		userId: string,
 		options: { folderId?: string; uid?: string }
 	): Promise<File[]> {
-		const cached = await cache.get<File[]>(Cache.USER_FILES_KEY(userId))
+		const cached = await this.cache.get<File[]>(Cache.USER_FILES_KEY(userId))
 		if (cached) {
 			return cached.filter(
 				file => file.userId === userId || file.exposure !== Exposure.PRIVATE
@@ -238,7 +241,7 @@ class CloudService {
 	}
 
 	async getFile(id: string, userId: string): Promise<File> {
-		const cached = await cache.get<File>(Cache.FILE_KEY(id))
+		const cached = await this.cache.get<File>(Cache.FILE_KEY(id))
 		if (
 			cached &&
 			(cached.userId === userId || cached.exposure === Exposure.PUBLIC)
@@ -250,7 +253,7 @@ class CloudService {
 		if (file.userId !== userId && file.exposure === Exposure.PRIVATE)
 			throw ApiError.Forbidden()
 
-		await cache.set(Cache.FILE_KEY(id), file)
+		await this.cache.set(Cache.FILE_KEY(id), file)
 		return file
 	}
 
@@ -292,5 +295,3 @@ class CloudService {
 		return file
 	}
 }
-
-export default CloudService

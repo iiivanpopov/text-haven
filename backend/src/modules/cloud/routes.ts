@@ -1,5 +1,7 @@
+import config from '@config'
 import auth from '@middleware/auth.middleware'
-import StorageService from '@services/storage.service'
+import Cache from '@modules/shared/services/cache.service'
+import StorageService from '@modules/shared/services/storage.service'
 import validate from '@utils/validate'
 import { Router } from 'express'
 import CloudController from './controller'
@@ -8,8 +10,10 @@ import CloudService from './service'
 
 const router = Router()
 
-const storageService = new StorageService()
-const cloudService = new CloudService(storageService)
+const storageService = new StorageService(config.S3, config.S3_BUCKET)
+
+const cache = new Cache(config.REDIS, config.PRISMA, config.CACHE_EXPIRE_TIME)
+const cloudService = new CloudService(storageService, config.PRISMA, cache)
 const cloudController = new CloudController(cloudService)
 
 // Folders

@@ -1,7 +1,7 @@
 import UserService from '@modules/user/service'
 import type { NextFunction, Request, Response } from 'express'
 
-class UserController {
+export default class UserController {
 	constructor(private userService: UserService) {}
 
 	updateUser = async (req: Request, res: Response, next: NextFunction) => {
@@ -20,5 +20,3 @@ class UserController {
 		}
 	}
 }
-
-export default UserController

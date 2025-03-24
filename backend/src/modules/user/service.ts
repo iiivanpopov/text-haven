@@ -1,11 +1,9 @@
 import ApiError from '@exceptions/ApiError'
-import type { PrismaClient } from '@generated/prisma_client'
-import JwtService, { jwtService } from '@services/jwt.service'
-import { prisma } from '@utils/prisma'
+import JwtService from '@modules/shared/services/jwt.service'
+import type { PrismaClient } from '@prisma/client'
 
-class UserService {
-	private prisma: PrismaClient = prisma
-	private jwtService: JwtService = jwtService
+export default class UserService {
+	constructor(private prisma: PrismaClient, private jwtService: JwtService) {}
 
 	async updateUser(id: string, data: { email?: string; password?: string }) {
 		const userData = await this.prisma.user.findUnique({
@@ -27,5 +25,3 @@ class UserService {
 		return await this.jwtService.generateAndSaveTokens(user)
 	}
 }
-
-export default UserService

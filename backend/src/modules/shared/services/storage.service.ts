@@ -1,21 +1,8 @@
 import { S3 } from '@aws-sdk/client-s3'
-import config from '@config'
 import ApiError from '@exceptions/ApiError'
 
 class StorageService {
-	private s3: S3
-	private bucket: string
-
-	constructor() {
-		this.s3 = new S3({
-			region: config.AWS_REGION,
-			credentials: {
-				accessKeyId: config.AWS_ACCESS_KEY,
-				secretAccessKey: config.AWS_SECRET_ACCESS_KEY,
-			},
-		})
-		this.bucket = config.MAIN_BUCKET
-	}
+	constructor(private s3: S3, private bucket: string) {}
 
 	private async checkFileExistence(name: string): Promise<void> {
 		try {

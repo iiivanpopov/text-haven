@@ -1,4 +1,4 @@
-import type { Exposure } from '@generated/prisma_client'
+import type { Exposure } from '@prisma/client'
 
 export default class FolderDto {
 	name: string

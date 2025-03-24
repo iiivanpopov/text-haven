@@ -3,13 +3,13 @@ import AuthService from './service'
 
 export default class AuthController {
 	constructor(private authService: AuthService) {}
-
 	register = async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const { password, email } = req.body
 			const userData = await this.authService.registration(email, password)
 			res.cookie('refreshToken', userData.refreshToken, {
-				maxAge: 30 * 24 * 60 * 60 * 1000,
+				// maxAge: 30 * 24 * 60 * 60 * 1000,
+				expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
 				httpOnly: true,
 			})
 			res.status(200).json(userData)
@@ -23,7 +23,8 @@ export default class AuthController {
 			const { email, password } = req.body
 			const userData = await this.authService.login(email, password)
 			res.cookie('refreshToken', userData.refreshToken, {
-				maxAge: 30 * 24 * 60 * 60 * 1000,
+				expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+
 				httpOnly: true,
 			})
 			res.status(200).json(userData)
@@ -48,7 +49,7 @@ export default class AuthController {
 			const { refreshToken } = req.cookies
 			const userData = await this.authService.refresh(refreshToken)
 			res.cookie('refreshToken', userData.refreshToken, {
-				maxAge: 30 * 24 * 60 * 60 * 1000,
+				expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
 				httpOnly: true,
 			})
 			res.status(200).json(userData)

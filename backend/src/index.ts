@@ -1,19 +1,18 @@
 import config from '@config'
 import logger from '@utils/logger'
-import { prisma } from '@utils/prisma'
-import type { Server } from 'http'
+import { Server } from 'http'
 import app from './app'
 
 let server: Server
 
-prisma.$connect().then(() => {
+config.PRISMA.$connect().then(() => {
 	server = app.listen(config.PORT, () =>
 		logger.log(`Listening to port ${config.PORT}.`)
 	)
 })
 
 const onCloseSignal = () => {
-	prisma.$disconnect().then(() => {
+	config.PRISMA.$disconnect().then(() => {
 		server.close()
 		process.exit()
 	})

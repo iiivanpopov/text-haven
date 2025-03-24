@@ -29,6 +29,7 @@
 			"@exceptions/*": ["./exceptions/*"],
 			"@middleware/*": ["./middleware/*"],
 			"@modules/*": ["./modules/*"],
+			"@shared/*": ["./modules/shared/*"],
 			"@generated/*": ["./../generated/*"]
 		}
 	}

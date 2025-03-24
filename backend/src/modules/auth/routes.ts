@@ -1,4 +1,5 @@
-import { jwtService } from '@services/jwt.service'
+import config from '@config'
+import JwtService from '@modules/shared/services/jwt.service'
 import validate from '@utils/validate'
 import { Router } from 'express'
 import AuthController from './controller'
@@ -7,7 +8,12 @@ import AuthService from './service'
 
 const router = Router()
 
-const authService = new AuthService(jwtService)
+const jwtService = new JwtService(
+	config.PRISMA,
+	config.JWT_SECRET_KEY,
+	config.REFRESH_SECRET_KEY
+)
+const authService = new AuthService(config.PRISMA, jwtService)
 const authController = new AuthController(authService)
 
 router.post('/register', authRules, validate, authController.register)

@@ -1,10 +1,8 @@
 import config from '@config'
 import UserDto from '@dtos/user.dto'
 import ApiError from '@exceptions/ApiError'
-import type { Role, Token, User } from '@generated/prisma_client'
-import logger from '@utils/logger'
-import { prisma } from '@utils/prisma'
-import { sign, verify } from 'jsonwebtoken'
+import type { PrismaClient, Role, Token, User } from '@prisma/client'
+import { Secret, sign, verify } from 'jsonwebtoken'
 
 interface Payload {
 	id: string
@@ -17,39 +15,53 @@ interface Tokens {
 	refreshToken: string
 }
 
-export default class JwtService {
+export interface ITokenService {
+	generateTokens(
+		payload: object
+	): Promise<{ accessToken: string; refreshToken: string }>
+	validateToken(token: string, type: 'refresh' | 'access'): UserDto | null
+}
+
+export default class JwtService implements ITokenService {
+	constructor(
+		private prisma: PrismaClient,
+		private accessSecret: string,
+		private refreshSecret: string
+	) {}
+
 	async generateTokens(payload: Payload): Promise<Tokens> {
 		const accessToken = sign(payload, config.JWT_SECRET_KEY, {
-			expiresIn: config.JWT_EXPIRATION_TIME,
+			expiresIn: +config.JWT_EXPIRATION_TIME,
 		})
-		const refreshToken = sign(payload, config.REFRESH_SECRET_KEY, {
-			expiresIn: config.REFRESH_EXPIRATION_TIME,
+		const refreshToken = sign(payload, config.REFRESH_SECRET_KEY as Secret, {
+			expiresIn: +config.REFRESH_EXPIRATION_TIME,
 		})
 		return { accessToken, refreshToken }
 	}
 
-	validateAccessToken(token: string): UserDto | null {
+	validateToken(token: string, type: 'refresh' | 'access'): UserDto | null {
 		try {
-			const userData = verify(token, config.JWT_SECRET_KEY) as UserDto
-			return userData
-		} catch (error) {
-			logger.error(error)
+			const secretKey =
+				type === 'access' ? this.accessSecret : this.refreshSecret
+			const decodedToken = verify(token, secretKey) as Payload
+			if (
+				typeof decodedToken === 'object' &&
+				decodedToken !== null &&
+				'id' in decodedToken &&
+				'email' in decodedToken &&
+				'role' in decodedToken
+			) {
+				return new UserDto(decodedToken as Payload)
+			}
 			return null
-		}
-	}
-
-	validateRefreshToken(token: string): UserDto | null {
-		try {
-			const userData = verify(token, config.REFRESH_SECRET_KEY) as UserDto
-			return userData
 		} catch (error) {
-			logger.error(error)
+			console.error('Error validating token:', error)
 			return null
 		}
 	}
 
 	async saveToken(userId: string, refreshToken: string): Promise<Token> {
-		const tokenData = await prisma.token.findFirst({ where: { userId } })
+		const tokenData = await this.prisma.token.findFirst({ where: { userId } })
 
 		const updatedTokenData = tokenData
 			? await this.updateToken(userId, refreshToken, tokenData)
@@ -63,7 +75,7 @@ export default class JwtService {
 		refreshToken: string,
 		tokenData: Token
 	): Promise<Token> {
-		return await prisma.token.update({
+		return await this.prisma.token.update({
 			where: { userId },
 			data: { ...tokenData, refreshToken },
 		})
@@ -73,14 +85,14 @@ export default class JwtService {
 		userId: string,
 		refreshToken: string
 	): Promise<Token> {
-		return await prisma.token.create({
+		return await this.prisma.token.create({
 			data: { userId, refreshToken },
 		})
 	}
 
 	async removeToken(refreshToken: string): Promise<Token> {
 		if (!refreshToken) throw ApiError.Unauthorized()
-		const tokenData = await prisma.token.delete({
+		const tokenData = await this.prisma.token.delete({
 			where: { refreshToken },
 		})
 		return tokenData
@@ -88,7 +100,7 @@ export default class JwtService {
 
 	async findToken(refreshToken: string): Promise<Token | null> {
 		if (!refreshToken) throw ApiError.Unauthorized()
-		const tokenData = await prisma.token.findFirst({
+		const tokenData = await this.prisma.token.findFirst({
 			where: { refreshToken },
 		})
 		return tokenData
@@ -101,5 +113,3 @@ export default class JwtService {
 		return { ...tokens, user: userDto }
 	}
 }
-
-export const jwtService = new JwtService()

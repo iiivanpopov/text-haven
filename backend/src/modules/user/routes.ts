@@ -1,13 +1,20 @@
+import config from '@config'
 import auth from '@middleware/auth.middleware'
-import UserService from '@modules/user/service'
+import JwtService from '@shared/services/jwt.service'
 import validate from '@utils/validate'
 import { Router } from 'express'
 import UserController from './controller'
 import { updateRules } from './rules'
+import UserService from './service'
 
 const router = Router()
 
-const userService = new UserService()
+const jwtService = new JwtService(
+	config.PRISMA,
+	config.JWT_SECRET_KEY,
+	config.REFRESH_SECRET_KEY
+)
+const userService = new UserService(config.PRISMA, jwtService)
 const userController = new UserController(userService)
 
 router.patch(

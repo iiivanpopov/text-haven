@@ -4,13 +4,13 @@ declare namespace NodeJS {
 		AWS_ACCESS_KEY: string
 		AWS_SECRET_ACCESS_KEY: string
 		AWS_REGION: string
-		MAIN_BUCKET: string
+		S3_BUCKET: string
 
 		// JWT
 		JWT_SECRET_KEY: string
-		JWT_EXPIRATION_TIME: string
+		JWT_EXPIRATION_TIME: StringValue
 		REFRESH_SECRET_KEY: string
-		REFRESH_EXPIRATION_TIME: string
+		REFRESH_EXPIRATION_TIME: StringValue
 
 		// DATABASE
 		DB_NAME: string
@@ -26,5 +26,6 @@ declare namespace NodeJS {
 		// REDIS
 		REDIS_PORT: string
 		REDIS_HOST: string
+		CACHE_EXPIRATION_TIME: StringValue
 	}
 }

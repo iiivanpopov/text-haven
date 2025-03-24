@@ -1,9 +1,12 @@
-import config from '@config'
-import Redis from 'ioredis'
-import { prisma } from './prisma'
+import { PrismaClient } from '@prisma/client'
+import { Redis } from 'ioredis'
 
-export class Cache {
-	redis = new Redis({ host: config.REDIS_HOST, port: config.REDIS_PORT })
+export default class Cache {
+	constructor(
+		private redis: Redis,
+		private prisma: PrismaClient,
+		private cacheExpireTime: number
+	) {}
 
 	static FOLDER_KEY = (id: string): string => `folder:${id}`
 	static FILE_KEY = (id: string): string => `file:${id}`
@@ -13,7 +16,7 @@ export class Cache {
 	set = async (
 		key: string,
 		value: any,
-		expiration: number = config.CACHE_EXPIRE_TIME
+		expiration: number = this.cacheExpireTime
 	) => await this.redis.setex(key, expiration, JSON.stringify(value))
 
 	remove = async (key: string | string[]): Promise<void> => {
@@ -39,7 +42,7 @@ export class Cache {
 		while (folderId) {
 			await this.remove(Cache.FOLDER_KEY(folderId))
 
-			const parentFolderId = await prisma.folder
+			const parentFolderId = await this.prisma.folder
 				.findUnique({
 					where: { id: folderId },
 					select: { parentId: true },
@@ -60,5 +63,3 @@ export class Cache {
 		await this.remove(fileIds.map(id => Cache.FILE_KEY(id)))
 	}
 }
-
-export default new Cache()
