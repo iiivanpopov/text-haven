@@ -13,13 +13,9 @@ class Logger {
 		const timestamp = this.getTimestamp()
 
 		if (error instanceof ApiError) {
-			console.error(
-				`[${timestamp}] [ERROR]: ${error.message} - Status: ${error.status}`
-			)
+			console.error(`[${timestamp}] [ERROR]: ${error.message} - Status: ${error.status}`)
 		} else if (error instanceof Error) {
-			console.error(
-				`[${timestamp}] [ERROR]: ${error.message}\nStack: ${error.stack}`
-			)
+			console.error(`[${timestamp}] [ERROR]: ${error.message}\nStack: ${error.stack}`)
 		} else {
 			console.error(`[${timestamp}] [ERROR]: Unknown error`)
 		}

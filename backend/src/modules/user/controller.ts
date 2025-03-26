@@ -9,10 +9,9 @@ export default class UserController {
 			const userId = req.user.id
 			const { email, password } = req.body
 
-			const user = await this.userService.updateUser(userId, {
-				email,
-				password,
-			})
+			const updateData = { email, password }
+
+			const user = await this.userService.updateUser(userId, updateData) // userId to update
 
 			res.status(200).json({ user })
 		} catch (error) {

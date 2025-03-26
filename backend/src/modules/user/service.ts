@@ -7,11 +7,13 @@ export default class UserService {
 
 	async updateUser(id: string, data: { email?: string; password?: string }) {
 		const userData = await this.prisma.user.findUnique({
-			where: { email: data.email },
+			where: { id },
 			select: { id: true },
 		})
 
-		if (userData && id != userData?.id) throw ApiError.Forbidden()
+		if (!userData) throw ApiError.NotFound() // user not found
+
+		if (id != userData.id) throw ApiError.Forbidden() // update only own data
 
 		if (data.password) {
 			data.password = await Bun.password.hash(data.password)
@@ -22,6 +24,6 @@ export default class UserService {
 			data,
 		})
 
-		return await this.jwtService.generateAndSaveTokens(user)
+		return this.jwtService.generateAndSaveTokens(user)
 	}
 }

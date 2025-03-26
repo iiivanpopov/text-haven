@@ -1,6 +1,6 @@
 import ApiError from '@exceptions/ApiError'
-import JwtService from '@modules/shared/services/jwt.service'
-import { PrismaClient } from '@prisma/client'
+import JwtService, { TokenType } from '@modules/shared/services/jwt.service'
+import type { PrismaClient } from '@prisma/client'
 
 export default class AuthService {
 	constructor(private prisma: PrismaClient, private jwtService: JwtService) {}
@@ -16,7 +16,7 @@ export default class AuthService {
 			data: { email, password: hash_password },
 		})
 
-		return await this.jwtService.generateAndSaveTokens(user)
+		return this.jwtService.generateAndSaveTokens(user)
 	}
 
 	async login(email: string, password: string) {
@@ -24,15 +24,13 @@ export default class AuthService {
 		if (!user) throw ApiError.NotFound('Password or user is incorrect')
 
 		const isPassEquals = await Bun.password.verify(password, user.password)
-		if (!isPassEquals)
-			throw ApiError.BadRequest('Password or user is incorrect')
+		if (!isPassEquals) throw ApiError.BadRequest('Password or user is incorrect')
 
-		return await this.jwtService.generateAndSaveTokens(user)
+		return this.jwtService.generateAndSaveTokens(user)
 	}
 
 	async logout(refreshToken: string) {
-		const token = await this.jwtService.removeToken(refreshToken)
-		return token
+		return this.jwtService.removeToken(refreshToken)
 	}
 
 	async refresh(refreshToken: string) {
@@ -40,7 +38,7 @@ export default class AuthService {
 			throw ApiError.Unauthorized()
 		}
 
-		const userData = this.jwtService.validateToken(refreshToken, 'refresh')
+		const userData = this.jwtService.validateToken(refreshToken, TokenType.REFRESH)
 
 		if (!userData || !Object.hasOwn(userData, 'id')) {
 			throw ApiError.Unauthorized()
@@ -58,6 +56,6 @@ export default class AuthService {
 			throw ApiError.Unauthorized()
 		}
 
-		return await this.jwtService.generateAndSaveTokens(user)
+		return this.jwtService.generateAndSaveTokens(user)
 	}
 }

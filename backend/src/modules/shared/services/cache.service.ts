@@ -13,11 +13,8 @@ export default class Cache {
 	static USER_FOLDERS_KEY = (userId: string): string => `user_folders:${userId}`
 	static USER_FILES_KEY = (userId: string): string => `user_files:${userId}`
 
-	set = async (
-		key: string,
-		value: any,
-		expiration: number = this.cacheExpireTime
-	) => await this.redis.setex(key, expiration, JSON.stringify(value))
+	set = async (key: string, value: any, expiration: number = this.cacheExpireTime) =>
+		await this.redis.setex(key, expiration, JSON.stringify(value))
 
 	remove = async (key: string | string[]): Promise<void> => {
 		if (typeof key == 'string') await this.redis.del(key)
@@ -30,12 +27,7 @@ export default class Cache {
 	}
 
 	clearUserCaches = async (userIds: string[]): Promise<void> => {
-		await Promise.all(
-			userIds.flatMap(id => [
-				Cache.USER_FILES_KEY(id),
-				Cache.USER_FOLDERS_KEY(id),
-			])
-		)
+		await Promise.all(userIds.flatMap(id => [Cache.USER_FILES_KEY(id), Cache.USER_FOLDERS_KEY(id)]))
 	}
 
 	clearCacheRecursive = async (folderId: string | null): Promise<void> => {
@@ -51,6 +43,16 @@ export default class Cache {
 
 			folderId = parentFolderId
 		}
+	}
+
+	async flushCache(userId: string, folderId?: string, fileId?: string): Promise<void> {
+		const cacheClearPromises = [
+			this.remove(Cache.USER_FILES_KEY(userId)),
+			this.remove(Cache.USER_FOLDERS_KEY(userId)),
+		]
+		if (folderId) cacheClearPromises.push(this.clearCacheRecursive(folderId))
+		if (fileId) cacheClearPromises.push(this.remove(Cache.FILE_KEY(fileId)))
+		await Promise.all(cacheClearPromises)
 	}
 
 	clearFolderCaches = async (folderIds: string[]): Promise<void> => {

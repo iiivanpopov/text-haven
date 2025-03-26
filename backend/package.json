@@ -13,10 +13,10 @@
 		"build:dev": "bun build --entrypoints ./src/index.ts ./src/workers/worker.ts --outdir ./dist --minify --sourcemap=inline --target bun"
 	},
 	"devDependencies": {
-		"@types/bun": "^1.2.5",
+		"@types/bun": "^1.2.6",
 		"@types/cookie-parser": "^1.4.8",
 		"@types/cors": "^2.8.17",
-		"@types/express": "^5.0.0",
+		"@types/express": "^5.0.1",
 		"@types/ioredis": "^5.0.0",
 		"@types/jsonwebtoken": "^9.0.9",
 		"@types/ms": "^2.1.0",
@@ -24,7 +24,7 @@
 		"typescript": "^5.8.2"
 	},
 	"dependencies": {
-		"@aws-sdk/client-s3": "^3.758.0",
+		"@aws-sdk/client-s3": "^3.775.0",
 		"@prisma/client": "^6.5.0",
 		"cookie-parser": "^1.4.7",
 		"cors": "^2.8.5",

@@ -1,8 +1,14 @@
 import config from '@config'
-import UserDto from '@dtos/user.dto'
 import ApiError from '@exceptions/ApiError'
+import UserDto from '@modules/shared/dtos/user.dto'
 import type { PrismaClient, Role, Token, User } from '@prisma/client'
-import { Secret, sign, verify } from 'jsonwebtoken'
+import logger from '@utils/logger'
+import { sign, verify } from 'jsonwebtoken'
+
+export enum TokenType {
+	ACCESS,
+	REFRESH,
+}
 
 interface Payload {
 	id: string
@@ -16,10 +22,8 @@ interface Tokens {
 }
 
 export interface ITokenService {
-	generateTokens(
-		payload: object
-	): Promise<{ accessToken: string; refreshToken: string }>
-	validateToken(token: string, type: 'refresh' | 'access'): UserDto | null
+	generateTokens(payload: object): Promise<Tokens>
+	validateToken(token: string, tokenType: TokenType): UserDto | null
 }
 
 export default class JwtService implements ITokenService {
@@ -30,68 +34,43 @@ export default class JwtService implements ITokenService {
 	) {}
 
 	async generateTokens(payload: Payload): Promise<Tokens> {
-		const accessToken = sign(payload, config.JWT_SECRET_KEY, {
+		const accessToken = sign(payload, this.accessSecret, {
 			expiresIn: +config.JWT_EXPIRATION_TIME,
 		})
-		const refreshToken = sign(payload, config.REFRESH_SECRET_KEY as Secret, {
+		const refreshToken = sign(payload, this.refreshSecret, {
 			expiresIn: +config.REFRESH_EXPIRATION_TIME,
 		})
 		return { accessToken, refreshToken }
 	}
 
-	validateToken(token: string, type: 'refresh' | 'access'): UserDto | null {
+	validateToken(token: string, tokenType: TokenType): UserDto | null {
 		try {
-			const secretKey =
-				type === 'access' ? this.accessSecret : this.refreshSecret
-			const decodedToken = verify(token, secretKey) as Payload
-			if (
-				typeof decodedToken === 'object' &&
-				decodedToken !== null &&
-				'id' in decodedToken &&
-				'email' in decodedToken &&
-				'role' in decodedToken
-			) {
-				return new UserDto(decodedToken as Payload)
-			}
-			return null
+			const secretKey = tokenType == TokenType.ACCESS ? this.accessSecret : this.refreshSecret
+			const decodedToken = verify(token, secretKey)
+
+			return new UserDto(decodedToken)
 		} catch (error) {
-			console.error('Error validating token:', error)
+			logger.error(error)
 			return null
 		}
 	}
 
 	async saveToken(userId: string, refreshToken: string): Promise<Token> {
-		const tokenData = await this.prisma.token.findFirst({ where: { userId } })
-
-		const updatedTokenData = tokenData
-			? await this.updateToken(userId, refreshToken, tokenData)
-			: await this.createToken(userId, refreshToken)
+		const updatedTokenData = await this.setToken(userId, refreshToken)
 
 		return updatedTokenData
 	}
 
-	private async updateToken(
-		userId: string,
-		refreshToken: string,
-		tokenData: Token
-	): Promise<Token> {
-		return await this.prisma.token.update({
+	private async setToken(userId: string, refreshToken: string): Promise<Token> {
+		return this.prisma.token.upsert({
 			where: { userId },
-			data: { ...tokenData, refreshToken },
-		})
-	}
-
-	private async createToken(
-		userId: string,
-		refreshToken: string
-	): Promise<Token> {
-		return await this.prisma.token.create({
-			data: { userId, refreshToken },
+			update: { refreshToken },
+			create: { userId, refreshToken },
 		})
 	}
 
 	async removeToken(refreshToken: string): Promise<Token> {
-		if (!refreshToken) throw ApiError.Unauthorized()
+		if (!refreshToken) throw ApiError.Unauthorized('Refresh token is required')
 		const tokenData = await this.prisma.token.delete({
 			where: { refreshToken },
 		})
@@ -99,8 +78,8 @@ export default class JwtService implements ITokenService {
 	}
 
 	async findToken(refreshToken: string): Promise<Token | null> {
-		if (!refreshToken) throw ApiError.Unauthorized()
-		const tokenData = await this.prisma.token.findFirst({
+		if (!refreshToken) throw ApiError.Unauthorized('Refresh token is required')
+		const tokenData = await this.prisma.token.findUnique({
 			where: { refreshToken },
 		})
 		return tokenData
@@ -108,7 +87,7 @@ export default class JwtService implements ITokenService {
 
 	async generateAndSaveTokens(user: User) {
 		const userDto = new UserDto(user)
-		const tokens = await this.generateTokens({ ...userDto })
+		const tokens = await this.generateTokens(userDto)
 		await this.saveToken(userDto.id, tokens.refreshToken)
 		return { ...tokens, user: userDto }
 	}

@@ -10,6 +10,6 @@ export default class FileDto {
 		this.name = model.name
 		this.folderId = model.folderId
 		this.exposure = model.exposure
-		this.expiresAt = model.expiresAt
+		this.expiresAt = new Date(model.expiresAt)
 	}
 }

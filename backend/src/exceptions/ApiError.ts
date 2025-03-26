@@ -17,12 +17,12 @@ class ApiError extends Error {
 		return new ApiError(400, message, errors)
 	}
 
-	static Unauthorized() {
-		return new ApiError(401, 'Unauthorized')
+	static Unauthorized(message = 'Unauthorized') {
+		return new ApiError(401, message)
 	}
 
-	static Forbidden() {
-		return new ApiError(403, 'Forbidden')
+	static Forbidden(message = 'Forbidden') {
+		return new ApiError(403, message)
 	}
 
 	static NotFound(message = 'Not found') {

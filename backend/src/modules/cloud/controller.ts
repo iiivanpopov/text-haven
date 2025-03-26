@@ -4,21 +4,12 @@ import CloudService from './service'
 class CloudController {
 	constructor(private cloudService: CloudService) {}
 
-	createFolder = async (
-		req: Request,
-		res: Response,
-		next: NextFunction
-	): Promise<void> => {
+	createFolder = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const userId = req.user.id
 			const { name, parentId, exposure } = req.body
 
-			const folder = await this.cloudService.createFolder(
-				name,
-				userId,
-				parentId,
-				exposure
-			)
+			const folder = await this.cloudService.createFolder(userId, parentId, name, exposure)
 			res.status(201).json({ folder })
 		} catch (error) {
 			next(error)
@@ -31,11 +22,11 @@ class CloudController {
 			const { name, folderId, expiresAt, exposure, content } = req.body
 
 			const file = await this.cloudService.createFile(
-				name,
 				userId,
 				folderId,
-				exposure,
 				content,
+				name,
+				exposure,
 				expiresAt
 			)
 			res.status(201).json({ file })
@@ -45,11 +36,7 @@ class CloudController {
 	}
 
 	// get all user folders / user folders by parentId and uid(optional)
-	getFolders = async (
-		req: Request,
-		res: Response,
-		next: NextFunction
-	): Promise<void> => {
+	getFolders = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const userId = req.user.id
 			const { parentId, uid } = req.query
@@ -65,11 +52,7 @@ class CloudController {
 		}
 	}
 
-	getFolder = async (
-		req: Request,
-		res: Response,
-		next: NextFunction
-	): Promise<void> => {
+	getFolder = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const { id } = req.params
 			const { userId } = req.user.id
@@ -89,7 +72,7 @@ class CloudController {
 
 			const files = await this.cloudService.getFiles(userId, {
 				folderId: folderId as string,
-				uid: uid as string,
+				targetUserId: uid as string,
 			})
 
 			res.status(200).json({ files })
@@ -122,11 +105,7 @@ class CloudController {
 		}
 	}
 
-	deleteFolder = async (
-		req: Request,
-		res: Response,
-		next: NextFunction
-	): Promise<void> => {
+	deleteFolder = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const { id } = req.params
 
@@ -151,9 +130,10 @@ class CloudController {
 	updateFolder = async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const { id } = req.params
-			const { body } = req
+			const { userId } = req.user
+			const { body: payload } = req
 
-			const folder = await this.cloudService.updateFolder(id, body)
+			const folder = await this.cloudService.updateFolder(id, userId, payload)
 			res.status(200).json({ folder })
 		} catch (error) {
 			next(error)
@@ -163,20 +143,17 @@ class CloudController {
 	updateFile = async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const { id } = req.params
-			const { body } = req
+			const { body: payload } = req
+			const { userId } = req.user
 
-			const file = await this.cloudService.updateFile(id, body)
+			const file = await this.cloudService.updateFile(id, userId, payload)
 			res.status(200).json({ file })
 		} catch (error) {
 			next(error)
 		}
 	}
 
-	updateFileContent = async (
-		req: Request,
-		res: Response,
-		next: NextFunction
-	) => {
+	updateFileContent = async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const { id } = req.params
 			const { content } = req.body
