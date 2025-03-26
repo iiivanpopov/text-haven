@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../generated/prisma_client"
 }
 
 datasource db {
@@ -8,38 +9,57 @@ datasource db {
 }
 
 model User {
-  id       Int             @id @default(autoincrement())
-  name     String          @unique
+  id       String   @id @default(cuid())
+  email    String   @unique
   password String
-  files    File[]
-  buckets  Bucket[]
-  links    TemporaryLink[]
+  role     Role     @default(USER)
+  Files    File[]
+  Folders  Folder[]
+  Token    Token?
 }
 
-model Bucket {
-  id         Int      @id @default(autoincrement())
-  bucketname String   @unique
-  userId     Int      @unique
-  user       User     @relation(fields: [userId], references: [id])
-  createdAt  DateTime @default(now())
-  files      File[]
+model Token {
+  id           String @id @default(cuid())
+  refreshToken String @unique
+  userId       String @unique
+  User         User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Folder {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String   @default("Untitled")
+  Files     File[]
+  parentId  String?
+  exposure  Exposure @default(PRIVATE)
+  parent    Folder?  @relation("FolderToParent", fields: [parentId], references: [id])
+  Folders   Folder[] @relation("FolderToParent")
+  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([userId, name])
 }
 
 model File {
-  id        Int      @id @default(autoincrement())
-  filename  String   @unique
-  userId    Int
-  bucketId  Int
-  user      User     @relation(fields: [userId], references: [id])
-  bucket    Bucket   @relation(fields: [bucketId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  userId    String
+  folderId  String
+  exposure  Exposure @default(PRIVATE)
+  name      String   @default("Untitled")
+  expiresAt DateTime
+  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Folder    Folder   @relation(fields: [folderId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([userId, folderId, name])
 }
 
-model TemporaryLink {
-  id         Int      @id @default(autoincrement())
-  link       String   @unique
-  userId     Int
-  expiration BigInt
-  user       User     @relation(fields: [userId], references: [id])
-  createdAt  DateTime @default(now())
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Exposure {
+  PUBLIC
+  PRIVATE
 }

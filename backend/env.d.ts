@@ -4,20 +4,28 @@ declare namespace NodeJS {
 		AWS_ACCESS_KEY: string
 		AWS_SECRET_ACCESS_KEY: string
 		AWS_REGION: string
+		S3_BUCKET: string
 
 		// JWT
 		JWT_SECRET_KEY: string
-		JWT_EXPIRATION_TIME: string
+		JWT_EXPIRATION_TIME: StringValue
+		REFRESH_SECRET_KEY: string
+		REFRESH_EXPIRATION_TIME: StringValue
 
 		// DATABASE
+		DB_NAME: string
+		DB_USERNAME: string
+		DB_PASSWORD: string
+		DB_HOST: string
+		DB_PORT: number
 		DATABASE_URL: string
 
 		// EXPRESS
-		PORT: string | number // Server port
+		PORT: string
 
-		// CRYPTO
-		ALGORITHM: crypto.CipherGCMTypes
-		ENCRYPTION_KEY: string
-		IV: string // Initializing vector
+		// REDIS
+		REDIS_PORT: string
+		REDIS_HOST: string
+		CACHE_EXPIRATION_TIME: StringValue
 	}
 }
