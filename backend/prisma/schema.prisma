@@ -28,7 +28,7 @@ model Token {
 model Folder {
   id        String   @id @default(cuid())
   userId    String
-  name      String   @default("Untitled")
+  name      String   @default("Unnamed")
   Files     File[]
   parentId  String?
   exposure  Exposure @default(PRIVATE)
@@ -45,7 +45,7 @@ model File {
   userId    String
   folderId  String
   exposure  Exposure @default(PRIVATE)
-  name      String   @default("Untitled")
+  name      String   @default("Unnamed")
   expiresAt DateTime
   User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   Folder    Folder   @relation(fields: [folderId], references: [id], onDelete: Cascade)
