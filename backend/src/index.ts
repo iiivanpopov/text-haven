@@ -1,14 +1,12 @@
 import config from '@config'
 import logger from '@utils/logger'
-import { Server } from 'http'
+import type { Server } from 'http'
 import app from './app'
 
 let server: Server
 
 config.PRISMA.$connect().then(() => {
-	server = app.listen(config.PORT, () =>
-		logger.log(`Listening to port ${config.PORT}.`)
-	)
+	server = app.listen(config.PORT, () => logger.log(`Listening to port ${config.PORT}.`))
 })
 
 const onCloseSignal = () => {

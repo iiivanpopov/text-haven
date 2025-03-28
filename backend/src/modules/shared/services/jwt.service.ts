@@ -35,10 +35,10 @@ export default class JwtService implements ITokenService {
 
 	async generateTokens(payload: Payload): Promise<Tokens> {
 		const accessToken = sign(payload, this.accessSecret, {
-			expiresIn: +config.JWT_EXPIRATION_TIME,
+			expiresIn: config.JWT_EXPIRATION_TIME,
 		})
 		const refreshToken = sign(payload, this.refreshSecret, {
-			expiresIn: +config.REFRESH_EXPIRATION_TIME,
+			expiresIn: config.REFRESH_EXPIRATION_TIME,
 		})
 		return { accessToken, refreshToken }
 	}
@@ -87,7 +87,7 @@ export default class JwtService implements ITokenService {
 
 	async generateAndSaveTokens(user: User) {
 		const userDto = new UserDto(user)
-		const tokens = await this.generateTokens(userDto)
+		const tokens = await this.generateTokens({ ...userDto })
 		await this.saveToken(userDto.id, tokens.refreshToken)
 		return { ...tokens, user: userDto }
 	}

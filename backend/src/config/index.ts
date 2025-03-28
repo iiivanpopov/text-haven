@@ -1,9 +1,9 @@
 import { S3 } from '@aws-sdk/client-s3'
 import { PrismaClient } from '@generated/prisma_client'
 import type { PrismaClient as prismaClientType } from '@prisma/client'
+import { Time } from '@utils/time'
 import { env } from 'bun'
 import Redis from 'ioredis'
-import ms from 'ms'
 
 export default {
 	// AWS
@@ -21,9 +21,9 @@ export default {
 
 	// JWT
 	JWT_SECRET_KEY: env.JWT_SECRET_KEY || '',
-	JWT_EXPIRATION_TIME: ms(env.JWT_EXPIRATION_TIME || '1d'), // github.com/vercel/ms
+	JWT_EXPIRATION_TIME: Time.mapToMilliseconds(env.JWT_EXPIRATION_TIME || '1d'),
 	REFRESH_SECRET_KEY: env.REFRESH_SECRET_KEY || '',
-	REFRESH_EXPIRATION_TIME: ms(env.REFRESH_EXPIRATION_TIME || '30d'), // github.com/vercel/ms
+	REFRESH_EXPIRATION_TIME: Time.mapToMilliseconds(env.REFRESH_EXPIRATION_TIME || '30d'),
 
 	// DATABASE
 	DATABASE_URL: env.DATABASE_URL || '',
@@ -32,7 +32,7 @@ export default {
 	PORT: +env.PORT,
 
 	// REDIS
-	CACHE_EXPIRE_TIME: +ms(env.CACHE_EXPIRATION_TIME || '1d') / 1000, // m|h|d => millis / 1000 =>  seconds
+	CACHE_EXPIRE_TIME: Time.mapToMilliseconds(env.CACHE_EXPIRATION_TIME || '1d') / 1000,
 	REDIS: new Redis({
 		host: env.REDIS_HOST || 'localhost',
 		port: +env.REDIS_PORT || 6379,
