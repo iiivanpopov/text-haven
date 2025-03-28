@@ -6,8 +6,6 @@ import type StorageService from '@modules/shared/services/storage.service'
 import { Exposure, type File, type Folder, type PrismaClient } from '@prisma/client'
 import logger from '@utils/logger'
 
-type FolderHierarchy = Folder & { Files: File[]; Folders: Folder[] }
-
 export default class CloudService {
 	constructor(
 		private storageService: StorageService,
@@ -54,58 +52,49 @@ export default class CloudService {
 		logger.log(`Cleared ${records.length} expired files`)
 	}
 
-	async getFolders(
+	// Return single folder(if folderId provided) or return all user folders(in specific folder if provided)
+	async getFoldersOrFolder(
 		userId: string,
-		options: { uid?: string; parentId?: string }
-	): Promise<FolderHierarchy[]> {
-		const { parentId, uid } = options
+		options: { targetUserId?: string; parentId?: string; folderId?: string }
+	): Promise<Folder | Folder[]> {
+		const { parentId, targetUserId, folderId } = options
 
-		const where: {
-			userId: string
-			parentId?: string
-			exposure?: Exposure
-		} = {
-			userId,
+		if (folderId) {
+			const cached = await this.cache.get<Folder>(Cache.FOLDER_KEY(folderId))
+			if (cached && (cached.userId == targetUserId || cached.exposure == Exposure.PUBLIC)) {
+				return cached
+			}
+
+			const folder = await this.prisma.folder.findFirst({
+				where: { id: folderId },
+			})
+			if (!folder) throw ApiError.NotFound('Folder not found')
+
+			if (folder.userId != userId && folder.exposure != Exposure.PUBLIC) throw ApiError.Forbidden()
+
+			await this.cache.set(Cache.FOLDER_KEY(folderId), folder)
+
+			return folder
+		}
+
+		const where: any = {
+			userId: targetUserId,
+			id: folderId,
 			parentId,
 		}
 
-		const include = {
-			Files: true,
-			Folders: true,
+		if (targetUserId && targetUserId != userId) {
+			where.exposure = Exposure.PUBLIC
 		}
 
-		if (uid && uid !== userId) {
-			Object.assign(where, {
-				userId: uid,
-				exposure: Exposure.PUBLIC,
-			})
-			Object.assign(include, {
-				Files: { where: { exposure: Exposure.PUBLIC } },
-				Folders: { where: { exposure: Exposure.PUBLIC } },
-			})
-		}
-
-		return this.prisma.folder.findMany({ where, include })
+		return this.prisma.folder.findMany({ where })
 	}
 
-	async getFolder(userId: string, id: string, include?: { Files: boolean }): Promise<Folder> {
-		const cached = await this.cache.get<Folder>(Cache.FOLDER_KEY(id))
-		if (cached && (cached.userId === userId || cached.exposure === Exposure.PUBLIC)) return cached
-
-		const folder = await this.prisma.folder.findFirst({
-			where: { id },
-			include,
-		})
-		if (!folder) throw ApiError.NotFound('Folder not found')
-		if (folder.userId !== userId && folder.exposure !== Exposure.PUBLIC) throw ApiError.Forbidden()
-
-		await this.cache.set(Cache.FOLDER_KEY(id), folder)
-		return folder
-	}
-
-	async deleteFolder(id: string): Promise<Folder> {
+	async deleteFolder(userId: string, id: string): Promise<Folder> {
 		const folder = await this.prisma.folder.findFirst({ where: { id } })
 		if (!folder) throw ApiError.BadRequest('Folder not found')
+
+		if (folder.userId != userId) throw ApiError.Forbidden()
 
 		await this.cache.flushCache(folder.userId, id)
 		await this.deleteFolderRecursive(id)
@@ -163,42 +152,43 @@ export default class CloudService {
 		return file
 	}
 
-	async deleteFile(id: string): Promise<File> {
+	async deleteFile(userId: string, id: string): Promise<File> {
 		const file = await this.prisma.file.findFirst({ where: { id } })
 		if (!file) throw ApiError.BadRequest('File not found')
+
+		if (file.userId != userId) throw ApiError.Forbidden()
 
 		await this.cache.flushCache(file.userId, file.folderId, id)
 		await this.storageService.deleteFile(id)
 		return this.prisma.file.delete({ where: { id } })
 	}
 
-	async getFiles(
+	// Return single file(if fileId provided) or return all user files(in specific folder if provided)
+	async getFilesOrFile(
 		userId: string,
-		options: { folderId?: string; targetUserId?: string }
-	): Promise<File[]> {
-		const { folderId, targetUserId } = options
-		const where: any = { userId, folderId }
+		options: { folderId?: string; targetUserId?: string; fileId?: string }
+	): Promise<File | File[]> {
+		const { folderId, targetUserId, fileId } = options
 
-		if (targetUserId && userId !== targetUserId) {
-			where.userId = targetUserId
+		if (fileId) {
+			const cached = await this.cache.get<File>(Cache.FILE_KEY(fileId))
+			if (cached && (cached.userId == userId || cached.exposure == Exposure.PUBLIC)) return cached
+
+			const file = await this.prisma.file.findFirst({ where: { id: fileId } })
+			if (!file) throw ApiError.BadRequest('File not found')
+			if (file.userId != userId && file.exposure != Exposure.PUBLIC) throw ApiError.Forbidden()
+
+			await this.cache.set(Cache.FILE_KEY(fileId), file)
+			return file
+		}
+
+		const where: any = { userId, folderId, id: fileId }
+
+		if (targetUserId && userId != targetUserId) {
 			where.exposure = Exposure.PUBLIC
 		}
 
-		const files = await this.prisma.file.findMany({ where })
-
-		return files
-	}
-
-	async getFile(id: string, userId: string): Promise<File> {
-		const cached = await this.cache.get<File>(Cache.FILE_KEY(id))
-		if (cached && (cached.userId === userId || cached.exposure === Exposure.PUBLIC)) return cached
-
-		const file = await this.prisma.file.findFirst({ where: { id } })
-		if (!file) throw ApiError.BadRequest('File not found')
-		if (file.userId !== userId && file.exposure !== Exposure.PUBLIC) throw ApiError.Forbidden()
-
-		await this.cache.set(Cache.FILE_KEY(id), file)
-		return file
+		return this.prisma.file.findMany({ where })
 	}
 
 	async getFileContent(id: string, userId: string): Promise<string> {
@@ -238,9 +228,11 @@ export default class CloudService {
 		return this.prisma.file.update({ where: { id }, data: updateData })
 	}
 
-	async updateFileContent(id: string, content: string): Promise<File> {
+	async updateFileContent(userId: string, id: string, content: string): Promise<File> {
 		const file = await this.prisma.file.findFirst({ where: { id } })
 		if (!file) throw ApiError.BadRequest('File not found')
+
+		if (file.userId != userId) throw ApiError.Forbidden()
 
 		await this.storageService.updateFile(id, content)
 		return file

@@ -18,16 +18,9 @@ const cloudController = new CloudController(cloudService)
 
 // Folders
 // Post
-router.post(
-	'/folders',
-	auth,
-	createFolderRules,
-	validate,
-	cloudController.createFolder
-)
+router.post('/folders', auth, createFolderRules, validate, cloudController.createFolder)
 
 // Get
-router.get('/folders/:id', auth, cloudController.getFolder)
 router.get('/folders', auth, cloudController.getFolders)
 
 // Patch
@@ -38,17 +31,10 @@ router.delete('/folders/:id', auth, cloudController.deleteFolder)
 
 // Files
 // Post
-router.post(
-	'/files',
-	auth,
-	createFileRules,
-	validate,
-	cloudController.createFile
-)
+router.post('/files', auth, createFileRules, validate, cloudController.createFile)
 
 // Get
-router.get('/files/:id', auth, cloudController.getFile)
-router.get('/files', auth, cloudController.getFiles)
+router.get('/files', auth, cloudController.getFilesOrFile)
 router.get('/files/:id/content', auth, cloudController.getFileContent)
 
 // Patch

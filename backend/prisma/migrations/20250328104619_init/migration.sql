@@ -27,7 +27,7 @@ CREATE TABLE "Token" (
 CREATE TABLE "Folder" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "name" TEXT NOT NULL DEFAULT 'Untitled',
+    "name" TEXT NOT NULL DEFAULT 'Unnamed',
     "parentId" TEXT,
     "exposure" "Exposure" NOT NULL DEFAULT 'PRIVATE',
     "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -41,7 +41,7 @@ CREATE TABLE "File" (
     "userId" TEXT NOT NULL,
     "folderId" TEXT NOT NULL,
     "exposure" "Exposure" NOT NULL DEFAULT 'PRIVATE',
-    "name" TEXT NOT NULL DEFAULT 'Untitled',
+    "name" TEXT NOT NULL DEFAULT 'Unnamed',
     "expiresAt" TIMESTAMP(3) NOT NULL,
     "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
