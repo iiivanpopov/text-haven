@@ -38,7 +38,7 @@ export default class AuthController {
 			const { refreshToken } = req.cookies
 			await this.authService.logout(refreshToken)
 			res.clearCookie('refreshToken')
-			res.status(200).send()
+			res.status(200).end()
 		} catch (error) {
 			next(error)
 		}
