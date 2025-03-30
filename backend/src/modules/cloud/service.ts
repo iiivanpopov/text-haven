@@ -202,7 +202,7 @@ export default class CloudService {
 		return this.storageService.getFileContent(id)
 	}
 
-	async updateFolder(id: string, userId: string, payload: any): Promise<Folder> {
+	async updateFolder(userId: string, id: string, payload: any): Promise<Folder> {
 		const updateData = new FolderDto(payload)
 		const oldFolder = await this.prisma.folder.findUnique({
 			where: { id },
@@ -215,7 +215,7 @@ export default class CloudService {
 		return this.prisma.folder.update({ where: { id }, data: updateData })
 	}
 
-	async updateFile(id: string, userId: string, payload: any): Promise<File> {
+	async updateFile(userId: string, id: string, payload: any): Promise<File> {
 		const updateData = new FileDto(payload)
 		const oldFile = await this.prisma.file.findUnique({
 			where: { id },

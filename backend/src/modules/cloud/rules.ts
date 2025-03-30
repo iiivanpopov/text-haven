@@ -30,3 +30,26 @@ export const createFolderRules = [
 		.withMessage('Exposure type must be either "PRIVATE" or "PUBLIC"'),
 	optionalStringField('parentId', 'Parent id'),
 ]
+
+export const updateFolderRules = [
+	optionalStringField('name', 'Name'),
+	optionalStringField('parentId', 'Parent id'),
+	body('exposure')
+		.optional()
+		.notEmpty()
+		.withMessage("Exposure type can't be empty")
+		.isIn(['PRIVATE', 'PUBLIC'])
+		.withMessage('Exposure type must be either "PRIVATE" or "PUBLIC"'),
+]
+
+export const updateFileRules = [
+	optionalStringField('name', 'Name'),
+	optionalStringField('folderId', 'Folder id'),
+	body('exposure')
+		.optional()
+		.notEmpty()
+		.withMessage("Exposure type can't be empty")
+		.isIn(['PRIVATE', 'PUBLIC'])
+		.withMessage('Exposure type must be either "PRIVATE" or "PUBLIC"'),
+	body('expiresAt').optional().isISO8601().withMessage('Invalid date format'),
+]

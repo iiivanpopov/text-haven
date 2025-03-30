@@ -5,7 +5,7 @@ import StorageService from '@modules/shared/services/storage.service'
 import validate from '@utils/validate'
 import { Router } from 'express'
 import CloudController from './controller'
-import { createFileRules, createFolderRules } from './rules'
+import { createFileRules, createFolderRules, updateFileRules, updateFolderRules } from './rules'
 import CloudService from './service'
 
 const router = Router()
@@ -24,7 +24,7 @@ router.post('/folders', auth, createFolderRules, validate, cloudController.creat
 router.get('/folders', auth, cloudController.getFolders)
 
 // Patch
-router.patch('/folders/:id', auth, cloudController.updateFolder)
+router.patch('/folders/:id', auth, updateFolderRules, validate, cloudController.updateFolder)
 
 // Delete
 router.delete('/folders/:id', auth, cloudController.deleteFolder)
@@ -38,7 +38,7 @@ router.get('/files', auth, cloudController.getFilesOrFile)
 router.get('/files/:id/content', auth, cloudController.getFileContent)
 
 // Patch
-router.patch('/files/:id', auth, cloudController.updateFile)
+router.patch('/files/:id', auth, updateFileRules, validate, cloudController.updateFile)
 router.patch('/files/:id/content', auth, cloudController.updateFileContent)
 
 // Delete

@@ -19,7 +19,6 @@ export default function (req: Request, _res: Response, next: NextFunction) {
 		req.user = userData
 		next()
 	} catch (error) {
-		console.error(error)
 		next(ApiError.Unauthorized())
 	}
 }

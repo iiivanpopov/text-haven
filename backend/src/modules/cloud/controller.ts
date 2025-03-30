@@ -111,7 +111,7 @@ class CloudController {
 			const userId = req.user.id
 			const { body: payload } = req
 
-			const folder = await this.cloudService.updateFolder(id, userId, payload)
+			const folder = await this.cloudService.updateFolder(userId, id, payload)
 			res.status(200).json({ folder })
 		} catch (error) {
 			next(error)
@@ -122,9 +122,9 @@ class CloudController {
 		try {
 			const { id } = req.params
 			const { body: payload } = req
-			const { userId } = req.user
+			const userId = req.user.id
 
-			const file = await this.cloudService.updateFile(id, userId, payload)
+			const file = await this.cloudService.updateFile(userId, id, payload)
 			res.status(200).json({ file })
 		} catch (error) {
 			next(error)
@@ -138,7 +138,7 @@ class CloudController {
 			const userId = req.user.id
 
 			const file = await this.cloudService.updateFileContent(userId, id, content)
-			res.status(200).json({ folder: file })
+			res.status(200).json({ file })
 		} catch (error) {
 			next(error)
 		}
