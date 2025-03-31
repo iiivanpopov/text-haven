@@ -1,7 +1,7 @@
 {
-	"name": "pastebin",
+	"name": "texthaven",
 	"version": "1.0.0",
-	"description": "Pastebin API",
+	"description": "TextHaven API",
 	"type": "module",
 	"private": true,
 	"scripts": {
