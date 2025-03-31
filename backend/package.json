@@ -1,5 +1,5 @@
 {
-	"name": "texthaven",
+	"name": "texthaven-api",
 	"version": "1.0.0",
 	"description": "TextHaven API",
 	"type": "module",
