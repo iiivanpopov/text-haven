@@ -2,8 +2,8 @@ import Header from '@components/Header'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-	title: 'Dashboard | TextHaven',
-	description: 'Manage your texts at dashboard',
+	title: 'TextHaven',
+	description: 'An app to share and post texts',
 }
 
 export default function ({ children }: { children: React.ReactNode }) {

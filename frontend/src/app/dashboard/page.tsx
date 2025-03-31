@@ -1,3 +1,3 @@
-export default function DashboardPage() {
-	return <div>Not implemented</div>
+export default function () {
+	return <div>Dashboard. Not implemented</div>
 }
