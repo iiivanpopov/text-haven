@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function StorageLayout({ children }: { children: React.ReactNode }) {
 	return (
-		<div className='max-w-[1270px] m-[0_auto] font-urbanist bg-background-primary grid grid-rows-[10vh_80vh]'>
+		<div className='max-w-[1270px] m-[0_auto] font-urbanist grid grid-rows-[10vh_80vh]'>
 			<Header />
 			{children}
 		</div>
