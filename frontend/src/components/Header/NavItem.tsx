@@ -10,13 +10,7 @@ interface NavItemProps {
 	className?: string
 }
 
-export default function NavItem({
-	icon: Icon,
-	url,
-	iconSize = 32,
-	ariaLabel,
-	className,
-}: NavItemProps) {
+export default function ({ icon: Icon, url, iconSize = 32, ariaLabel, className }: NavItemProps) {
 	return (
 		<Link className='relative flex flex-col items-center' href={url} aria-label={ariaLabel}>
 			{Icon && (

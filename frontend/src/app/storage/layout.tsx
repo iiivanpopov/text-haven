@@ -6,7 +6,7 @@ export const metadata: Metadata = {
 	description: 'Storage of your texts',
 }
 
-export default function ({ children }: { children: React.ReactNode }) {
+export default function StorageLayout({ children }: { children: React.ReactNode }) {
 	return (
 		<div className='max-w-[1270px] m-[0_auto] font-urbanist bg-background-primary grid grid-rows-[10vh_80vh]'>
 			<Header />

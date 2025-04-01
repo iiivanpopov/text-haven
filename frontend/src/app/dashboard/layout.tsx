@@ -6,7 +6,7 @@ export const metadata: Metadata = {
 	description: 'Manage your texts at dashboard',
 }
 
-export default function ({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
 	return (
 		<div className='max-w-[1270px] m-[0_auto] font-urbanist bg-background-primary grid grid-rows-[10vh_80vh]'>
 			<Header />
