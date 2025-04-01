@@ -14,6 +14,7 @@ export default function Profile() {
 			</div>
 			<Link
 				href={'/profile/settings'}
+				aria-label='Go to profile settings'
 				className='flex items-center justify-center transition-colors cursor-pointer bg-blue-light dark:bg-blue-dark w-full h-16 rounded-md text-white text-3xl dark:hover:bg-blue-dark-dark hover:bg-blue-dark-light'
 			>
 				Edit

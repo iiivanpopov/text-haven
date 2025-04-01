@@ -13,6 +13,7 @@ export default function Settings() {
 				<Button
 					onClick={() => setTheme(theme == 'dark' ? 'light' : 'dark')}
 					name={'Switch theme'}
+					ariaLabel='Switch theme'
 					className='bg-blue-light dark:bg-blue-dark hover:bg-blue-dark-light dark:hover:dark:bg-blue-dark-dark'
 				/>
 			</div>

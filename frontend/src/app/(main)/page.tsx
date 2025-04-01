@@ -19,6 +19,7 @@ export default function Main() {
 				</p>
 				<Link
 					href={'/storage'}
+					aria-label='Go to storage'
 					className='flex items-center justify-center transition-colors cursor-pointer bg-blue-light dark:bg-blue-dark w-64 h-16 rounded-md text-white text-3xl hover:bg-blue-dark-light dark:hover:bg-blue-dark-dark'
 				>
 					New Post

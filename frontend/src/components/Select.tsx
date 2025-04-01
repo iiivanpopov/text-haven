@@ -10,15 +10,24 @@ interface SelectProps {
 		name: string
 		value: string
 	}[]
+	ariaLabel?: string
 }
 
-export default function Select({ name, options, className, onChange, value }: SelectProps) {
+export default function Select({
+	name,
+	ariaLabel,
+	options,
+	className,
+	onChange,
+	value,
+}: SelectProps) {
 	return (
 		<select
 			onChange={onChange}
 			name={name}
 			value={value}
 			id={name}
+			aria-label={ariaLabel}
 			className={twMerge(
 				'text-primary-light dark:text-primary-dark transition-colors rounded-md px-5 border-2 border-outline-light dark:border-outline-dark focus:border-outline-dark-light dark:focus:border-outline-dark-dark outline-none w-64 h-[50px]',
 				className

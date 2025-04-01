@@ -18,6 +18,7 @@ export default function ProfileSettings() {
 						name='username'
 						placeholder='Name'
 						value={username}
+						ariaLabel='Username input'
 						onChange={e => setUsername(e.target.value)}
 					/>
 					<Input
@@ -25,11 +26,13 @@ export default function ProfileSettings() {
 						name='email'
 						placeholder='Email'
 						value={email}
+						ariaLabel='Email input'
 						onChange={e => setEmail(e.target.value)}
 					/>
 					<Input
 						className='h-[75px]'
 						name='password'
+						ariaLabel='Password input'
 						placeholder='Password'
 						value={password}
 						onChange={e => setPassword(e.target.value)}
@@ -37,6 +40,7 @@ export default function ProfileSettings() {
 				</div>
 				<Button
 					name='Save'
+					ariaLabel='Save your profile'
 					className='bg-green-light dark:bg-green-dark h-[50px] hover:bg-green-dark-light dark:hover:bg-green-dark-dark w-full'
 					onClick={() => console.log('Save profile')}
 				/>
