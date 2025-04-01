@@ -19,13 +19,20 @@ export default function ({
 	return (
 		<button
 			aria-label={ariaLabel}
-			className='bg-transparent outline-none border-none hover:cursor-pointer'
+			className='relative flex flex-col items-center bg-transparent outline-none border-none hover:cursor-pointer'
 			onClick={onClick}
 		>
-			<Icon
-				size={iconSize}
-				className={twMerge('text-primary transition-colors delay-75', className)}
-			/>
+			{Icon && (
+				<Icon
+					size={iconSize}
+					className={twMerge('z-50 text-primary transition-colors delay-75', className, 'peer')}
+				/>
+			)}
+			{ariaLabel && (
+				<span className='text-md text-nowrap delay-75 transition-all absolute opacity-0 peer-hover:opacity-100 peer-hover:block peer-hover:translate-y-10'>
+					{ariaLabel}
+				</span>
+			)}
 		</button>
 	)
 }

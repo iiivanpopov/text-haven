@@ -18,12 +18,17 @@ export default function NavItem({
 	className,
 }: NavItemProps) {
 	return (
-		<Link href={url} aria-label={ariaLabel}>
+		<Link className='relative flex flex-col items-center' href={url} aria-label={ariaLabel}>
 			{Icon && (
 				<Icon
-					className={twMerge('text-primary delay-75 transition-colors', className)}
+					className={twMerge('z-50 text-primary delay-75 transition-colors', className, 'peer')}
 					size={iconSize}
 				/>
+			)}
+			{ariaLabel && (
+				<span className='text-md delay-75 text-nowrap transition-all absolute opacity-0 peer-hover:opacity-100 peer-hover:block peer-hover:translate-y-10'>
+					{ariaLabel}
+				</span>
 			)}
 		</Link>
 	)

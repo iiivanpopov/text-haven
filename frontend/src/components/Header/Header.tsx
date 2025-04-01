@@ -9,7 +9,7 @@ export default function Header() {
 	return (
 		<header className='flex justify-between items-center'>
 			<Link href={'/'} className='text-subheading text-primary'>
-				<h1>Text Haven</h1>
+				<h1 className='hover:font-bold duration-100 delay-75 transition-all'>Text Haven</h1>
 			</Link>
 			<nav className='flex w-80 justify-between'>
 				<div className='w-24 flex justify-between'>
@@ -21,13 +21,13 @@ export default function Header() {
 						icon={Settings}
 						url={'/settings'}
 						className='hover:text-blue'
-						ariaLabel='Profile'
+						ariaLabel='Settings'
 					/>
 					<NavBtn
 						onClick={() => console.log('Log out')}
 						icon={LogOut}
-						className='text-red hover:text-red-hover '
-						aria-label='Log Out'
+						className='text-red hover:text-red-hover'
+						ariaLabel='Log Out'
 					/>
 				</div>
 			</nav>
