@@ -37,7 +37,7 @@ export default function ProfileSettings() {
 				</div>
 				<Button
 					name='Save'
-					className='bg-green h-[50px] hover:bg-green-dark w-full'
+					className='bg-green-light dark:bg-green-dark h-[50px] hover:bg-green-dark-light dark:hover:bg-green-dark-dark w-full'
 					onClick={() => console.log('Save profile')}
 				/>
 			</div>

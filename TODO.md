@@ -5,15 +5,15 @@
 - Texts
 - Storage
 - Dashboard
-- Auth
 
 - FINISH: Connect backend and frontend
 
 ## WIP:
 
-- Settings
+- Auth
 
 ## DONE:
 
+- Settings
 - Profile
 - Main page

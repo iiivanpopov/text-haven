@@ -1,4 +1,4 @@
-import { HTMLInputTypeAttribute } from 'react'
+import type { HTMLInputTypeAttribute } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 interface InputProps {
@@ -21,7 +21,7 @@ export default function Input({
 	return (
 		<input
 			className={twMerge(
-				'transition-colors outline-none rounded-md px-5 bg-background-secondary border-outline border-2 text-secondary text-body h-10 focus:border-outline-dark',
+				'transition-colors outline-none rounded-md px-5 bg-background-secondary-light dark:bg-background-secondary-dark border-outline-light dark:border-outline-dark border-2 text-secondary text-body h-10 focus:border-outline-dark-light dark:focus:border-outline-dark-dark text-primary-light dark:text-primary-dark',
 				className
 			)}
 			type={type}

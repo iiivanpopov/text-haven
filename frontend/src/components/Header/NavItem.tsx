@@ -15,12 +15,16 @@ export default function ({ icon: Icon, url, iconSize = 32, ariaLabel, className 
 		<Link className='relative flex flex-col items-center' href={url} aria-label={ariaLabel}>
 			{Icon && (
 				<Icon
-					className={twMerge('z-50 text-primary delay-75 transition-colors', className, 'peer')}
+					className={twMerge(
+						'z-50 text-primary-light dark:text-primary-dark delay-75 transition-colors',
+						className,
+						'peer'
+					)}
 					size={iconSize}
 				/>
 			)}
 			{ariaLabel && (
-				<span className='text-md delay-75 text-nowrap transition-all absolute opacity-0 peer-hover:opacity-100 peer-hover:block peer-hover:translate-y-10'>
+				<span className='text-primary-light dark:text-primary-dark text-md delay-75 text-nowrap transition-all absolute opacity-0 peer-hover:opacity-100 peer-hover:block peer-hover:translate-y-10'>
 					{ariaLabel}
 				</span>
 			)}

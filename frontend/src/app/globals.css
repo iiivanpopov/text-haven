@@ -1,29 +1,51 @@
 @import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700&display=swap');
 @import 'tailwindcss';
 
+@variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 @theme {
 	--text-heading: 5rem;
 	--text-subheading: 3rem;
-	--text-body: 1.5rem;
-	--text-card: 1.2rem;
+	--text-default: 1.6rem;
+	--text-second: 1.2rem;
 
 	--font-urbanist: 'Urbanist', sans-serif;
 
-	--color-primary: #1f2024;
-	--color-secondary: #282828;
-	--color-muted: #a9a9b0;
+	/* Light theme */
+	--color-primary-light: #1f2024;
+	--color-secondary-light: #282828;
+	--color-muted-light: #a9a9b0;
 
-	--color-blue: #4484d7;
-	--color-blue-dark: #3266ab;
-	--color-green: #59cd6a;
-	--color-green-dark: #39ad4a;
-	--color-red: #d6433c;
-	--color-red-dark: #9c2822;
+	--color-blue-light: #4484d7;
+	--color-blue-dark-light: #3266ab;
+	--color-green-light: #59cd6a;
+	--color-green-dark-light: #39ad4a;
+	--color-red-light: #d6433c;
+	--color-red-dark-light: #9c2822;
 
-	--color-background-primary: #f3f3f1;
-	--color-background-secondary: #f1f1f1;
-	--color-backing: #e7e6ed;
+	--color-background-primary-light: #f3f3f1;
+	--color-background-secondary-light: #f1f1f1;
+	--color-backing-light: #e7e6ed;
 
-	--color-outline: #dddddd;
-	--color-outline-dark: #d0d0d0;
+	--color-outline-light: #dddddd;
+	--color-outline-dark-light: #d0d0d0;
+
+	/* Dark theme */
+	--color-primary-dark: #e0e0e0;
+	--color-secondary-dark: #b0b0b0;
+	--color-muted-dark: #8c8c8c;
+
+	--color-blue-dark: #66aaff;
+	--color-blue-dark-dark: #3388ff;
+	--color-green-dark: #66d966;
+	--color-green-dark-dark: #33b833;
+	--color-red-dark: #ff6666;
+	--color-red-dark-dark: #ff3333;
+
+	--color-background-primary-dark: #121212;
+	--color-background-secondary-dark: #1c1c1c;
+	--color-backing-dark: #262626;
+
+	--color-outline-dark: #444444;
+	--color-outline-dark-dark: #333333;
 }

@@ -11,7 +11,7 @@ interface PostProps {
 
 export default function Post({ id, title, content, date }: PostProps) {
 	return (
-		<div className='border-outline border-2 rounded-md p-2 px-3 bg-background-secondary flex flex-col justify-between'>
+		<div className='border-outline-light dark:border-outline-dark border-2 rounded-md p-2 px-3 bg-background-secondary-light dark:bg-background-secondary-dark flex flex-col justify-between'>
 			<PostTitle title={title} id={id} />
 			<PostContent content={content} />
 			<PostDate date={date} />
