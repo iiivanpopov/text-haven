@@ -16,14 +16,14 @@
 	--color-blue: #4484d7;
 	--color-blue-dark: #3266ab;
 	--color-green: #59cd6a;
+	--color-green-dark: #39ad4a;
 	--color-red: #d6433c;
 	--color-red-dark: #9c2822;
 
-
 	--color-background-primary: #f3f3f1;
 	--color-background-secondary: #f1f1f1;
-	--color-backing: #e2e1e6;
+	--color-backing: #e7e6ed;
 
 	--color-outline: #dddddd;
-
+	--color-outline-dark: #d0d0d0;
 }

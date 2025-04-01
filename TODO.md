@@ -2,8 +2,6 @@
 
 ## TODO:
 
-- Profile
-- Settings
 - Texts
 - Storage
 - Dashboard
@@ -11,6 +9,11 @@
 
 - FINISH: Connect backend and frontend
 
+## WIP:
+
+- Settings
+
 ## DONE:
 
+- Profile
 - Main page
