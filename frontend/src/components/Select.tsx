@@ -29,17 +29,13 @@ export default function Select({
 			id={name}
 			aria-label={ariaLabel}
 			className={twMerge(
-				'text-primary-light dark:text-primary-dark transition-colors rounded-md px-5 border-2 border-outline-light dark:border-outline-dark focus:border-outline-dark-light dark:focus:border-outline-dark-dark outline-none w-64 h-[50px]',
+				'bg-background-secondary-light dark:bg-background-secondary-dark text-primary-light dark:text-primary-dark transition-colors rounded-md px-5 border-2 border-outline-light dark:border-outline-dark focus:border-outline-dark-light dark:focus:border-outline-dark-dark outline-none h-[50px]',
 				className
 			)}
 		>
 			{Array.isArray(options) &&
 				options.map(elem => (
-					<option
-						className='bg-background-secondary-light dark:bg-background-secondary-dark'
-						key={elem.name}
-						value={elem.value}
-					>
+					<option key={elem.name} value={elem.value}>
 						{elem.name}
 					</option>
 				))}

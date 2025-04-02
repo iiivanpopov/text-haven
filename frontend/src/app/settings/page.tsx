@@ -42,7 +42,9 @@ export default function Settings() {
 								{ name: 'Note', value: 'note' },
 								{ name: 'Post', value: 'post' },
 							]}
+							className='w-64'
 							name={'Text Default Type'}
+							ariaLabel='Select text default type'
 						/>
 					)}
 				</div>

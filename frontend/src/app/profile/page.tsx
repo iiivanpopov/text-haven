@@ -5,11 +5,14 @@ export default function Profile() {
 		<main className='mt-20 h-[25vh] flex flex-col gap-y-10 w-[450px]'>
 			<div className='flex gap-x-10'>
 				<div className='rounded-full min-w-[150px] min-h-[150px] size-[150px] bg-backing-light dark:bg-backing-dark'></div>
-				<div>
-					<h4 className='text-primary-light dark:text-primary-dark text-subheading'>My name</h4>
-					<span className='text-secondary-light dark:text-secondary-dark text-body'>
-						username@gmail.com
-					</span>
+				<div className='flex flex-col justify-between'>
+					<div>
+						<h4 className='text-primary-light dark:text-primary-dark text-subheading'>My name</h4>
+						<span className='text-secondary-light dark:text-secondary-dark text-body'>
+							username@gmail.com
+						</span>
+					</div>
+					<span className='text-muted-light dark:text-muted-dark text-body'>Public</span>
 				</div>
 			</div>
 			<Link
