@@ -1,8 +1,8 @@
 'use client'
 
-import Post from '@components/Post'
 import Link from 'next/link'
 import { useState } from 'react'
+import Post from './components/Post'
 
 export default function Main() {
 	const [date, setDate] = useState<Date>(new Date())

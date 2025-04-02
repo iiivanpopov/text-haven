@@ -15,7 +15,7 @@ export default function Button({ onClick, ariaLabel, className, name }: ButtonPr
 				'transition-colors h-[50px] w-64 cursor-pointer rounded-md text-white text-[1.2rem]',
 				className
 			)}
-			aria-label={ariaLabel || ''}
+			aria-label={ariaLabel}
 		>
 			{name}
 		</button>
