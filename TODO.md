@@ -6,7 +6,6 @@
 
 - Texts (Page only)
 - Storage (Page only)
-- Dashboard (Page only)
 
 - FINISH: Connect backend and frontend. Dockerize
 
@@ -20,10 +19,11 @@
 
 ## WIP:
 
-- Auth (Page only)
+- Dashboard (Page only)
 
 ## DONE:
 
+- Auth (Page only)
 - Settings (Page only)
 - Profile (Page only)
 - Main page (Page only)
