@@ -1,6 +1,6 @@
 'use client'
 
-import { Folder, LogOut, Settings, User } from 'lucide-react'
+import { Folder, LayoutDashboard, LogOut, Settings, User } from 'lucide-react'
 import Link from 'next/link'
 import NavBtn from './NavBtn'
 import NavItem from './NavItem'
@@ -14,12 +14,18 @@ export default function () {
 				</h1>
 			</Link>
 			<nav className='flex w-80 justify-between'>
-				<div className='w-24 flex justify-between'>
+				<div className='w-32 flex justify-between'>
 					<NavItem
 						icon={Folder}
 						url={'/storage'}
 						className='hover:text-blue-light dark:hover:text-blue-dark'
 						ariaLabel='Storage'
+					/>
+					<NavItem
+						icon={LayoutDashboard}
+						url={'/dashboard'}
+						className='hover:text-blue-light dark:hover:text-blue-dark'
+						ariaLabel='Dashboard'
 					/>
 					<NavItem
 						icon={User}
