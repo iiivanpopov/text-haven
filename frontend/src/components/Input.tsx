@@ -23,7 +23,7 @@ export default function Input({
 	return (
 		<input
 			className={twMerge(
-				'transition-colors outline-none rounded-md px-5 bg-background-secondary-light dark:bg-background-secondary-dark border-outline-light dark:border-outline-dark border-2 text-secondary text-body h-10 focus:border-outline-dark-light dark:focus:border-outline-dark-dark text-primary-light dark:text-primary-dark',
+				'transition-colors outline-none rounded-md px-5 bg-gray-100 text-md dark:bg-gray-950 text-gray-700 dark:text-gray-300 text-md h-10',
 				className
 			)}
 			aria-label={ariaLabel}

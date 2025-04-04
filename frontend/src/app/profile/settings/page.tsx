@@ -12,11 +12,11 @@ export default function ProfileSettings() {
 	const [profileAccessability, setProfileAccessability] = useState<string>('Public')
 
 	return (
-		<main className='mt-20 h-[25vh] flex flex-col gap-y-10 w-[450px]'>
-			<div className='flex gap-y-15 flex-col'>
-				<div className='flex flex-col gap-y-8'>
-					<div>
-						<h4 className='text-primary-light dark:text-primary-dark text-[1.2rem]'>Username</h4>
+		<main className='mt-20 h-[25vh] flex flex-col gap-y-10'>
+			<div className='flex gap-y-5 flex-col'>
+				<div className='flex flex-col gap-y-4'>
+					<div className='w-64'>
+						<h4 className='text-gray-800 dark:text-gray-100 text-md'>Username</h4>
 						<Input
 							className='h-[75px] w-full'
 							name='username'
@@ -26,8 +26,8 @@ export default function ProfileSettings() {
 							onChange={e => setUsername(e.target.value)}
 						/>
 					</div>
-					<div>
-						<h4 className='text-primary-light dark:text-primary-dark text-[1.2rem]'>Email</h4>
+					<div className='w-64'>
+						<h4 className='text-gray-800 dark:text-gray-100 text-md'>Email</h4>
 						<Input
 							className='h-[75px] w-full'
 							name='email'
@@ -37,8 +37,8 @@ export default function ProfileSettings() {
 							onChange={e => setEmail(e.target.value)}
 						/>
 					</div>
-					<div>
-						<h4 className='text-primary-light dark:text-primary-dark text-[1.2rem]'>Password</h4>
+					<div className='w-64'>
+						<h4 className='text-gray-800 dark:text-gray-100 text-md'>Password</h4>
 						<Input
 							className='h-[75px] w-full'
 							name='password'
@@ -49,10 +49,8 @@ export default function ProfileSettings() {
 							onChange={e => setPassword(e.target.value)}
 						/>
 					</div>
-					<div>
-						<h4 className='text-primary-light dark:text-primary-dark text-[1.2rem]'>
-							Profile accessability
-						</h4>
+					<div className='w-64'>
+						<h4 className='text-gray-800 dark:text-gray-100 text-md'>Profile accessability</h4>
 						<Select
 							className='h-[75px] w-full'
 							name='Change profile accessability'
@@ -71,7 +69,7 @@ export default function ProfileSettings() {
 				<Button
 					name='Save'
 					ariaLabel='Save your profile'
-					className='bg-green-light dark:bg-green-dark h-[50px] hover:bg-green-dark-light dark:hover:bg-green-dark-dark w-full'
+					className='bg-green-400 dark:bg-green-500 h-10 w-64 text-xl hover:bg-green-500 dark:hover:bg-green-600'
 					onClick={() => console.log('Save profile')}
 				/>
 			</div>

@@ -15,9 +15,7 @@ export default function Register() {
 			<div className='flex justify-between flex-col h-64'>
 				<div className='flex flex-col gap-y-5'>
 					<div className='flex flex-col'>
-						<span className='dark:text-secondary-dark text-secondary-light text-[1.2rem]'>
-							Username
-						</span>
+						<span className='dark:text-gray-200 text-gray-700 text-md'>Username</span>
 						<Input
 							name={'username'}
 							value={username}
@@ -27,9 +25,7 @@ export default function Register() {
 						/>
 					</div>
 					<div className='flex flex-col'>
-						<span className='dark:text-secondary-dark text-secondary-light text-[1.2rem]'>
-							Email
-						</span>
+						<span className='dark:text-gray-200 text-gray-700 text-md'>Email</span>
 						<Input
 							name={'email'}
 							value={email}
@@ -39,9 +35,7 @@ export default function Register() {
 						/>
 					</div>
 					<div className='flex flex-col'>
-						<span className='dark:text-secondary-dark text-secondary-light text-[1.2rem]'>
-							Password
-						</span>
+						<span className='dark:text-gray-200 text-gray-700 text-md'>Password</span>
 						<Input
 							name={'password'}
 							value={password}
@@ -55,11 +49,11 @@ export default function Register() {
 				<div className='flex flex-col gap-y-3 items-center mt-5'>
 					<Button
 						name={'Register'}
-						className='bg-blue-light dark:bg-blue-dark hover:bg-blue-dark-light dark:hover:bg-blue-dark-dark'
+						className='bg-blue-400 dark:bg-blue-500 hover:bg-blue-500 dark:hover:bg-blue-600'
 						ariaLabel='Register button'
 						onClick={() => console.log('Register')}
 					/>
-					<Link href={'/login'} className='dark:text-secondary-dark text-secondary-light text-sm'>
+					<Link href={'/login'} className='dark:text-gray-200 text-gray-700 text-sm'>
 						Go to login
 					</Link>
 				</div>

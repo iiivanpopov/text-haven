@@ -26,14 +26,14 @@ export default function ({
 				<Icon
 					size={iconSize}
 					className={twMerge(
-						'z-50 text-primary-light dark:text-primary-dark transition-colors delay-75',
+						'z-50 text-gray-800 dark:text-gray-100 transition-colors delay-75',
 						className,
 						'peer'
 					)}
 				/>
 			)}
 			{ariaLabel && (
-				<span className='text-primary-light dark:text-primary-dark text-md text-nowrap delay-75 transition-all absolute opacity-0 peer-hover:opacity-100 peer-hover:block peer-hover:translate-y-10'>
+				<span className='text-gray-800 dark:text-gray-100 text-md text-nowrap delay-75 transition-all absolute opacity-0 peer-hover:opacity-100 peer-hover:block peer-hover:translate-y-10'>
 					{ariaLabel}
 				</span>
 			)}

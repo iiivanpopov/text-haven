@@ -1,12 +1,9 @@
 'use client'
 
-import Button from '@components/Button'
 import Select from '@components/Select'
-import { useTheme } from 'next-themes'
 import { useEffect, useState } from 'react'
 
 export default function Settings() {
-	const { theme, setTheme } = useTheme()
 	const [textDefType, setTextDefType] = useState('')
 
 	useEffect(() => {
@@ -16,38 +13,28 @@ export default function Settings() {
 
 	return (
 		<main className='mt-20 h-[20vh] grid grid-rows-2 gap-y-10'>
-			<div className='flex items-center gap-x-10'>
-				<h1 className='text-primary-light dark:text-primary-dark text-subheading '>Settings</h1>
-				<Button
-					onClick={() => setTheme(theme == 'dark' ? 'light' : 'dark')}
-					name='Switch theme'
-					ariaLabel='Switch theme'
-					className='bg-blue-light dark:bg-blue-dark hover:bg-blue-dark-light dark:hover:dark:bg-blue-dark-dark'
-				/>
-			</div>
-			<div className='flex gap-x-5'>
-				<div>
-					<h4 className='text-primary-light dark:text-primary-dark text-[1.2rem]'>
-						Default text type
-					</h4>
-					{textDefType && (
-						<Select
-							value={textDefType}
-							onChange={e => {
-								const value = e.target.value
-								setTextDefType(value)
-								localStorage.setItem('textdeftype', value)
-							}}
-							options={[
-								{ name: 'Note', value: 'note' },
-								{ name: 'Post', value: 'post' },
-							]}
-							className='w-64'
-							name={'Text Default Type'}
-							ariaLabel='Select text default type'
-						/>
-					)}
-				</div>
+			<h1 className='text-gray-800 dark:text-gray-100 text-5xl'>Settings</h1>
+			<div className='flex items-center gap-x-5'>
+				<span className='font-bold text-gray-800 dark:text-gray-100 text-2xl'>
+					Default text type
+				</span>
+				{textDefType && (
+					<Select
+						value={textDefType}
+						onChange={e => {
+							const value = e.target.value
+							setTextDefType(value)
+							localStorage.setItem('textdeftype', value)
+						}}
+						options={[
+							{ name: 'Note', value: 'note' },
+							{ name: 'Post', value: 'post' },
+						]}
+						className='w-40 text-xl'
+						name={'Text Default Type'}
+						ariaLabel='Select text default type'
+					/>
+				)}
 			</div>
 		</main>
 	)

@@ -29,7 +29,7 @@ export default function Select({
 			id={name}
 			aria-label={ariaLabel}
 			className={twMerge(
-				'bg-background-secondary-light dark:bg-background-secondary-dark text-primary-light dark:text-primary-dark transition-colors rounded-md px-5 border-2 border-outline-light dark:border-outline-dark focus:border-outline-dark-light dark:focus:border-outline-dark-dark outline-none h-[50px]',
+				'duration-300 bg-gray-100 dark:bg-gray-950 text-gray-700 text-md dark:text-gray-300 cursor-pointer transition-colors rounded-md outline-none h-10',
 				className
 			)}
 		>

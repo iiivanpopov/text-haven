@@ -14,9 +14,9 @@ const truncate = (text: string, max = 40) => (text.length > max ? text.slice(0, 
 export default function PostContent({ content }: PostContentProps) {
 	if (Array.isArray(content)) {
 		return (
-			<div className='bg-backing-light dark:bg-backing-dark h-full rounded-sm p-1 pl-3 flex flex-col text-primary-light dark:text-primary-dark'>
+			<div className='bg-gray-200 dark:bg-gray-900 h-full rounded-sm p-1 pl-3 flex flex-col text-gray-800 dark:text-gray-100'>
 				{content.map(str => (
-					<span className='whitespace-pre w-full truncate' key={str}>
+					<span className='whitespace-pre w-full' key={str}>
 						{truncate(str)}
 					</span>
 				))}
@@ -25,7 +25,7 @@ export default function PostContent({ content }: PostContentProps) {
 	}
 
 	return (
-		<span className='h-full text-primary-light dark:text-primary-dark bg-backing-light dark:bg-backing-dark rounded-sm p-1 pl-3'>
+		<span className='h-full text-gray-800 dark:text-gray-100 bg-gray-200 dark:bg-gray-900 rounded-sm p-1 pl-3'>
 			{truncate(content)}
 		</span>
 	)
