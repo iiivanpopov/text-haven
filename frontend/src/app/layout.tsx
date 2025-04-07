@@ -6,7 +6,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 		<html lang='en' suppressHydrationWarning>
 			<body>
 				<ThemeProvider attribute='data-theme' enableSystem>
-					<div className='h-screen v-screen bg-gray-100 dark:bg-gray-950'>{children}</div>
+					<div className='bg-gray-100 dark:bg-gray-950 min-h-screen'>{children}</div>
 				</ThemeProvider>
 			</body>
 		</html>

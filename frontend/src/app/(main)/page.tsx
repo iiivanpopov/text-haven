@@ -1,12 +1,9 @@
-'use client'
-
 import Post from '@components/Post'
 import Link from 'next/link'
-import { useState } from 'react'
+
+const date = new Date()
 
 export default function Main() {
-	const [date, setDate] = useState<Date>(new Date())
-
 	return (
 		<main className='mt-20 grid grid-cols-[5fr_2fr] gap-x-20'>
 			<div className='h-[40vh] flex flex-col justify-between'>

@@ -1,5 +1,6 @@
 'use client'
 
+import File from '@components/File'
 import Input from '@components/Input'
 import Post from '@components/Post'
 import Link from 'next/link'
@@ -32,13 +33,7 @@ export default function Dashboard() {
 					</div>
 					<div className='grid grid-rows-4 gap-y-8'>
 						{filteredTexts.map(text => (
-							<Link
-								key={text}
-								href={`/text/${text}`}
-								className='h-14 flex items-center rounded-tl-md rounded-tr-md border-b-2 border-gray-300 dark:border-gray-700'
-							>
-								<span className='text-gray-700 dark:text-gray-200'>{text}</span>
-							</Link>
+							<File key={text} fileId={text} className='h-14 px-5' title={text} />
 						))}
 					</div>
 				</div>

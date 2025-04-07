@@ -15,7 +15,7 @@ export default function Settings() {
 		<main className='mt-20 h-[20vh] grid grid-rows-2 gap-y-10'>
 			<h1 className='text-gray-800 dark:text-gray-100 text-5xl'>Settings</h1>
 			<div className='flex items-center gap-x-5'>
-				<span className='font-bold text-gray-800 dark:text-gray-100 text-2xl'>
+				<span className='font-semibold text-gray-800 dark:text-gray-100 text-2xl'>
 					Default text type
 				</span>
 				{textDefType && (

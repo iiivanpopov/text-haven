@@ -15,12 +15,12 @@ export default function File({
 		<Link
 			href={`/storage/${folderId}`}
 			className={twMerge(
-				'hover:bg-gray-200 dark:hover:bg-gray-900 transition-colors flex items-center border-b-2 border-gray-300 dark:border-gray-700 text-xl text-gray-700 dark:text-gray-200',
+				'hover:bg-gray-200 dark:hover:bg-gray-900 transition-colors flex items-center border-b-2 border-gray-300 dark:border-gray-700 text-xl text-gray-700 dark:text-gray-200 h-14',
 				className
 			)}
 		>
 			<Icon size={32} className='text-gray-700 dark:text-gray-200' />
-			<span className='ml-10'>{title}</span>
+			<span className='pl-10'>{title}</span>
 		</Link>
 	)
 }

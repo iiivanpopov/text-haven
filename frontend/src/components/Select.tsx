@@ -1,44 +1,52 @@
 import { twMerge } from 'tailwind-merge'
 
+interface Option {
+	name: string
+	value: string
+}
+
 interface SelectProps {
 	value: string
-	className?: string
 	name: string
+	options: Option[]
 	onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void
 	placeholder?: string
-	options: {
-		name: string
-		value: string
-	}[]
 	ariaLabel?: string
+	className?: string
 }
 
 export default function Select({
-	name,
-	ariaLabel,
-	options,
-	className,
-	onChange,
 	value,
+	name,
+	options,
+	onChange,
+	placeholder,
+	ariaLabel,
+	className,
 }: SelectProps) {
 	return (
 		<select
-			onChange={onChange}
+			id={name}
 			name={name}
 			value={value}
-			id={name}
-			aria-label={ariaLabel}
+			onChange={onChange}
+			aria-label={ariaLabel || name}
 			className={twMerge(
-				'duration-300 bg-gray-100 dark:bg-gray-950 text-gray-700 text-md dark:text-gray-300 cursor-pointer transition-colors rounded-md outline-none h-10',
+				'h-10 rounded-md bg-gray-100 dark:bg-gray-950 text-md text-gray-700 dark:text-gray-300 outline-none transition-colors duration-300 cursor-pointer',
 				className
 			)}
 		>
-			{Array.isArray(options) &&
-				options.map(elem => (
-					<option key={elem.name} value={elem.value}>
-						{elem.name}
-					</option>
-				))}
+			{placeholder && (
+				<option value='' disabled hidden>
+					{placeholder}
+				</option>
+			)}
+
+			{options.map(({ name, value }) => (
+				<option key={value} value={value}>
+					{name}
+				</option>
+			))}
 		</select>
 	)
 }

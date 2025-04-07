@@ -13,25 +13,21 @@ export default function ThemeButton({ className }: { className: string }) {
 		setMounted(true)
 	}, [])
 
-	if (!mounted) {
-		return null
-	}
+	if (!mounted) return null
+
+	const Icon = theme == 'light' ? Moon : Sun
 
 	return (
 		<button
-			className={twMerge(
-				'cursor-pointer relative flex flex-col items-center text-gray-800 dark:text-gray-100',
-				className
-			)}
 			aria-label='Switch theme'
 			onClick={() => setTheme(theme == 'light' ? 'dark' : 'light')}
-		>
-			{theme == 'light' ? (
-				<Moon size={32} className='peer z-50 transition-colors duration-300 delay-75' />
-			) : (
-				<Sun size={32} className='peer z-50 transition-colors duration-300 delay-75' />
+			className={twMerge(
+				'cursor-pointer relative flex flex-col items-center text-gray-800 dark:text-gray-100 transition-colors duration-300',
+				className
 			)}
-			<span className='text-gray-800 dark:text-gray-100 text-md delay-75 text-nowrap transition-all absolute opacity-0 peer-hover:opacity-100 peer-hover:block peer-hover:translate-y-10'>
+		>
+			<Icon size={32} className='peer z-50 transition-colors duration-300 delay-75' />
+			<span className='absolute opacity-0 peer-hover:opacity-100 peer-hover:block peer-hover:translate-y-10 text-md transition-all delay-75 text-nowrap text-gray-800 dark:text-gray-100'>
 				Switch theme
 			</span>
 		</button>

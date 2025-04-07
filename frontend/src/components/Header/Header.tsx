@@ -6,40 +6,32 @@ import NavBtn from './NavBtn'
 import NavItem from './NavItem'
 import ThemeButton from './ThemeBtn'
 
-export default function () {
+const ICON_HOVER_CLASSES = 'hover:text-blue-400 dark:hover:text-blue-500'
+
+export default function Header() {
 	return (
 		<header className='grid grid-cols-3 items-center'>
-			<Link href={'/'}>
-				<h1 className='hover:font-bold duration-100 delay-75 transition-all text-5xl text-gray-800 dark:text-gray-100'>
+			<Link href='/'>
+				<h1 className='text-5xl text-gray-800 dark:text-gray-100 transition-all duration-100 delay-75 hover:font-bold'>
 					Text Haven
 				</h1>
 			</Link>
 			<div className='w-32 flex justify-between justify-self-center'>
-				<NavItem
-					icon={Folder}
-					url={'/storage'}
-					className='hover:text-blue-400 dark:hover:text-blue-500'
-					ariaLabel='Storage'
-				/>
+				<NavItem icon={Folder} url='/storage' className={ICON_HOVER_CLASSES} ariaLabel='Storage' />
 				<NavItem
 					icon={LayoutDashboard}
-					url={'/dashboard'}
-					className='hover:text-blue-400 dark:hover:text-blue-500'
+					url='/dashboard'
+					className={ICON_HOVER_CLASSES}
 					ariaLabel='Dashboard'
 				/>
-				<NavItem
-					icon={User}
-					url={'/profile'}
-					className='hover:text-blue-400 dark:hover:text-blue-500'
-					ariaLabel='Profile'
-				/>
+				<NavItem icon={User} url='/profile' className={ICON_HOVER_CLASSES} ariaLabel='Profile' />
 			</div>
 			<div className='grid grid-cols-3 w-40 items-center justify-between justify-self-end'>
-				<ThemeButton className='hover:text-blue-400 dark:hover:text-blue-500' />
+				<ThemeButton className={ICON_HOVER_CLASSES} />
 				<NavItem
 					icon={Settings}
-					url={'/settings'}
-					className='hover:text-blue-400 dark:hover:text-blue-500'
+					url='/settings'
+					className={ICON_HOVER_CLASSES}
 					ariaLabel='Settings'
 				/>
 				<NavBtn
