@@ -1,5 +1,15 @@
-import Storage from './[slug]/page'
+import Storage from './[id]/page'
 
 export default function StorageRoot() {
-	return <Storage />
+	return (
+		<Storage
+			params={
+				new Promise(resolve =>
+					resolve({
+						id: '',
+					})
+				)
+			}
+		/>
+	)
 }

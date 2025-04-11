@@ -2,7 +2,7 @@
 
 import File from '@components/File'
 import Folder from '@components/Folder'
-import { usePathname } from 'next/navigation'
+import { use } from 'react'
 
 const fakeFileSystem: Record<
 	string,
@@ -27,15 +27,14 @@ const fakeFileSystem: Record<
 	},
 }
 
-export default function Storage() {
-	const pathname = usePathname()
-	const folderId = pathname.split('/')[2] ?? ''
+export default function Storage({ params }: { params: Promise<{ id: string }> }) {
+	const { id: folderId } = use(params)
 
 	const data: { folders?: { name: string; id: string }[]; files: string[] } = fakeFileSystem[
 		folderId
 	] ?? { folders: [], files: [] }
 
-	// FIXME: Not an efficient way(AT ALL)
+	// FIXME: Not an efficient way(AT ALL). Maybe i should save it at state manager??(redux/mobx)
 	const currentFolder = Object.values(fakeFileSystem)
 		.map(value => value.folders?.find(val => val.id == folderId))
 		.find(folder => folder != undefined)
