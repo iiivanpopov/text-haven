@@ -1,6 +1,6 @@
 'use client'
 
-import { Folder, LayoutDashboard, LogOut, Settings, User } from 'lucide-react'
+import { Folder, LogOut, Settings, User } from 'lucide-react'
 import Link from 'next/link'
 import NavBtn from './NavBtn'
 import NavItem from './NavItem'
@@ -16,14 +16,8 @@ export default function Header() {
 					Text Haven
 				</h1>
 			</Link>
-			<div className='w-32 flex justify-between justify-self-center'>
+			<div className='w-20 flex justify-between justify-self-center'>
 				<NavItem icon={Folder} url='/storage' className={ICON_HOVER_CLASSES} ariaLabel='Storage' />
-				<NavItem
-					icon={LayoutDashboard}
-					url='/dashboard'
-					className={ICON_HOVER_CLASSES}
-					ariaLabel='Dashboard'
-				/>
 				<NavItem icon={User} url='/profile' className={ICON_HOVER_CLASSES} ariaLabel='Profile' />
 			</div>
 			<div className='grid grid-cols-3 w-40 items-center justify-between justify-self-end'>
