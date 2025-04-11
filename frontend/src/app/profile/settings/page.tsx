@@ -16,7 +16,7 @@ export default function ProfileSettings() {
 			<div className='flex gap-y-5 flex-col'>
 				<div className='flex flex-col gap-y-4'>
 					<div className='w-64'>
-						<h4 className='text-gray-800 dark:text-gray-100 text-md'>Username</h4>
+						<h4 className='text-gray-800 dark:text-gray-100 text-md font-semibold'>Username</h4>
 						<Input
 							className='h-[75px] w-full'
 							name='username'
@@ -27,7 +27,7 @@ export default function ProfileSettings() {
 						/>
 					</div>
 					<div className='w-64'>
-						<h4 className='text-gray-800 dark:text-gray-100 text-md'>Email</h4>
+						<h4 className='text-gray-800 dark:text-gray-100 text-md font-semibold'>Email</h4>
 						<Input
 							className='h-[75px] w-full'
 							name='email'
@@ -38,7 +38,7 @@ export default function ProfileSettings() {
 						/>
 					</div>
 					<div className='w-64'>
-						<h4 className='text-gray-800 dark:text-gray-100 text-md'>Password</h4>
+						<h4 className='text-gray-800 dark:text-gray-100 text-md font-semibold'>Password</h4>
 						<Input
 							className='h-[75px] w-full'
 							name='password'
@@ -50,9 +50,11 @@ export default function ProfileSettings() {
 						/>
 					</div>
 					<div className='w-64'>
-						<h4 className='text-gray-800 dark:text-gray-100 text-md'>Profile accessability</h4>
+						<h4 className='text-gray-800 dark:text-gray-100 text-md font-semibold'>
+							Profile accessability
+						</h4>
 						<Select
-							className='h-[75px] w-full'
+							className='h-[75px] w-full px-5'
 							name='Change profile accessability'
 							value={profileAccessability}
 							ariaLabel='Profile accessability input'
@@ -69,7 +71,7 @@ export default function ProfileSettings() {
 				<Button
 					name='Save'
 					ariaLabel='Save your profile'
-					className='bg-green-400 dark:bg-green-500 h-10 w-64 text-xl hover:bg-green-500 dark:hover:bg-green-600'
+					className='bg-green-400 dark:bg-green-500 h-12 w-64 text-xl hover:bg-green-500 dark:hover:bg-green-600'
 					onClick={() => console.log('Save profile')}
 				/>
 			</div>

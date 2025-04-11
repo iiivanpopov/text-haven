@@ -11,8 +11,8 @@ const ICON_HOVER_CLASSES = 'hover:text-blue-400 dark:hover:text-blue-500'
 export default function Header() {
 	return (
 		<header className='grid grid-cols-3 items-center'>
-			<Link href='/'>
-				<h1 className='text-5xl text-gray-800 dark:text-gray-100 transition-all duration-100 delay-75 hover:font-bold'>
+			<Link href='/' className='w-fit inline'>
+				<h1 className='text-5xl text-gray-800 dark:text-gray-100 transition-all duration-100 delay-75 hover:font-bold '>
 					Text Haven
 				</h1>
 			</Link>

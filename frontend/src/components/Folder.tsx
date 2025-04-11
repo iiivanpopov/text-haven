@@ -13,7 +13,7 @@ export default function File({
 }) {
 	return (
 		<Link
-			href={`/storage/${folderId}`}
+			href={`/storage/${encodeURIComponent(folderId)}`}
 			className={twMerge(
 				'hover:bg-gray-200 dark:hover:bg-gray-900 transition-colors flex items-center border-b-2 border-gray-300 dark:border-gray-700 text-xl text-gray-700 dark:text-gray-200 h-14',
 				className
