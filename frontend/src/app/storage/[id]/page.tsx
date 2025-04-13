@@ -1,38 +1,53 @@
 'use client'
-
-import File from '@components/File'
-import Folder from '@components/Folder'
-import { use } from 'react'
+// SOme mock data from api
 
 const fakeFileSystem: Record<
 	string,
-	{ folders?: { name: string; id: string }[]; files: string[] }
+	{
+		folders?: { name: string; id: string }[]
+		files: { name: string; id: string; content: string }[]
+	}
 > = {
 	'': {
 		folders: [
 			{ name: 'Folder A', id: 'a' },
 			{ name: 'Folder B', id: 'b' },
 		],
-		files: ['Root File 1', 'Root File 2'],
+		files: [
+			{ name: 'Root File 1', id: 'a', content: 'Content 1' },
+			{ name: 'Root File 2', id: 'b', content: 'Content 1' },
+		],
 	},
 	a: {
 		folders: [{ name: 'Folder C', id: 'c' }],
-		files: ['File 1', 'File 2'],
+		files: [
+			{ name: 'File 1', id: 'File 1', content: 'Content 1' },
+			{ name: 'File 2', id: 'File 2', content: 'Content 1' },
+		],
 	},
 	b: {
-		files: ['File 3', 'File 4'],
+		files: [
+			{ name: 'File 3', id: 'File 3', content: 'Content 1' },
+			{ name: 'File 4', id: 'File 4', content: 'Content 1' },
+		],
 	},
 	c: {
-		files: ['File 5', 'File 6'],
+		files: [
+			{ name: 'File 5', id: 'File 5', content: 'Content 1' },
+			{ name: 'File 6', id: 'File 6', content: 'Content 1' },
+		],
 	},
 }
+
+import File from '@/app/storage/components/FileBtn'
+import Folder from '@/app/storage/components/FolderBtn'
+import { use } from 'react'
 
 export default function Storage({ params }: { params: Promise<{ id: string }> }) {
 	const { id: folderId } = use(params)
 
-	const data: { folders?: { name: string; id: string }[]; files: string[] } = fakeFileSystem[
-		folderId
-	] ?? { folders: [], files: [] }
+	const data: { folders?: { name: string; id: string }[]; files: { name: string; id: string }[] } =
+		fakeFileSystem[folderId] ?? { folders: [], files: [] }
 
 	// FIXME: Not an efficient way(AT ALL). Maybe i should save it at state manager??(redux/mobx)
 	const currentFolder = Object.values(fakeFileSystem)
@@ -48,8 +63,8 @@ export default function Storage({ params }: { params: Promise<{ id: string }> })
 				<Folder key={folder.id} folderId={folder.id} className='px-5' title={folder.name} />
 			))}
 
-			{data.files.map(fileName => (
-				<File key={fileName} className='px-5' fileId={fileName} title={fileName} />
+			{data.files.map(file => (
+				<File key={file.id} className='px-5' fileId={file.id} title={file.name} />
 			))}
 		</main>
 	)

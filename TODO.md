@@ -4,8 +4,8 @@
 
 ### Frontend
 
-- Texts (Page only)
 - Footer (Auth buttons)
+- Edit texts
 
 - FINISH: Connect backend and frontend. Dockerize
 
@@ -16,13 +16,15 @@
 - Private/public account(hide/show email)
 - Improve caching
 - Username field: user model(unique)
+- Update some backend endpoints(get files/folders)
 
 ## WIP:
 
-- Storage (Page only)
+- Texts (Page only)
 
 ## DONE:
 
+- Storage (Page only)
 - Dashboard (Page only)
 - Auth (Page only)
 - Settings (Page only)

@@ -1,6 +1,6 @@
 'use client'
 
-import Select from '@components/Select'
+import Select from '@components/shared/Select'
 import { useEffect, useState } from 'react'
 
 export default function Settings() {

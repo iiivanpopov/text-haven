@@ -1,8 +1,8 @@
 'use client'
 
-import Button from '@components/Button'
-import Input from '@components/Input'
-import Select from '@components/Select'
+import Button from '@components/shared/Button'
+import Input from '@components/shared/Input'
+import Select from '@components/shared/Select'
 import { useState } from 'react'
 
 export default function ProfileSettings() {
