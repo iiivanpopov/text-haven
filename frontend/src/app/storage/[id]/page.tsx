@@ -53,7 +53,7 @@ export default function Storage({ params }: { params: Promise<{ id: string }> })
 		.find(folder => folder != undefined)
 
 	return (
-		<main className='mt-20 w-3/5 pb-20'>
+		<main className='mt-20 w-3/5 pb-40'>
 			<h3 className='mb-5 text-5xl text-gray-800 dark:text-gray-100'>
 				Storage | {currentFolder ? currentFolder.name : 'Root'}
 			</h3>

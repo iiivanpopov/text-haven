@@ -1,70 +1,92 @@
-//example api response
+'use client'
 
+type FileStructure = {
+	name: string
+	id: string
+	content: string
+}
+
+type FolderStructure = {
+	name: string
+	id: string
+}
+
+type FileSystem = {
+	folders?: FolderStructure[]
+	files?: FileStructure[]
+}
+
+//example api response
 const fakeResponse: {
-	data: Record<
-		string,
-		{
-			folders?: {
-				name: string
-				id: string
-			}[]
-			files: {
-				name: string
-				id: string
-				content: string
-			}[]
-		}
-	>
 	status: number
+	data: FileSystem
 } = {
 	status: 200,
 	data: {
-		'': {
-			files: [
-				{
-					name: 'Root File 1',
-					id: 'a',
-					content:
-						'Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.',
-				},
-				{ name: 'Root File 2', id: 'b', content: 'Content 1' },
-			],
-		},
+		files: [
+			{
+				name: 'Root File 1',
+				id: 'a',
+				content:
+					'Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.',
+			},
+			{ name: 'Root File 2', id: 'b', content: 'Content 1' },
+		],
 	},
 }
 
-import { use } from 'react'
-import { twMerge } from 'tailwind-merge'
+import { use, useEffect, useState } from 'react'
+import ChangeModeBtn from '../components/ChangeModeBtn'
+import EditMode from '../components/EditMode'
+import ReadMode from '../components/ReadMode'
+
+// fake data
+const isUserOwner = true
 
 export default function Text({ params }: { params: Promise<{ id: string }> }) {
 	const { id } = use(params)
-	// rework later
-	const fileData = Object.values(fakeResponse.data)
-		.flatMap(folder => folder.files)
-		.find(file => file.id == id)
 
-	// const fileData = undefined
+	const [mode, setMode] = useState<'edit' | 'read'>('read')
+	const [title, setTitle] = useState<string>('')
+	const [content, setContent] = useState<string>('')
+
+	// fake filedata
+	const fileData = fakeResponse.data.files?.find(file => file.id == id)
+
+	useEffect(() => {
+		if (fileData) {
+			setTitle(fileData.name)
+			setContent(fileData.content)
+		}
+	}, [fileData])
+
+	if (fakeResponse.status !== 200) {
+		return (
+			<div className='mt-20'>
+				<h3 className='text-red-400 dark:text-red-500 text-6xl font-semibold'>Not found</h3>
+			</div>
+		)
+	}
 
 	return (
-		<div className='mt-20'>
-			<span
-				className={twMerge(
-					// rework "not found" later
-					fileData
-						? 'text-gray-800 dark:text-gray-100 text-4xl'
-						: 'text-red-400 dark:text-red-500 text-6xl font-semibold'
+		<div className='mt-20 grid grid-rows-[5vh_fit] pb-[10vh]'>
+			<div className='flex flex-col gap-y-5'>
+				{isUserOwner && (
+					<ChangeModeBtn
+						mode={mode}
+						onClick={() => setMode(prev => (prev == 'read' ? 'edit' : 'read'))}
+					/>
 				)}
-			>
-				{fileData?.name ?? 'File not found'}
-			</span>
-			<div
-				className={twMerge(
-					'text-xl',
-					fileData ? 'text-gray-700 dark:text-gray-200' : 'text-gray-300 dark:text-gray-700',
-					'w-10/12'
+				{mode == 'read' ? (
+					<ReadMode title={title} content={content} />
+				) : (
+					<EditMode
+						title={title}
+						content={content}
+						setTitle={title => setTitle(title)}
+						setContent={content => setContent(content)}
+					/>
 				)}
-			>
-				{fakeResponse.status == 200 ? (fileData?.content ? fileData.content : 'No content') : ''}
 			</div>
 		</div>
 	)
