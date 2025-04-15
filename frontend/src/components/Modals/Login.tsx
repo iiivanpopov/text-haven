@@ -2,17 +2,25 @@
 
 import Button from '@components/shared/Button'
 import Input from '@components/shared/Input'
-import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
 import { useState } from 'react'
+import Modal from './Modal'
 
 export default function Login() {
 	const [username, setUsername] = useState('')
 	const [password, setPassword] = useState('')
 
+	const router = useRouter()
+	const pathname = usePathname()
+
 	return (
-		<main className='flex justify-center items-center'>
-			<div className='flex justify-between flex-col h-64'>
-				<div className='flex flex-col gap-y-5'>
+		<Modal
+			onClose={() => {
+				router.push(pathname)
+			}}
+		>
+			<main className='flex justify-center items-center bg-gray-100 dark:bg-gray-950 p-10 rounded-md'>
+				<div className='grid grid-rows-3 gap-y-5'>
 					<div className='flex flex-col'>
 						<span className='dark:text-gray-200 text-gray-700 text-md'>Username</span>
 						<Input
@@ -34,20 +42,14 @@ export default function Login() {
 							onChange={e => setPassword(e.target.value)}
 						/>
 					</div>
-				</div>
-
-				<div className='flex flex-col gap-y-3 items-center'>
 					<Button
 						name={'Login'}
-						className='bg-blue-400 dark:bg-blue-500 hover:bg-blue-500 dark:hover:bg-blue-600'
+						className='self-end bg-blue-400 dark:bg-blue-500 hover:bg-blue-500 dark:hover:bg-blue-600'
 						ariaLabel='Login button'
 						onClick={() => console.log('Login')}
 					/>
-					<Link href={'/register'} className='dark:text-gray-200 text-gray-700 text-sm'>
-						Go to register
-					</Link>
 				</div>
-			</div>
-		</main>
+			</main>
+		</Modal>
 	)
 }

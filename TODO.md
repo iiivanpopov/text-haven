@@ -4,8 +4,8 @@
 
 ### Frontend
 
-- Footer (Auth buttons)
-- Edit texts
+- Create files/folders(Page only)
+- Optimize components
 
 - FINISH: Connect backend and frontend. Dockerize
 
@@ -20,10 +20,12 @@
 
 ## WIP:
 
-- Texts (Page only)
+- Edit texts
 
 ## DONE:
 
+- Footer (Auth buttons)
+- Texts (Page only)
 - Storage (Page only)
 - Dashboard (Page only)
 - Auth (Page only)

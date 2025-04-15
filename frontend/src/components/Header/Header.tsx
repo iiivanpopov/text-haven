@@ -1,8 +1,6 @@
-'use client'
-
-import { Folder, LogOut, Settings, User } from 'lucide-react'
+import { Folder, Settings, User } from 'lucide-react'
 import Link from 'next/link'
-import NavBtn from './NavBtn'
+import LogOutBtn from './LogOut'
 import NavItem from './NavItem'
 import ThemeButton from './ThemeBtn'
 
@@ -28,9 +26,7 @@ export default function Header() {
 					className={ICON_HOVER_CLASSES}
 					ariaLabel='Settings'
 				/>
-				<NavBtn
-					onClick={() => console.log('Log out')}
-					icon={LogOut}
+				<LogOutBtn
 					className='text-red-400 hover:text-red-500 dark:text-red-500 dark:hover:text-red-600'
 					ariaLabel='Log Out'
 				/>
