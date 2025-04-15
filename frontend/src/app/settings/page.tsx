@@ -4,11 +4,11 @@ import Select from '@components/shared/Select'
 import { useEffect, useState } from 'react'
 
 export default function Settings() {
-	const [textDefType, setTextDefType] = useState('')
+	const [defaultType, setDefaultType] = useState('')
 
 	useEffect(() => {
 		const saved = localStorage.getItem('textdeftype')
-		if (saved) setTextDefType(saved)
+		if (saved) setDefaultType(saved)
 	}, [])
 
 	return (
@@ -18,12 +18,12 @@ export default function Settings() {
 				<span className='font-semibold text-gray-800 dark:text-gray-100 text-2xl'>
 					Default text type
 				</span>
-				{textDefType && (
+				{defaultType && (
 					<Select
-						value={textDefType}
+						value={defaultType}
 						onChange={e => {
 							const value = e.target.value
-							setTextDefType(value)
+							setDefaultType(value)
 							localStorage.setItem('textdeftype', value)
 						}}
 						options={[

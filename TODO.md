@@ -5,7 +5,6 @@
 ### Frontend
 
 - Create files/folders(Page only)
-- Optimize components
 
 - FINISH: Connect backend and frontend. Dockerize
 
@@ -20,6 +19,7 @@
 
 ## WIP:
 
+- Optimize components
 - Edit texts
 
 ## DONE:

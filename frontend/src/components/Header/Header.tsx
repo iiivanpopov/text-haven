@@ -1,6 +1,6 @@
 import { Folder, Settings, User } from 'lucide-react'
 import Link from 'next/link'
-import LogOutBtn from './LogOut'
+import LogOutBtn from './LogOutBtn'
 import NavItem from './NavItem'
 import ThemeButton from './ThemeBtn'
 

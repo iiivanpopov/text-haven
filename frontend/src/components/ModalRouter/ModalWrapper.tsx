@@ -7,7 +7,7 @@ interface ModalProps {
 	onClose: () => void
 }
 
-export default function Modal({
+export default function ModalWrapper({
 	children,
 	className,
 	onClose,

@@ -1,6 +1,4 @@
-'use client'
 // SOme mock data from api
-
 const fakeFileSystem: Record<
 	string,
 	{
@@ -39,9 +37,9 @@ const fakeFileSystem: Record<
 	},
 }
 
-import File from '@/app/storage/components/FileBtn'
-import Folder from '@/app/storage/components/FolderBtn'
 import { use } from 'react'
+import File from '../components/FileBtn'
+import Folder from '../components/FolderBtn'
 
 export default function Storage({ params }: { params: Promise<{ id: string }> }) {
 	const { id: folderId } = use(params)
@@ -55,7 +53,7 @@ export default function Storage({ params }: { params: Promise<{ id: string }> })
 		.find(folder => folder != undefined)
 
 	return (
-		<main className='mt-20 w-3/5'>
+		<main className='mt-20 w-3/5 pb-20'>
 			<h3 className='mb-5 text-5xl text-gray-800 dark:text-gray-100'>
 				Storage | {currentFolder ? currentFolder.name : 'Root'}
 			</h3>
