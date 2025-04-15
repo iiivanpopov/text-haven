@@ -1,5 +1,6 @@
 import type { LucideIcon } from 'lucide-react'
 import Link from 'next/link'
+import { memo } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 interface NavItemProps {
@@ -10,21 +11,21 @@ interface NavItemProps {
 	className?: string
 }
 
-export default function NavItem({
-	icon: Icon,
-	url,
-	iconSize = 32,
-	ariaLabel,
-	className,
-}: NavItemProps) {
-	return (
-		<Link href={url} aria-label={ariaLabel}>
-			{Icon && (
-				<Icon
-					className={twMerge('text-primary delay-75 transition-colors', className)}
-					size={iconSize}
-				/>
+const NavItem = ({ icon: Icon, url, iconSize = 32, ariaLabel, className }: NavItemProps) => (
+	<Link className='relative flex flex-col items-center z-0' href={url} aria-label={ariaLabel}>
+		<Icon
+			className={twMerge(
+				'z-40 text-gray-800 dark:text-gray-100 transition-colors delay-75 peer',
+				className
 			)}
-		</Link>
-	)
-}
+			size={iconSize}
+		/>
+		{ariaLabel && (
+			<span className='absolute opacity-0 peer-hover:opacity-100 peer-hover:block peer-hover:translate-y-10 text-md text-gray-800 dark:text-gray-100 transition-all delay-75 z-30'>
+				{ariaLabel}
+			</span>
+		)}
+	</Link>
+)
+
+export default memo(NavItem)

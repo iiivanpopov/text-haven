@@ -1,3 +1,4 @@
+import Footer from '@components/Footer'
 import Header from '@components/Header'
 import type { Metadata } from 'next'
 
@@ -6,11 +7,12 @@ export const metadata: Metadata = {
 	description: 'Storage of your texts',
 }
 
-export default function ({ children }: { children: React.ReactNode }) {
+export default function StorageLayout({ children }: React.PropsWithChildren) {
 	return (
-		<div className='max-w-[1270px] m-[0_auto] font-urbanist bg-background-primary grid grid-rows-[10vh_80vh]'>
+		<div className='max-w-[1270px] m-[0_auto] grid grid-rows-[10vh_minmax(80vh,auto)]'>
 			<Header />
 			{children}
+			<Footer />
 		</div>
 	)
 }

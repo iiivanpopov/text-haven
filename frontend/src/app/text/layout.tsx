@@ -3,11 +3,11 @@ import Header from '@components/Header'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-	title: 'Settings | TextHaven',
-	description: 'Settings page of TextHaven',
+	title: 'TextHaven | Text',
+	description: 'Page with text',
 }
 
-export default function SettingsLayout({ children }: { children: React.ReactNode }) {
+export default function TextLayout({ children }: { children: React.ReactNode }) {
 	return (
 		<div className='max-w-[1270px] m-[0_auto] grid grid-rows-[10vh_minmax(80vh,auto)]'>
 			<Header />

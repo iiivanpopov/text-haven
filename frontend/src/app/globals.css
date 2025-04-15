@@ -1,31 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700&display=swap');
 @import 'tailwindcss';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
-	--text-heading: 6rem;
-	--text-subheading: 3rem;
-	--text-body: 2rem;
-
 	--font-urbanist: 'Urbanist', sans-serif;
-
-	--color-primary: #1f2024;
-	--color-secondary: #282828;
-
-	--color-blue: #4484d7;
-	--color-green: #59cd6a;
-	--color-red: #d6433c;
-	--color-red-hover: #9c2822;
-
-	--color-background-primary: #f3f3f1;
-	--color-background-secondary: #f1f1f1;
-
-	--color-outline: #dddddd;
-}
-
-.lucide {
-	stroke-width: 2.5;
-}
-
-.lucide * {
-	vector-effect: non-scaling-stroke;
 }

@@ -20,10 +20,9 @@
 		"useUnknownInCatchVariables": false,
 		"forceConsistentCasingInFileNames": true,
 		"allowUnreachableCode": false,
+		"alwaysStrict": true,
 		"baseUrl": "./src",
 		"paths": {
-			"@services/*": ["./services/*"],
-			"@dtos/*": ["./dtos/*"],
 			"@utils/*": ["./utils/*"],
 			"@config": ["./config/index"],
 			"@exceptions/*": ["./exceptions/*"],
