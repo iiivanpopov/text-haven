@@ -4,29 +4,33 @@ import { Moon, Sun } from 'lucide-react'
 import { memo, useEffect, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 
-function ThemeButton({ className }: { className: string }) {
-	const [theme, setTheme] = useState<'light' | 'dark'>('light')
+type Theme = 'light' | 'dark'
+
+function ThemeButton({ className }: { className?: string }) {
+	const [theme, setTheme] = useState<Theme | null>(null)
 
 	useEffect(() => {
-		const savedTheme = (localStorage.getItem('theme') as 'light' | 'dark') || 'light'
-		setTheme(savedTheme)
+		if (typeof window == 'undefined') return
+
+		const storedTheme = localStorage.getItem('theme') as Theme | null
+		const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+
+		const initialTheme: Theme = storedTheme || (systemPrefersDark ? 'dark' : 'light')
+		setTheme(initialTheme)
+		document.documentElement.classList.toggle('dark', initialTheme == 'dark')
 	}, [])
 
 	useEffect(() => {
-		const root = document.documentElement
-		if (theme == 'dark') {
-			root.classList.add('dark')
-		} else {
-			root.classList.remove('dark')
-		}
+		if (theme == null) return
+		document.documentElement.classList.toggle('dark', theme == 'dark')
 		localStorage.setItem('theme', theme)
 	}, [theme])
 
 	const toggleTheme = () => {
-		setTheme(prev => (prev === 'dark' ? 'light' : 'dark'))
+		setTheme(prev => (prev == 'dark' ? 'light' : 'dark'))
 	}
 
-	const Icon = theme == 'light' ? Moon : Sun
+	const Icon = theme == 'dark' ? Sun : Moon
 
 	return (
 		<button
