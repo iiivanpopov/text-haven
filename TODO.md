@@ -1,40 +1,43 @@
-# Tracking features
+# Feature Tracking
 
-## TODO:
+## TODO
 
 ### Frontend
 
-- Search folder/file thru storage(user's files)
-- Connect redux toolkit
-
-- FINISH: Connect backend and frontend. Dockerize
+- Implement search for folders/files in user storage
+- Integrate Redux Toolkit for state management
+- Connect frontend to backend
+- Dockerize
 
 ### Backend
 
-- Settings saves
-- Get last 3-4 POSTs(will show them at the main page)
-- Private/public account(hide/show email & posts)
-- Improve caching
-- Username field: user model(unique)
-- Update some backend endpoints(get files/folders)
+- Implement user cloud settings
+- Add endpoint to fetch last 3-4 posts (for main page display)
+- Add private/public account toggle (controls visibility of email & posts)
+- Improve caching mechanisms
+- Add unique username field to user model
+- Update endpoints for retrieving files/folders
+- Refactor to use Bun's built-in Redis and AWS S3 (remove external dependencies)
 
-## WIP:
+## WIP (Work in Progress)
 
-- Create files/folders(Page only)
-- Optimize components
+- Create files/folders (UI only, not connected to backend)
+- Optimize frontend components
 
-## DONE:
+## DONE
 
-- Edit texts(page only)
-- Footer (Auth buttons)
-- Texts (Page only)
-- Storage (Page only)
-- Dashboard (Page only)
-- Auth (Page only)
-- Settings (Page only)
-- Profile (Page only)
-- Main page (Page only)
+- Edit texts (UI only)
+- Footer (with auth buttons)
+- Texts page (UI only)
+- Storage page (UI only)
+- Dashboard page (UI only)
+- Auth page (UI only)
+- Settings page (UI only)
+- Profile page (UI only)
+- Main page (UI only)
 
-## Remark
+---
 
-"Page only" means that the page is not connected to the backend yet. The page is only a static page with no functionality.
+**Note:**
+
+- "UI only" means the page is static and not yet connected to backend functionality.

@@ -1,94 +1,56 @@
 # TextHaven
 
-TextHaven is a web application designed for sharing and managing text-based content. It provides a simple and convenient platform for users to create, share, and manage their texts online.
+TextHaven is a web application for sharing and managing text-based content. It allows users to create, organize, and share texts online with ease.
 
 ## Features
 
-- **User Authentication**: Register, login, and manage your account.
+- **User Authentication**: Register, log in, and manage your account.
 - **Text Storage**: Create, update, and delete text files and folders.
-- **Public and Private Sharing**: Control the visibility of your texts with public and private options. Also you can save your text as note or post.
-- **Dashboard**: Manage your texts and folders in a user-friendly interface.
-- **Redis Caching**: Improve performance with caching for frequently accessed data.
-- **AWS S3 Integration**: Store and retrieve text files securely using AWS S3.
+- **Public & Private Sharing**: Control visibility of your texts. Save as notes or posts.
+- **Dashboard**: Manage texts and folders in a user-friendly interface.
+- **Redis Caching**: Faster access to frequently used data.
+- **AWS S3 Integration**: Secure storage and retrieval of text files.
 
-## Technologies Used
+## Technologies
 
-### Backend
+**Backend:**
 
-- [**Bun**](https://www.bun.sh/)
-- [**Express.js**](https://www.expressjs.com/)
-- [**TypeScript**](https://www.typescriptlang.org/)
-- [**Prisma**](https://www.prisma.io/)
-- [**Redis**](https://redis.io/)
-- [**PostgreSQL**](https://www.postgresql.org/)
-- [**AWS S3**](https://aws.amazon.com/s3/)
+- [Bun](https://www.bun.sh/)
+- [Express.js](https://www.expressjs.com/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Prisma](https://www.prisma.io/)
+- [Redis](https://redis.io/)
+- [PostgreSQL](https://www.postgresql.org/)
+- [AWS S3](https://aws.amazon.com/s3/)
 
-### Frontend
+**Frontend:**
 
-- [**Next.js**](https://nextjs.org/)
-- [**Tailwind CSS**](https://tailwindcss.com/)
-
-## Installation
-
-### Prerequisites
-
-- [Docker](https://docker.com/)
-- [Node.js](https://nodejs.org/) or [Bun](https://bun.sh/)
-
-Nodejs needs additional configuration
-
-### Steps
-
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/iiivanpopov/text-haven.git
-   cd text-haven
-   ```
-
-2. Set up environment variables:
-
-   - Copy `.env.example` to `.env`, then configure.
-
-3. Start the application using Docker Compose:
-
-   ```bash
-   docker-compose up --build
-   ```
-
-4. Access the application:
-   - Frontend: `http://localhost:<PORT>`
-   - Backend API: `http://localhost:<PORT>/api`
+- [Next.js](https://nextjs.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
 
 ## Project Structure
 
-### Backend
+**Backend:**
 
-- **`src/app.ts`**: Main Express app configuration.
-- **`src/modules`**: Contains feature modules (e.g., `auth`, `cloud`, `user`).
-- **`src/utils`**: Utility functions and helpers.
-- **`prisma`**: Database schema and migrations.
+- `src/app.ts`: Main Express app setup.
+- `src/modules/`: Feature modules (auth, cloud, user, etc).
+- `src/utils/`: Utility functions.
+- `prisma/`: Database schema and migrations.
 
-### Frontend
+**Frontend:**
 
-- **`src/app`**: Next.js pages and layouts.
-- **`src/components`**: Reusable React components.
-- **`src/utils`**: Utility functions for the frontend.
+- `src/app/`: Next.js pages and layouts.
+- `src/components/`: Reusable React components.
+- `src/utils/`: Frontend utilities.
 
-## Scripts
+## Architecture
 
-### Backend
+The following diagram illustrates the high-level architecture of TextHaven:
 
-- `dev`: Start the backend in development mode.
-- `build`: Build the backend for production.
-- `start`: Start the backend in production mode.
+<img src='./architecture.png' alt='TextHaven Architecture Diagram'/>
 
-### Frontend
-
-- `dev`: Start the frontend in development mode.
-- `build`: Build the frontend for production.
-- `start`: Start the frontend in production mode.
+If you notice any missing architectural details, please open an issue or pull request.
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
+This project is licensed under the MIT License. See [LICENSE](./LICENSE) for details.
