@@ -10,13 +10,12 @@ type Exposure = "PUBLIC" | "PRIVATE";
 type ExpiryOption = number | "never";
 
 // TODO: move this wherever later
-
-const EXPOSURE_OPTIONS = [
+const EXPOSURE_OPTIONS: { name: string, value: string }[] = [
   { name: "Private", value: "PRIVATE" },
   { name: "Public", value: "PUBLIC" },
 ];
 
-const EXPIRY_OPTIONS = [
+const EXPIRY_OPTIONS: { name: string, value: ExpiryOption }[] = [
   { name: "1 min", value: 1000 * 60 },
   { name: "30 mins", value: 1000 * 60 * 30 },
   { name: "1 hour", value: 1000 * 60 * 60 },
@@ -27,7 +26,7 @@ export default function New() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [exposure, setExposure] = useState<Exposure>("PRIVATE");
-  const [expiresIn, setExpiresIn] = useState<ExpiryOption>(0);
+  const [expiresIn, setExpiresIn] = useState<ExpiryOption>(EXPIRY_OPTIONS[0].value);
 
   const handleCreate = () => {
     console.log({ title, content, exposure, expiresIn });
@@ -43,6 +42,7 @@ export default function New() {
           name="Title"
           onChange={(e) => setTitle(e.target.value)}
         />
+
         <div className="flex flex-wrap gap-4">
           <Select
             value={exposure}
@@ -63,7 +63,7 @@ export default function New() {
             }))}
             onChange={(e) => {
               const val = e.target.value;
-              setExpiresIn(val === "never" ? "never" : Number(val));
+              setExpiresIn(val == "never" ? "never" : Number(val));
             }}
           />
         </div>
