@@ -63,12 +63,10 @@ export default function Storage({
   return (
     <main className="mt-20 w-3/5 pb-40">
       <h3 className="mb-5 text-5xl flex flex-col text-gray-800 dark:text-gray-100">
-        <span className="mb-10">
-          Storage {currentFolder?.name ? `| ${currentFolder.name}` : null}
-        </span>
-        <List data={data} />
-        <CreateNew />
+        Storage {currentFolder?.name ? `| ${currentFolder.name}` : null}
       </h3>
+      <List data={data} />
+      <CreateNew />
     </main>
   );
 }
