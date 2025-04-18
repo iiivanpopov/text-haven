@@ -4,6 +4,7 @@
 
 ### Frontend
 
+- Update Post component
 - Integrate Redux Toolkit for state management
 - Connect frontend to backend
 - Optimize frontend components
@@ -11,16 +12,16 @@
 
 ### Backend
 
-- Implement user cloud settings
-- Update endpoints for retrieving files/folders
 - Improve caching mechanisms
 
 ## WIP (Work in Progress)
 
-- Add endpoint to fetch last 3-4 posts (for main page display)
+- Update endpoints for retrieving files/folders
 
 ## DONE
 
+- Implement user cloud settings(backend)
+- Add endpoint to fetch last 3-4 posts (for main page display)
 - Refactor to use Bun's built-in Redis and AWS S3 (remove external dependencies)
 - Fetch profile endpoint
 - Add private/public account toggle (controls visibility of email)

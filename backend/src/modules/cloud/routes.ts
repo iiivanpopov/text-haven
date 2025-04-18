@@ -36,6 +36,7 @@ router.post('/files', auth, createFileRules, validate, cloudController.createFil
 // Get
 router.get('/files', auth, cloudController.getFilesOrFile)
 router.get('/files/:id/content', auth, cloudController.getFileContent)
+router.get('/posts', cloudController.getLatestPosts)
 
 // Patch
 router.patch('/files/:id', auth, updateFileRules, validate, cloudController.updateFile)

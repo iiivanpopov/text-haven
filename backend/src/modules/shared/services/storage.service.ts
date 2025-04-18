@@ -8,7 +8,7 @@ class StorageService {
 		return await this.s3.exists(name)
 	}
 
-	async upsertFile(name: string, content: string): Promise<number> {
+	async writeFile(name: string, content: string): Promise<number> {
 		return await this.s3.write(name, content)
 	}
 

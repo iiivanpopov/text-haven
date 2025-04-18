@@ -31,4 +31,29 @@ export default class UserController {
 			next(error)
 		}
 	}
+
+	fetchSettings = async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const userId = req.user.id
+
+			const settings = await this.userService.fetchSettings(userId)
+
+			res.status(200).json({ settings })
+		} catch (error) {
+			next(error)
+		}
+	}
+
+	saveSettings = async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const userId = req.user.id
+			const settings = req.body
+
+			const response = await this.userService.saveSettings(userId, settings)
+
+			res.status(200).json({ settings: response })
+		} catch (error) {
+			next(error)
+		}
+	}
 }

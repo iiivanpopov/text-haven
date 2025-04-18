@@ -20,8 +20,9 @@ model User {
   files   File[]
   folders Folder[]
 
-  createdAt DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+  createdAt DateTime   @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime   @updatedAt @db.Timestamptz(3)
+  Settings  Settings[]
 }
 
 model Token {
@@ -60,6 +61,7 @@ model File {
   name      String   @default("Untitled")
   exposure  Exposure @default(PRIVATE)
   expiresAt DateTime
+  type      FileType @default(NOTE)
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   folder Folder @relation(fields: [folderId], references: [id], onDelete: Cascade)
@@ -70,6 +72,17 @@ model File {
   @@index([userId, folderId, name])
 }
 
+model Settings {
+  id     String @id @default(cuid())
+  userId String @unique
+
+  defaultTextType FileType
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
 enum Role {
   USER
   ADMIN
@@ -78,4 +91,9 @@ enum Role {
 enum Exposure {
   PUBLIC
   PRIVATE
+}
+
+enum FileType {
+  NOTE
+  POST
 }

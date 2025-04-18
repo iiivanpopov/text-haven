@@ -14,6 +14,8 @@ const userService = new UserService(config.PRISMA, jwtService)
 const userController = new UserController(userService)
 
 router.patch('/user/update', updateRules, validate, auth, userController.updateUser)
+router.patch('/user/settings', auth, userController.saveSettings)
+router.get('/user/settings', auth, userController.fetchSettings)
 
 router.get('/user/:id', auth, userController.fetchUser)
 

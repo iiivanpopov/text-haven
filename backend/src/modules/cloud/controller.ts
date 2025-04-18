@@ -4,6 +4,15 @@ import CloudService from './service'
 class CloudController {
 	constructor(private cloudService: CloudService) {}
 
+	getLatestPosts = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
+		try {
+			const posts = await this.cloudService.getLatestPosts()
+			res.status(200).json({ posts })
+		} catch (error) {
+			next(error)
+		}
+	}
+
 	createFolder = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const userId = req.user.id
@@ -19,7 +28,7 @@ class CloudController {
 	createFile = async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const userId = req.user.id
-			const { name, folderId, expiresAt, exposure, content } = req.body
+			const { name, folderId, expiresAt, exposure, content, type } = req.body
 
 			const file = await this.cloudService.createFile(
 				userId,
@@ -27,6 +36,7 @@ class CloudController {
 				content,
 				name,
 				exposure,
+				type,
 				expiresAt
 			)
 			res.status(201).json({ file })

@@ -4,7 +4,7 @@ import FolderDto from '@modules/cloud/dtos/folder.dto'
 import PrivateUser from '@modules/shared/dtos/user/private.user.dto'
 import Cache from '@modules/shared/services/cache.service'
 import type StorageService from '@modules/shared/services/storage.service'
-import { Exposure, type File, type Folder, type PrismaClient } from '@prisma'
+import { Exposure, FileType, type File, type Folder, type PrismaClient } from '@prisma'
 import logger from '@utils/logger'
 
 export default class CloudService {
@@ -53,7 +53,31 @@ export default class CloudService {
 		logger.log(`Cleared ${records.length} expired files`)
 	}
 
-	// Return single folder(if folderId provided) or return all user folders(in specific folder if provided)
+	async getLatestPosts(): Promise<
+		(Pick<File, 'createdAt' | 'id' | 'name'> & { content: string })[]
+	> {
+		const latestPosts = await this.prisma.file.findMany({
+			where: { type: FileType.POST },
+			take: 3,
+			orderBy: { createdAt: 'desc' },
+			select: { createdAt: true, userId: true, id: true, name: true },
+		})
+
+		const postsWithContent = await Promise.all(
+			latestPosts.map(async post => {
+				const content = await this.getFileContent(post.id, post.userId)
+				return {
+					createdAt: post.createdAt,
+					id: post.id,
+					name: post.name,
+					content: content.slice(0, 60),
+				}
+			})
+		)
+
+		return postsWithContent
+	}
+
 	async getFoldersOrFolder(
 		userId: string,
 		options: { targetUserId?: string; parentId?: string; folderId?: string }
@@ -139,6 +163,7 @@ export default class CloudService {
 		content: string,
 		name: string = 'Untitled',
 		exposure: Exposure = Exposure.PRIVATE,
+		type: FileType = FileType.NOTE,
 		expiresAt: Date = new Date(Number.MAX_SAFE_INTEGER)
 	): Promise<File & { user: PrivateUser }> {
 		const [folder, user] = await Promise.all([
@@ -155,11 +180,12 @@ export default class CloudService {
 		if (existingFile) throw ApiError.BadRequest('File already exists')
 
 		const file = await this.prisma.file.create({
-			data: { name, folderId, userId, expiresAt, exposure },
+			data: { name, folderId, userId, expiresAt, exposure, type },
 		})
 
 		await this.cache.flushCache(userId, folderId)
-		await this.storageService.upsertFile(file.id, content)
+
+		await this.storageService.writeFile(file.id, content)
 
 		return { ...file, user: new PrivateUser(user) }
 	}
@@ -175,7 +201,6 @@ export default class CloudService {
 		return this.prisma.file.delete({ where: { id } })
 	}
 
-	// Return single file(if fileId provided) or return all user files(in specific folder if provided)
 	async getFilesOrFile(
 		userId: string,
 		options: { folderId?: string; targetUserId?: string; fileId?: string }
@@ -246,7 +271,7 @@ export default class CloudService {
 
 		if (file.userId != userId) throw ApiError.Forbidden()
 
-		await this.storageService.upsertFile(id, content)
+		await this.storageService.writeFile(id, content)
 		return file
 	}
 }

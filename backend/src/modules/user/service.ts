@@ -2,7 +2,8 @@ import ApiError from '@exceptions/ApiError'
 import PrivateUser from '@modules/shared/dtos/user/private.user.dto'
 import PublicUser from '@modules/shared/dtos/user/user.dto'
 import JwtService from '@modules/shared/services/jwt.service'
-import { Exposure, type PrismaClient } from '@prisma'
+import { Exposure, FileType, Settings, type PrismaClient } from '@prisma'
+import SettingsDto from './dtos/settings.dto'
 
 export default class UserService {
 	constructor(private prisma: PrismaClient, private jwtService: JwtService) {}
@@ -35,5 +36,20 @@ export default class UserService {
 		return user.exposure == Exposure.PUBLIC || userId == targetId
 			? new PublicUser(user)
 			: new PrivateUser(user)
+	}
+
+	async saveSettings(userId: string, settings: { defaultTextType: FileType }): Promise<Settings> {
+		const settingsDto = new SettingsDto(settings)
+		return await this.prisma.settings.upsert({
+			where: { userId },
+			update: { ...settingsDto },
+			create: { userId, ...settingsDto },
+		})
+	}
+
+	async fetchSettings(userId: string): Promise<Settings> {
+		const settings = await this.prisma.settings.findUnique({ where: { userId } })
+		if (!settings) throw ApiError.BadRequest('Settings not found')
+		return settings
 	}
 }
