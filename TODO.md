@@ -7,6 +7,8 @@
 - Implement search for folders/files in user storage
 - Integrate Redux Toolkit for state management
 - Connect frontend to backend
+- Optimize frontend components
+
 - Dockerize
 
 ### Backend
@@ -21,11 +23,9 @@
 
 ## WIP (Work in Progress)
 
-- Create files/folders (UI only, not connected to backend)
-- Optimize frontend components
-
 ## DONE
 
+- Create files/folders (UI only)
 - Edit texts (UI only)
 - Footer (with auth buttons)
 - Texts page (UI only)
