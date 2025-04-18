@@ -7,9 +7,9 @@ export default class UserController {
 	updateUser = async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const userId = req.user.id
-			const { email, password } = req.body
+			const { email, password, username } = req.body
 
-			const updateData = { email, password }
+			const updateData = { email, password, username }
 
 			const user = await this.userService.updateUser(userId, updateData) // userId to update
 
