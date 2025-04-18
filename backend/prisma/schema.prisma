@@ -9,33 +9,45 @@ datasource db {
 }
 
 model User {
-  id       String   @id @default(cuid())
-  email    String   @unique
+  id       String @id @default(cuid())
+  email    String @unique
+  username String @unique
   password String
-  role     Role     @default(USER)
-  Files    File[]
-  Folders  Folder[]
-  Token    Token?
+  role     Role   @default(USER)
+
+  token   Token?
+  files   File[]
+  folders Folder[]
+
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
 }
 
 model Token {
   id           String @id @default(cuid())
   refreshToken String @unique
   userId       String @unique
-  User         User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
 }
 
 model Folder {
-  id        String   @id @default(cuid())
-  userId    String
-  name      String   @default("Unnamed")
-  Files     File[]
-  parentId  String?
-  exposure  Exposure @default(PRIVATE)
-  parent    Folder?  @relation("FolderToParent", fields: [parentId], references: [id])
-  Folders   Folder[] @relation("FolderToParent")
-  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id       String   @id @default(cuid())
+  userId   String
+  parentId String?
+  name     String   @default("Untitled")
+  exposure Exposure @default(PRIVATE)
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parent   Folder?  @relation("FolderToParent", fields: [parentId], references: [id])
+  children Folder[] @relation("FolderToParent")
+  files    File[]
+
   createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
 
   @@index([userId, name])
 }
@@ -44,12 +56,15 @@ model File {
   id        String   @id @default(cuid())
   userId    String
   folderId  String
+  name      String   @default("Untitled")
   exposure  Exposure @default(PRIVATE)
-  name      String   @default("Unnamed")
   expiresAt DateTime
-  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Folder    Folder   @relation(fields: [folderId], references: [id], onDelete: Cascade)
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  folder Folder @relation(fields: [folderId], references: [id], onDelete: Cascade)
+
   createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
 
   @@index([userId, folderId, name])
 }
