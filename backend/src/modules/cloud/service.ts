@@ -1,6 +1,7 @@
 import ApiError from '@exceptions/ApiError'
 import FileDto from '@modules/cloud/dtos/file.dto'
 import FolderDto from '@modules/cloud/dtos/folder.dto'
+import PrivateUser from '@modules/shared/dtos/user/private.user.dto'
 import Cache from '@modules/shared/services/cache.service'
 import type StorageService from '@modules/shared/services/storage.service'
 import { Exposure, type File, type Folder, type PrismaClient } from '@prisma'
@@ -104,9 +105,12 @@ export default class CloudService {
 	async createFolder(
 		userId: string,
 		parentId?: string,
-		name: string = 'Unnamed',
+		name: string = 'Untitled',
 		exposure: Exposure = Exposure.PRIVATE
-	): Promise<Folder> {
+	): Promise<Folder & { user: PrivateUser }> {
+		const user = await this.prisma.user.findUnique({ where: { id: userId } })
+		if (!user) throw ApiError.BadRequest('User not found')
+
 		const existingFolder = await this.prisma.folder.findFirst({
 			where: { parentId, name, userId },
 		})
@@ -121,23 +125,29 @@ export default class CloudService {
 		}
 
 		await this.cache.remove(Cache.USER_FOLDERS_KEY(userId))
-		return this.prisma.folder.create({
+
+		const folder = await this.prisma.folder.create({
 			data: { name, userId, parentId, exposure },
 		})
+
+		return { ...folder, user: new PrivateUser(user) }
 	}
 
 	async createFile(
 		userId: string,
 		folderId: string,
 		content: string,
-		name: string = 'Unnamed',
+		name: string = 'Untitled',
 		exposure: Exposure = Exposure.PRIVATE,
 		expiresAt: Date = new Date(Number.MAX_SAFE_INTEGER)
-	): Promise<File> {
-		const folder = await this.prisma.folder.findFirst({
-			where: { id: folderId },
-		})
+	): Promise<File & { user: PrivateUser }> {
+		const [folder, user] = await Promise.all([
+			this.prisma.folder.findFirst({ where: { id: folderId } }),
+			this.prisma.user.findUnique({ where: { id: userId } }),
+		])
+
 		if (!folder) throw ApiError.BadRequest('Folder not found')
+		if (!user) throw ApiError.BadRequest('User not found')
 
 		const existingFile = await this.prisma.file.findFirst({
 			where: { name, userId, folderId },
@@ -147,9 +157,11 @@ export default class CloudService {
 		const file = await this.prisma.file.create({
 			data: { name, folderId, userId, expiresAt, exposure },
 		})
+
 		await this.cache.flushCache(userId, folderId)
 		await this.storageService.createFile(file.id, content)
-		return file
+
+		return { ...file, user: new PrivateUser(user) }
 	}
 
 	async deleteFile(userId: string, id: string): Promise<File> {
