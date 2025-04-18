@@ -12,15 +12,16 @@
 ### Backend
 
 - Implement user cloud settings
-- Add endpoint to fetch last 3-4 posts (for main page display)
-- Improve caching mechanisms
 - Update endpoints for retrieving files/folders
-- Refactor to use Bun's built-in Redis and AWS S3 (remove external dependencies)
+- Improve caching mechanisms
 
 ## WIP (Work in Progress)
 
+- Add endpoint to fetch last 3-4 posts (for main page display)
+
 ## DONE
 
+- Refactor to use Bun's built-in Redis and AWS S3 (remove external dependencies)
 - Fetch profile endpoint
 - Add private/public account toggle (controls visibility of email)
 - Add unique username field to user model

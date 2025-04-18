@@ -10,7 +10,7 @@ import CloudService from './service'
 
 const router = Router()
 
-const storageService = new StorageService(config.S3, config.S3_BUCKET)
+const storageService = new StorageService(config.S3)
 
 const cache = new Cache(config.REDIS, config.PRISMA, config.CACHE_EXPIRE_TIME)
 const cloudService = new CloudService(storageService, config.PRISMA, cache)

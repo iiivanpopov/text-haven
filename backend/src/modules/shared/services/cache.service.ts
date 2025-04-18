@@ -1,9 +1,9 @@
 import { PrismaClient } from '@prisma'
-import { Redis } from 'ioredis'
+import { RedisClient } from 'bun'
 
 export default class Cache {
 	constructor(
-		private redis: Redis,
+		private redis: RedisClient,
 		private prisma: PrismaClient,
 		private cacheExpireTime: number
 	) {}
@@ -14,7 +14,7 @@ export default class Cache {
 	static USER_FILES_KEY = (userId: string): string => `user_files:${userId}`
 
 	set = async (key: string, value: any, expiration: number = this.cacheExpireTime) =>
-		await this.redis.setex(key, expiration, JSON.stringify(value))
+		await this.redis.set(key, JSON.stringify(value), 'PX', expiration)
 
 	remove = async (key: string | string[]): Promise<void> => {
 		if (typeof key == 'string') await this.redis.del(key)

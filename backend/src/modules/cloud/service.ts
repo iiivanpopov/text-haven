@@ -159,7 +159,7 @@ export default class CloudService {
 		})
 
 		await this.cache.flushCache(userId, folderId)
-		await this.storageService.createFile(file.id, content)
+		await this.storageService.upsertFile(file.id, content)
 
 		return { ...file, user: new PrivateUser(user) }
 	}
@@ -246,7 +246,7 @@ export default class CloudService {
 
 		if (file.userId != userId) throw ApiError.Forbidden()
 
-		await this.storageService.updateFile(id, content)
+		await this.storageService.upsertFile(id, content)
 		return file
 	}
 }
