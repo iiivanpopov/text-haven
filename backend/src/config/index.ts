@@ -1,6 +1,5 @@
 import { S3 } from '@aws-sdk/client-s3'
-import { PrismaClient } from '@generated/prisma_client'
-import type { PrismaClient as prismaClientType } from '@prisma/client'
+import { PrismaClient } from '@prisma'
 import { Time } from '@utils/time'
 import { env } from 'bun'
 import Redis from 'ioredis'
@@ -17,7 +16,7 @@ export default {
 	S3_BUCKET: env.S3_BUCKET || '',
 
 	// PRISMA
-	PRISMA: new PrismaClient() as prismaClientType,
+	PRISMA: new PrismaClient(),
 
 	// JWT
 	JWT_SECRET_KEY: env.JWT_SECRET_KEY || '',

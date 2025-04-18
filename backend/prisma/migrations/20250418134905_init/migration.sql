@@ -8,8 +8,11 @@ CREATE TYPE "Exposure" AS ENUM ('PUBLIC', 'PRIVATE');
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
     "email" TEXT NOT NULL,
+    "username" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "role" "Role" NOT NULL DEFAULT 'USER',
+    "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ(3) NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -19,6 +22,8 @@ CREATE TABLE "Token" (
     "id" TEXT NOT NULL,
     "refreshToken" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
+    "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ(3) NOT NULL,
 
     CONSTRAINT "Token_pkey" PRIMARY KEY ("id")
 );
@@ -27,10 +32,11 @@ CREATE TABLE "Token" (
 CREATE TABLE "Folder" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "name" TEXT NOT NULL DEFAULT 'Unnamed',
     "parentId" TEXT,
+    "name" TEXT NOT NULL DEFAULT 'Untitled',
     "exposure" "Exposure" NOT NULL DEFAULT 'PRIVATE',
     "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ(3) NOT NULL,
 
     CONSTRAINT "Folder_pkey" PRIMARY KEY ("id")
 );
@@ -40,16 +46,20 @@ CREATE TABLE "File" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "folderId" TEXT NOT NULL,
+    "name" TEXT NOT NULL DEFAULT 'Untitled',
     "exposure" "Exposure" NOT NULL DEFAULT 'PRIVATE',
-    "name" TEXT NOT NULL DEFAULT 'Unnamed',
     "expiresAt" TIMESTAMP(3) NOT NULL,
     "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ(3) NOT NULL,
 
     CONSTRAINT "File_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Token_refreshToken_key" ON "Token"("refreshToken");
@@ -67,10 +77,10 @@ CREATE INDEX "File_userId_folderId_name_idx" ON "File"("userId", "folderId", "na
 ALTER TABLE "Token" ADD CONSTRAINT "Token_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Folder" ADD CONSTRAINT "Folder_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "Folder"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Folder" ADD CONSTRAINT "Folder_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Folder" ADD CONSTRAINT "Folder_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Folder" ADD CONSTRAINT "Folder_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "Folder"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "File" ADD CONSTRAINT "File_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

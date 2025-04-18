@@ -3,7 +3,7 @@ import FileDto from '@modules/cloud/dtos/file.dto'
 import FolderDto from '@modules/cloud/dtos/folder.dto'
 import Cache from '@modules/shared/services/cache.service'
 import type StorageService from '@modules/shared/services/storage.service'
-import { Exposure, type File, type Folder, type PrismaClient } from '@prisma/client'
+import { Exposure, type File, type Folder, type PrismaClient } from '@prisma'
 import logger from '@utils/logger'
 
 export default class CloudService {

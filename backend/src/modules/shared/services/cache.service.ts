@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma'
 import { Redis } from 'ioredis'
 
 export default class Cache {

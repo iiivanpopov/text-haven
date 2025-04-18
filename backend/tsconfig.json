@@ -29,7 +29,8 @@
 			"@middleware/*": ["./middleware/*"],
 			"@modules/*": ["./modules/*"],
 			"@shared/*": ["./modules/shared/*"],
-			"@generated/*": ["./../generated/*"]
+			"@generated/*": ["./../generated/*"],
+			"@prisma": ["./../generated/prisma_client"]
 		}
 	}
 }

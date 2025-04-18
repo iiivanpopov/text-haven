@@ -1,3 +1,8 @@
-import { emailValidator, passwordValidator } from '../shared/validators'
+import { emailValidator, passwordValidator, stringField } from '../shared/validators'
 
-export const authRules = [emailValidator(), passwordValidator()]
+export const loginRules = [emailValidator(), passwordValidator()]
+export const registerRules = [
+	emailValidator(),
+	passwordValidator(),
+	stringField('username', 'Username'),
+]

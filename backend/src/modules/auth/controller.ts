@@ -1,12 +1,15 @@
 import type { NextFunction, Request, Response } from 'express'
-import AuthService from './service'
+import type AuthService from './service'
 
 export default class AuthController {
 	constructor(private authService: AuthService) {}
+
 	register = async (req: Request, res: Response, next: NextFunction) => {
 		try {
-			const { password, email } = req.body
-			const userData = await this.authService.registration(email, password)
+			const { password, email, username } = req.body
+
+			const userData = await this.authService.registration(email, username, password)
+
 			res.cookie('refreshToken', userData.refreshToken, {
 				// maxAge: 30 * 24 * 60 * 60 * 1000,
 				expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
