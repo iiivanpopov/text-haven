@@ -1,6 +1,8 @@
 import ApiError from '@exceptions/ApiError'
+import PrivateUser from '@modules/shared/dtos/user/private.user.dto'
+import PublicUser from '@modules/shared/dtos/user/user.dto'
 import JwtService from '@modules/shared/services/jwt.service'
-import type { PrismaClient } from '@prisma'
+import { Exposure, type PrismaClient } from '@prisma'
 
 export default class UserService {
 	constructor(private prisma: PrismaClient, private jwtService: JwtService) {}
@@ -25,5 +27,13 @@ export default class UserService {
 		})
 
 		return this.jwtService.generateAndSaveTokens(user)
+	}
+
+	async fetchUser(userId: string, targetId: string): Promise<PrivateUser | PublicUser> {
+		const user = await this.prisma.user.findUnique({ where: { id: targetId } })
+		if (!user) throw ApiError.NotFound('User not found')
+		return user.exposure == Exposure.PUBLIC || userId == targetId
+			? new PublicUser(user)
+			: new PrivateUser(user)
 	}
 }

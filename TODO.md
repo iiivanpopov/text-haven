@@ -13,17 +13,17 @@
 
 - Implement user cloud settings
 - Add endpoint to fetch last 3-4 posts (for main page display)
-- Add private/public account toggle (controls visibility of email & posts)
 - Improve caching mechanisms
 - Update endpoints for retrieving files/folders
 - Refactor to use Bun's built-in Redis and AWS S3 (remove external dependencies)
 
 ## WIP (Work in Progress)
 
-- Add unique username field to user model
-
 ## DONE
 
+- Fetch profile endpoint
+- Add private/public account toggle (controls visibility of email)
+- Add unique username field to user model
 - Implement search for folders/files in user storage
 - Create files/folders (UI only)
 - Edit texts (UI only)

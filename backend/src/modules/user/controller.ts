@@ -18,4 +18,17 @@ export default class UserController {
 			next(error)
 		}
 	}
+
+	fetchUser = async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const { id: targetId } = req.params
+			const userId = req.user.id
+
+			const user = await this.userService.fetchUser(userId, targetId)
+
+			res.status(200).json({ user })
+		} catch (error) {
+			next(error)
+		}
+	}
 }

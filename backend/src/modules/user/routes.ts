@@ -9,20 +9,12 @@ import UserService from './service'
 
 const router = Router()
 
-const jwtService = new JwtService(
-	config.PRISMA,
-	config.JWT_SECRET_KEY,
-	config.REFRESH_SECRET_KEY
-)
+const jwtService = new JwtService(config.PRISMA, config.JWT_SECRET_KEY, config.REFRESH_SECRET_KEY)
 const userService = new UserService(config.PRISMA, jwtService)
 const userController = new UserController(userService)
 
-router.patch(
-	'/user/update',
-	updateRules,
-	validate,
-	auth,
-	userController.updateUser
-)
+router.patch('/user/update', updateRules, validate, auth, userController.updateUser)
+
+router.get('/user/:id', auth, userController.fetchUser)
 
 export default router
