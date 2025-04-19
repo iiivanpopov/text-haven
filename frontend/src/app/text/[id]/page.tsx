@@ -35,12 +35,12 @@ const fakeResponse: {
 	},
 }
 
+import Input from '@components/shared/Input'
+import TextArea from '@components/shared/TextArea'
 import { use, useEffect, useState } from 'react'
 import ChangeModeBtn from '../components/ChangeModeBtn'
-import EditMode from '../components/EditMode'
-import ReadMode from '../components/ReadMode'
+import Content from '../components/Content'
 
-// fake data
 const isUserOwner = true
 
 export default function Text({ params }: { params: Promise<{ id: string }> }) {
@@ -50,42 +50,53 @@ export default function Text({ params }: { params: Promise<{ id: string }> }) {
 	const [title, setTitle] = useState<string>('')
 	const [content, setContent] = useState<string>('')
 
-	// fake filedata
-	const fileData = fakeResponse.data.files?.find(file => file.id == id)
-
 	useEffect(() => {
-		if (fileData) {
-			setTitle(fileData.name)
-			setContent(fileData.content)
-		}
-	}, [fileData])
+		const fileData = fakeResponse.data.files?.find(file => file.id == id)
+		if (!fileData) return
+
+		setTitle(fileData.name)
+		setContent(fileData.content)
+	}, [])
 
 	if (fakeResponse.status !== 200) {
 		return (
-			<div className='mt-20'>
+			<div className='mt-10'>
 				<h3 className='text-red-400 dark:text-red-500 text-6xl font-semibold'>Not found</h3>
 			</div>
 		)
 	}
 
 	return (
-		<div className='mt-20 grid grid-rows-[5vh_fit] pb-[10vh]'>
-			<div className='flex flex-col gap-y-5'>
+		<div className='mt-10 grid grid-rows-[5vh_1fr]'>
+			<div className='w-full flex items-center'>
 				{isUserOwner && (
 					<ChangeModeBtn
 						mode={mode}
 						onClick={() => setMode(prev => (prev == 'read' ? 'edit' : 'read'))}
 					/>
 				)}
+			</div>
+			<div className='flex flex-col'>
 				{mode == 'read' ? (
-					<ReadMode title={title} content={content} />
+					<>
+						<h4 className={'text-gray-800 dark:text-gray-100 text-4xl'}>{title}</h4>
+						<Content>{content}</Content>
+					</>
 				) : (
-					<EditMode
-						title={title}
-						content={content}
-						setTitle={title => setTitle(title)}
-						setContent={content => setContent(content)}
-					/>
+					<>
+						<Input
+							name='Title'
+							className='text-gray-800 dark:text-gray-100 text-4xl p-0'
+							value={title}
+							onChange={e => setTitle(e.target.value)}
+						/>
+
+						<TextArea
+							value={content}
+							onChange={e => setContent(e.target.value)}
+							className='text-md overflow-auto h-[70vh] w-[1270px]'
+						/>
+					</>
 				)}
 			</div>
 		</div>

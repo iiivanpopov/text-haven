@@ -54,7 +54,7 @@ export default function ProfileSettings() {
 							Profile accessability
 						</h4>
 						<Select
-							className='h-[75px] w-full px-5'
+							className='h-[75px] w-full'
 							name='Change profile accessability'
 							value={profileAccessability}
 							ariaLabel='Profile accessability input'

@@ -1,11 +1,20 @@
 import Button from '@components/shared/Button'
 import { Check, Wrench } from 'lucide-react'
 import { memo } from 'react'
+import { twMerge } from 'tailwind-merge'
 
-const ChangeModeBtn = ({ mode, onClick }: { mode: 'edit' | 'read'; onClick: () => void }) => (
+const ChangeModeBtn = ({
+	mode,
+	onClick,
+	className,
+}: {
+	className?: string
+	mode: 'edit' | 'read'
+	onClick: () => void
+}) => (
 	<Button
 		name='Configure'
-		className='w-48 m-[0_auto]'
+		className={twMerge('w-48', className)}
 		onClick={() => {
 			if (mode == 'edit') console.log('Some save logic')
 			onClick()

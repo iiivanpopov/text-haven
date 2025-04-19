@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function TextLayout({ children }: { children: React.ReactNode }) {
 	return (
-		<div className='max-w-[1270px] m-[0_auto] grid grid-rows-[10vh_minmax(80vh,auto)]'>
+		<div className='max-w-[1270px] m-[0_auto] grid grid-rows-[10vh_80vh]'>
 			<Header />
 			{children}
 			<Footer />

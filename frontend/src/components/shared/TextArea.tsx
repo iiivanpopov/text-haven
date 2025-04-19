@@ -1,46 +1,48 @@
-"use client";
+import React, { memo, useRef, useState } from 'react'
+import { twMerge } from 'tailwind-merge'
 
-import { memo, useEffect, useRef } from "react";
-import { twMerge } from "tailwind-merge";
-
-function TextArea({
-  className,
-  onChange,
-  value,
-  autoSize = false,
-  placeholder = "",
-}: {
-  placeholder?: string;
-  className?: string;
-  autoSize?: boolean;
-  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  value: string;
-}) {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-  useEffect(() => {
-    if (!autoSize) return;
-    const textarea = textareaRef.current;
-    if (textarea) {
-      const scrollY = window.scrollY;
-
-      textarea.style.height = "auto";
-      textarea.style.height = textarea.scrollHeight + "px";
-
-      window.scrollTo({ top: scrollY });
-    }
-  }, [value]);
-
-  return (
-    <textarea
-      placeholder={placeholder}
-      ref={textareaRef}
-      rows={1}
-      className={twMerge("outline-none min-h-40 resize-none", className)}
-      onChange={onChange}
-      value={value}
-    />
-  );
+type TextAreaProps = {
+	className?: string
+	placeholder?: string
+	onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
+	value: string
 }
 
-export default memo(TextArea);
+const TextArea = ({ className, onChange, value, placeholder = '' }: TextAreaProps) => {
+	const ref = useRef<HTMLTextAreaElement>(null)
+	const [text, setText] = useState(value || '')
+
+	const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+		setText(e.target.value)
+		onChange(e)
+	}
+
+	const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+		if (e.key === 'Tab') {
+			e.preventDefault()
+			const ta = e.currentTarget
+			const { selectionStart, selectionEnd } = ta
+
+			ta.setRangeText('  ', selectionStart, selectionEnd, 'end') // insert \t
+
+			const pos = selectionStart + 2
+			ta.selectionStart = ta.selectionEnd = pos // move cursor
+
+			const event = new InputEvent('input', { bubbles: true })
+			ta.dispatchEvent(event) // bind target to event and send one
+		}
+	}
+
+	return (
+		<textarea
+			ref={ref}
+			value={text}
+			onChange={handleChange}
+			onKeyDown={handleKeyDown}
+			placeholder={placeholder}
+			className={twMerge('outline-none resize-none', className)}
+		/>
+	)
+}
+
+export default memo(TextArea)

@@ -1,10 +1,10 @@
 import Link from 'next/link'
 
-export default function MainBlock() {
+export default function MainSection() {
 	return (
-		<div className='h-[40vh] flex flex-col justify-between'>
+		<section className='h-[40vh] flex flex-col justify-between'>
 			<h1 className='text-8xl text-gray-800 dark:text-gray-100 font-bold'>Share texts easily</h1>
-			<p className='text-2xl text-gray-700 dark:text-gray-200'>
+			<p aria-label='subheading' className='text-2xl text-gray-700 dark:text-gray-200'>
 				A simple and convenient tool for sharing text online. Create an new text below, or browse
 				the latest public posts.
 			</p>
@@ -15,6 +15,6 @@ export default function MainBlock() {
 			>
 				New Post
 			</Link>
-		</div>
+		</section>
 	)
 }

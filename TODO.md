@@ -15,10 +15,9 @@
 
 ## WIP (Work in Progress)
 
-- Update Post component
-
 ## DONE
 
+- Update Post component
 - Test caching system
 - Improve caching mechanisms(need to test)
 - Update endpoints for retrieving files/folders
