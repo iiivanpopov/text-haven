@@ -57,7 +57,7 @@ export default class Cache {
 			fileId && Cache.mapKey(type, { fileId }),
 		].filter(Boolean) as string[]
 
-		await Promise.all(keys.map(this.remove))
+		await Promise.all(keys.map(key => this.remove(key)))
 	}
 
 	set = async (key: string, value: any, expiration: number = this.cacheExpireTime) => {

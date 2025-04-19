@@ -31,9 +31,6 @@ model Token {
   userId       String @unique
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime @updatedAt @db.Timestamptz(3)
 }
 
 model Folder {
@@ -51,7 +48,7 @@ model Folder {
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @updatedAt @db.Timestamptz(3)
 
-  @@index([userId, name])
+  @@index([userId, parentId])
 }
 
 model File {
@@ -69,7 +66,7 @@ model File {
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @updatedAt @db.Timestamptz(3)
 
-  @@index([userId, folderId, name])
+  @@index([userId, folderId])
 }
 
 model Settings {

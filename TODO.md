@@ -11,7 +11,7 @@
 
 ### Backend
 
-- Test caching system
+- Improve scalability
 
 ## WIP (Work in Progress)
 
@@ -19,6 +19,7 @@
 
 ## DONE
 
+- Test caching system
 - Improve caching mechanisms(need to test)
 - Update endpoints for retrieving files/folders
 - Implement user cloud settings(backend)

@@ -19,43 +19,57 @@ export default class CloudService {
 	) {}
 
 	async clearExpiredFiles(): Promise<void> {
-		const now = new Date()
-
 		const records = await this.prisma.file.findMany({
-			where: { expiresAt: { lt: now } },
+			where: { expiresAt: { lt: new Date() } },
 			select: { id: true, userId: true, folderId: true },
 		})
 
-		if (records.length == 0) return
-
+		if (records.length === 0) {
+			logger.log('Nothing to clear')
+			return
+		}
 		logger.log(`Clearing ${records.length} expired files`)
 
 		const fileIds = records.map(record => record.id)
-
-		const deleteFilePromises = this.storageService.deleteFiles(fileIds)
-		const deleteFilesFromDb = this.prisma.file.deleteMany({ where: { id: { in: fileIds } } })
-		const removeCacheKeys = records.map(record =>
-			this.cache.flush('file', record.userId, { fileId: record.id, folderId: record.folderId })
+		const cacheFlushes = records.map(record =>
+			this.cache.flush('file', record.userId, {
+				fileId: record.id,
+				folderId: record.folderId,
+			})
 		)
 
-		await Promise.all([deleteFilePromises, deleteFilesFromDb, removeCacheKeys])
-
+		await Promise.all([
+			Promise.all(cacheFlushes),
+			this.storageService.deleteFiles(fileIds),
+			this.prisma.file.deleteMany({ where: { id: { in: fileIds } } }),
+		])
 		logger.log(`Successfully cleared ${records.length} expired files`)
 	}
 
-	async deleteFolderRecursively(folderId: string) {
+	async deleteFolderRecursively(folderId: string): Promise<void> {
 		if (!folderId) return
-		const children = await this.prisma.folder.findMany({
-			where: { parentId: folderId },
-			select: { id: true },
-		})
+
+		const [children, files] = await Promise.all([
+			this.prisma.folder.findMany({
+				where: { parentId: folderId },
+				select: { id: true },
+			}),
+			this.prisma.file.findMany({
+				where: { folderId },
+				select: { id: true },
+			}),
+		])
 
 		await Promise.all(children.map(child => this.deleteFolderRecursively(child.id)))
 
-		const files = await this.prisma.file.findMany({ where: { folderId } })
-		await this.storageService.deleteFiles(files.map(file => file.id))
+		if (files.length > 0) {
+			const fileIds = files.map(file => file.id)
+			await Promise.all([
+				this.prisma.file.deleteMany({ where: { folderId } }),
+				this.storageService.deleteFiles(fileIds),
+			])
+		}
 
-		await this.prisma.file.deleteMany({ where: { folderId } })
 		await this.prisma.folder.delete({ where: { id: folderId } })
 	}
 

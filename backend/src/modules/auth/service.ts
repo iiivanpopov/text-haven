@@ -8,7 +8,7 @@ export default class AuthService {
 	async registration(email: string, username: string, password: string) {
 		const candidate = await this.prisma.user.findFirst({
 			where: {
-				OR: [{ email: email }, { username: username }],
+				OR: [{ email }, { username }],
 			},
 		})
 
