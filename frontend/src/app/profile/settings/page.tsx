@@ -9,7 +9,7 @@ export default function ProfileSettings() {
 	const [username, setUsername] = useState<string>('My name')
 	const [email, setEmail] = useState<string>('username@gmail.com')
 	const [password, setPassword] = useState<string>('12345678')
-	const [profileAccessability, setProfileAccessability] = useState<string>('Public')
+	const [profileAccessability, setprofileAccessability] = useState<string>('Public')
 
 	return (
 		<main className='mt-20 h-[25vh] flex flex-col gap-y-10'>
@@ -59,7 +59,7 @@ export default function ProfileSettings() {
 							value={profileAccessability}
 							ariaLabel='Profile accessability input'
 							onChange={e => {
-								setProfileAccessability(e.target.value)
+								setprofileAccessability(e.target.value)
 							}}
 							options={[
 								{ name: 'Public', value: 'public' },

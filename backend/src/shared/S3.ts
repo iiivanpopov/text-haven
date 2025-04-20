@@ -10,8 +10,8 @@ export class S3 {
 	}
 
 	async deleteFile(name: string): Promise<void> {
-		const fileExistance = await this.s3.exists(name)
-		if (!fileExistance) {
+		const fileExistence = await this.s3.exists(name)
+		if (!fileExistence) {
 			throw ApiError.BadRequest(`File ${name} does not exist`)
 		}
 		await this.s3.delete(name)
@@ -23,8 +23,8 @@ export class S3 {
 	}
 
 	async getFileContent(name: string): Promise<string> {
-		const fileExistance = await this.s3.exists(name)
-		if (!fileExistance) {
+		const fileExistence = await this.s3.exists(name)
+		if (!fileExistence) {
 			throw ApiError.BadRequest(`File ${name} does not exist`)
 		}
 		return await this.s3.file(name).text()

@@ -357,7 +357,7 @@ export default class CloudService {
 		await this.cache.flush('file', oldFile.userId, { folderId: oldFile.folderId, fileId: id })
 		if (oldFile.type == FileType.POST) await this.cache.remove('post')
 
-		return await this.prisma.file.update({ where: { id }, data: updateData })
+		return this.prisma.file.update({ where: { id }, data: updateData })
 	}
 
 	async updateFileContent(userId: string, id: string, content: string): Promise<File> {

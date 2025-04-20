@@ -35,7 +35,7 @@ export class Jwt {
 	}
 
 	private async upsertRefreshToken(userId: string, refreshToken: string): Promise<Token> {
-		return await this.prisma.token.upsert({
+		return this.prisma.token.upsert({
 			where: { userId },
 			update: { refreshToken },
 			create: { userId, refreshToken },
@@ -44,12 +44,12 @@ export class Jwt {
 
 	async removeToken(refreshToken: string): Promise<Token> {
 		if (!refreshToken) throw ApiError.Unauthorized('Missing refresh token')
-		return await this.prisma.token.delete({ where: { refreshToken } })
+		return this.prisma.token.delete({ where: { refreshToken } })
 	}
 
 	async findToken(refreshToken: string): Promise<Token | null> {
 		if (!refreshToken) throw ApiError.Unauthorized('Missing refresh token')
-		return await this.prisma.token.findUnique({ where: { refreshToken } })
+		return this.prisma.token.findUnique({ where: { refreshToken } })
 	}
 
 	async updateTokens(user: User) {

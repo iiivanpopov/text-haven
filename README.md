@@ -16,11 +16,11 @@ TextHaven is a web application for sharing and managing text-based content. It a
 **Backend:**
 
 - [Bun](https://www.bun.sh/)
-- [Express.js](https://www.expressjs.com/)
+- [Express](https://www.expressjs.com/)
 - [TypeScript](https://www.typescriptlang.org/)
 - [Prisma](https://www.prisma.io/)
 - [Redis](https://redis.io/)
-- [PostgreSQL](https://www.postgresql.org/)
+- [Postgres](https://www.postgresql.org/)
 - [AWS S3](https://aws.amazon.com/s3/)
 
 **Frontend:**

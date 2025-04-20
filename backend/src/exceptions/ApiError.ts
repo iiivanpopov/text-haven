@@ -13,8 +13,8 @@ class ApiError extends Error {
 		this.errors = errors
 	}
 
-	static BadRequest(message = 'Bad request') {
-		return new ApiError(400, message)
+	static BadRequest(message = 'Bad request', errors: Errors = []) {
+		return new ApiError(400, message, errors)
 	}
 
 	static Unauthorized(message = 'Unauthorized') {

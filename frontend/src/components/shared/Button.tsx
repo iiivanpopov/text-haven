@@ -1,4 +1,4 @@
-import type { PropsWithChildren } from 'react'
+import React, { PropsWithChildren } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 type ButtonStyle = 'solid' | 'outline'

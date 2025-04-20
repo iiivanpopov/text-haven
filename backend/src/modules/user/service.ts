@@ -49,18 +49,15 @@ export default class UserService {
 
 		if (cacheKey) await this.cache.set(cacheKey, user)
 
-		const userDto =
-			user.exposure == Exposure.PUBLIC || userId == targetId
+		return user.exposure == Exposure.PUBLIC || userId == targetId
 				? new User(user)
 				: new PrivateUser(user)
-
-		return userDto
 	}
 
 	async saveSettings(userId: string, settings: { defaultTextType: FileType }): Promise<Settings> {
 		const settingsDto = new SettingsDto(settings)
 		await this.cache.flush('settings', userId)
-		return await this.prisma.settings.upsert({
+		return this.prisma.settings.upsert({
 			where: { userId },
 			update: { ...settingsDto },
 			create: { userId, ...settingsDto },

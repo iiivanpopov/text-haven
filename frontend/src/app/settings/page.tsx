@@ -7,7 +7,7 @@ export default function Settings() {
 	const [defaultType, setDefaultType] = useState('')
 
 	useEffect(() => {
-		const saved = localStorage.getItem('textdeftype')
+		const saved = localStorage.getItem('textDefaultType')
 		if (saved) setDefaultType(saved)
 	}, [])
 
@@ -24,7 +24,7 @@ export default function Settings() {
 						onChange={e => {
 							const value = e.target.value
 							setDefaultType(value)
-							localStorage.setItem('textdeftype', value)
+							localStorage.setItem('textDefaultType', value)
 						}}
 						options={[
 							{ name: 'Note', value: 'note' },

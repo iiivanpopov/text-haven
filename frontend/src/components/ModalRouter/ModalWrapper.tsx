@@ -1,6 +1,7 @@
 'use client'
 
 import { twMerge } from 'tailwind-merge'
+import React from "react"
 
 interface ModalProps {
 	className?: string

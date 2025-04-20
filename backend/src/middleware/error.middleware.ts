@@ -2,7 +2,7 @@ import ApiError from '@exceptions/ApiError'
 import logger from '@utils/logger'
 import { NextFunction, Request, Response } from 'express'
 
-export default (err: Error | ApiError, req: Request, res: Response, next: NextFunction) => {
+export default (err: Error | ApiError, _req: Request, res: Response, _next: NextFunction) => {
 	const statusCode = err instanceof ApiError ? err.status : 500
 	const message =
 		process.env.NODE_ENV === 'production' && statusCode === 500

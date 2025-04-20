@@ -17,4 +17,4 @@ export const optionalStringField = (fieldName: string, displayName: string) =>
 		.isString()
 		.withMessage(`${displayName} must be a string`)
 
-// TODO: ENUN FIELDS
+// TODO: ENUM FIELDS

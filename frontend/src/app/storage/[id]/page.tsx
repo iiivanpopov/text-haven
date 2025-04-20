@@ -6,7 +6,7 @@ import CreateNew from '../components/CreateNew'
 import FileBtn from '../components/FileBtn'
 import FolderBtn from '../components/FolderBtn'
 
-type ShittyAPIREsponse = {
+type ShittyAPIResponse = {
 	folders: {
 		name: string
 		id: string
@@ -59,7 +59,7 @@ export default function Storage({ params }: { params: Promise<{ id: string }> })
 
 	const [search, setSearch] = useState('')
 
-	const [{ files, folders }, setData] = useState<ShittyAPIREsponse>({ folders: [], files: [] })
+	const [{ files, folders }, setData] = useState<ShittyAPIResponse>({ folders: [], files: [] })
 
 	useEffect(() => {
 		setData(fakeFileSystem[folderId] ?? { folders: [], files: [] })
