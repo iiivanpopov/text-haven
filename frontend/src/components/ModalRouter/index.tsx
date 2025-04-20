@@ -1,1 +1,1 @@
-export { default } from './ModalRouter'
+export { default } from "./ModalRouter";
