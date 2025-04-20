@@ -26,6 +26,7 @@ declare namespace NodeJS {
 		// REDIS
 		REDIS_PORT: string
 		REDIS_HOST: string
+		REDIS_URL: string
 		CACHE_EXPIRATION_TIME: TimeType
 	}
 }

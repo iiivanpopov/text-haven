@@ -1,10 +1,10 @@
+import FileDto from '@dtos/file.dto'
+import FolderDto from '@dtos/folder.dto'
+import PrivateUser from '@dtos/private.user.dto'
 import ApiError from '@exceptions/ApiError'
-import FileDto from '@modules/cloud/dtos/file.dto'
-import FolderDto from '@modules/cloud/dtos/folder.dto'
-import PrivateUser from '@modules/shared/dtos/user/private.user.dto'
-import Cache from '@modules/shared/services/cache.service'
-import type StorageService from '@modules/shared/services/storage.service'
 import { Exposure, FileType, type File, type Folder, type PrismaClient } from '@prisma'
+import { Cache } from '@shared/cache'
+import type { S3 } from '@shared/S3'
 import logger from '@utils/logger'
 
 type Post = Pick<File, 'createdAt' | 'id' | 'name'> & {
@@ -12,11 +12,7 @@ type Post = Pick<File, 'createdAt' | 'id' | 'name'> & {
 }
 
 export default class CloudService {
-	constructor(
-		private storageService: StorageService,
-		private prisma: PrismaClient,
-		private cache: Cache
-	) {}
+	constructor(private storageService: S3, private prisma: PrismaClient, private cache: Cache) {}
 
 	async clearExpiredFiles(): Promise<void> {
 		const records = await this.prisma.file.findMany({
@@ -89,9 +85,7 @@ export default class CloudService {
 			latestPosts.map(async post => {
 				const content = await this.getFileContent(post.id, post.userId)
 				return {
-					createdAt: post.createdAt,
-					id: post.id,
-					name: post.name,
+					...post,
 					content: content.slice(0, 60),
 				}
 			})
@@ -120,9 +114,11 @@ export default class CloudService {
 		{ folderId, targetUserId }: { folderId?: string; targetUserId?: string }
 	): Promise<Folder> {
 		const cacheKey = Cache.mapKey('folder', { folderId, userId: targetUserId })
-		const cached = await this.cache.get<Folder>(cacheKey)
-		if (cached && (cached.userId == userId || cached.exposure == Exposure.PUBLIC)) {
-			return cached
+		if (cacheKey) {
+			const cached = await this.cache.get<Folder>(cacheKey)
+			if (cached && (cached.userId == userId || cached.exposure == Exposure.PUBLIC)) {
+				return cached
+			}
 		}
 
 		const folder = await this.prisma.folder.findFirst({
@@ -131,7 +127,7 @@ export default class CloudService {
 		if (!folder) throw ApiError.NotFound('Folder not found')
 		if (folder.userId != userId && folder.exposure != Exposure.PUBLIC) throw ApiError.Forbidden()
 
-		await this.cache.set(cacheKey, folder)
+		if (cacheKey) await this.cache.set(cacheKey, folder)
 
 		return folder
 	}
@@ -153,15 +149,16 @@ export default class CloudService {
 		const cacheKey = Cache.mapKey('folder', {
 			userId: effectiveUserId,
 			parentId,
-			additional: where.exposure,
+			exposure: where.exposure,
 		})
-
-		const cached = await this.cache.get<Folder[]>(cacheKey)
-		if (cached) return cached
+		if (cacheKey) {
+			const cached = await this.cache.get<Folder[]>(cacheKey)
+			if (cached) return cached
+		}
 
 		const folders = await this.prisma.folder.findMany({ where })
 
-		await this.cache.set(cacheKey, folders)
+		if (cacheKey) await this.cache.set(cacheKey, folders)
 
 		return folders
 	}
@@ -203,7 +200,7 @@ export default class CloudService {
 			data: { name, userId, parentId, exposure },
 		})
 
-		await this.cache.flush('folder', userId, { parentId })
+		await this.cache.flush('folder', userId)
 
 		return { ...folder, user: new PrivateUser(user) }
 	}
@@ -251,6 +248,8 @@ export default class CloudService {
 
 		await this.cache.flush('file', userId, { fileId: id, folderId: file.folderId })
 
+		if (file.type == FileType.POST) await this.cache.remove('post')
+
 		await this.storageService.deleteFile(id)
 
 		return this.prisma.file.delete({ where: { id } })
@@ -274,17 +273,19 @@ export default class CloudService {
 		{ fileId, targetUserId, folderId }: { fileId: string; targetUserId?: string; folderId?: string }
 	): Promise<File> {
 		const cacheKey = Cache.mapKey('file', { fileId, userId: targetUserId, folderId })
-		const cached = await this.cache.get<File>(cacheKey)
+		if (cacheKey) {
+			const cached = await this.cache.get<File>(cacheKey)
 
-		if (cached && (cached.userId == userId || cached.exposure == Exposure.PUBLIC)) {
-			return cached
+			if (cached && (cached.userId == userId || cached.exposure == Exposure.PUBLIC)) {
+				return cached
+			}
 		}
 
 		const file = await this.prisma.file.findFirst({ where: { id: fileId } })
 		if (!file) throw ApiError.BadRequest('File not found')
 		if (file.userId != userId && file.exposure != Exposure.PUBLIC) throw ApiError.Forbidden()
 
-		await this.cache.set(cacheKey, file)
+		if (cacheKey) await this.cache.set(cacheKey, file)
 		return file
 	}
 
@@ -302,14 +303,16 @@ export default class CloudService {
 		const cacheKey = Cache.mapKey('file', {
 			userId: effectiveUserId,
 			folderId,
-			additional: where.exposure,
+			exposure: where.exposure,
 		})
 
-		const cached = await this.cache.get<File[]>(cacheKey)
-		if (cached) return cached
+		if (cacheKey) {
+			const cached = await this.cache.get<File[]>(cacheKey)
+			if (cached) return cached
+		}
 
 		const files = await this.prisma.file.findMany({ where })
-		await this.cache.set(cacheKey, files)
+		if (cacheKey) await this.cache.set(cacheKey, files)
 
 		return files
 	}
@@ -346,14 +349,15 @@ export default class CloudService {
 		const updateData = new FileDto(payload)
 		const oldFile = await this.prisma.file.findUnique({
 			where: { id },
-			select: { userId: true, folderId: true },
+			select: { type: true, userId: true, folderId: true },
 		})
 		if (!oldFile) throw ApiError.BadRequest('File not found')
 		if (userId != oldFile.userId) throw ApiError.Forbidden()
 
 		await this.cache.flush('file', oldFile.userId, { folderId: oldFile.folderId, fileId: id })
+		if (oldFile.type == FileType.POST) await this.cache.remove('post')
 
-		return this.prisma.file.update({ where: { id }, data: updateData })
+		return await this.prisma.file.update({ where: { id }, data: updateData })
 	}
 
 	async updateFileContent(userId: string, id: string, content: string): Promise<File> {

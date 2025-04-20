@@ -1,21 +1,5 @@
 import { body } from 'express-validator'
 
-export const emailValidator = () =>
-	body('email')
-		.notEmpty()
-		.withMessage("Email can't be empty")
-		.isString()
-		.withMessage('Email must be a string')
-		.isEmail()
-		.withMessage('Value must be a valid email')
-
-export const passwordValidator = () =>
-	body('password')
-		.notEmpty()
-		.withMessage("Password can't be empty")
-		.isString()
-		.withMessage('Password must be a string')
-
 export const stringField = (fieldName: string, displayName: string) =>
 	body(fieldName)
 		.exists()
@@ -32,3 +16,5 @@ export const optionalStringField = (fieldName: string, displayName: string) =>
 		.withMessage(`${displayName} can't be empty`)
 		.isString()
 		.withMessage(`${displayName} must be a string`)
+
+// TODO: ENUN FIELDS

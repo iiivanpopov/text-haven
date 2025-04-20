@@ -6,18 +6,40 @@ class Logger {
 	}
 
 	log(data: unknown): void {
-		console.log(`[${this.getTimestamp()}] [INFO]: ${data}`)
+		console.log(`[${this.getTimestamp()}] [INFO]:`, data)
 	}
 
-	error(error: unknown): void {
+	error(message: string, error: unknown): void
+	error(error: unknown): void
+
+	error(arg1: string | unknown, arg2?: unknown): void {
 		const timestamp = this.getTimestamp()
 
-		if (error instanceof ApiError) {
-			console.error(`[${timestamp}] [ERROR]: ${error.message} - Status: ${error.status}`)
-		} else if (error instanceof Error) {
-			console.error(`[${timestamp}] [ERROR]: ${error.message}\nStack: ${error.stack}`)
+		if (typeof arg1 === 'string' && arg2 !== undefined) {
+			const message = arg1
+			const error = arg2
+
+			if (error instanceof ApiError) {
+				console.error(
+					`[${timestamp}] [ERROR]: ${message} - ${error.message} (Status: ${error.status})`
+				)
+			} else if (error instanceof Error) {
+				console.error(
+					`[${timestamp}] [ERROR]: ${message} - ${error.message}\nStack: ${error.stack}`
+				)
+			} else {
+				console.error(`[${timestamp}] [ERROR]: ${message} - Unknown error`)
+			}
 		} else {
-			console.error(`[${timestamp}] [ERROR]: Unknown error`)
+			const error = arg1
+
+			if (error instanceof ApiError) {
+				console.error(`[${timestamp}] [ERROR]: ${error.message} (Status: ${error.status})`)
+			} else if (error instanceof Error) {
+				console.error(`[${timestamp}] [ERROR]: ${error.message}\nStack: ${error.stack}`)
+			} else {
+				console.error(`[${timestamp}] [ERROR]: Unknown error`)
+			}
 		}
 	}
 }

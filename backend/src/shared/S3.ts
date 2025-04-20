@@ -1,7 +1,8 @@
+import config from '@config'
 import ApiError from '@exceptions/ApiError'
-import { S3Client } from 'bun'
+import type { S3Client } from 'bun'
 
-class StorageService {
+export class S3 {
 	constructor(private s3: S3Client) {}
 
 	async writeFile(name: string, content: string): Promise<number> {
@@ -30,4 +31,4 @@ class StorageService {
 	}
 }
 
-export default StorageService
+export default new S3(config.S3)

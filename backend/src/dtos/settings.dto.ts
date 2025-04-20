@@ -1,4 +1,4 @@
-import { FileType } from '@generated/prisma_client'
+import { FileType } from '@prisma'
 
 export default class SettingsDto {
 	defaultTextType: FileType

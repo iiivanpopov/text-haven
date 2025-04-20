@@ -1,19 +1,22 @@
 import config from '@config'
 import auth from '@middleware/auth.middleware'
-import Cache from '@modules/shared/services/cache.service'
-import StorageService from '@modules/shared/services/storage.service'
+import cache from '@shared/cache'
+import S3 from '@shared/S3'
 import validate from '@utils/validate'
 import { Router } from 'express'
 import CloudController from './controller'
-import { createFileRules, createFolderRules, updateFileRules, updateFolderRules } from './rules'
+import {
+	createFileRules,
+	createFolderRules,
+	updateFileContentRules,
+	updateFileRules,
+	updateFolderRules,
+} from './rules'
 import CloudService from './service'
 
 const router = Router()
 
-const storageService = new StorageService(config.S3)
-
-const cache = new Cache(config.REDIS, config.PRISMA, config.CACHE_EXPIRE_TIME)
-const cloudService = new CloudService(storageService, config.PRISMA, cache)
+const cloudService = new CloudService(S3, config.PRISMA, cache)
 const cloudController = new CloudController(cloudService)
 
 // Folders
@@ -40,7 +43,13 @@ router.get('/posts', cloudController.getLatestPosts)
 
 // Patch
 router.patch('/files/:id', auth, updateFileRules, validate, cloudController.updateFile)
-router.patch('/files/:id/content', auth, cloudController.updateFileContent)
+router.patch(
+	'/files/:id/content',
+	auth,
+	updateFileContentRules,
+	validate,
+	cloudController.updateFileContent
+)
 
 // Delete
 router.delete('/files/:id', auth, cloudController.deleteFile)

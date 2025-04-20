@@ -1,14 +1,10 @@
+import { optionalStringField, stringField } from '@utils/validators'
 import { body } from 'express-validator'
-import { optionalStringField, stringField } from '../shared/validators'
 
 export const createFileRules = [
 	stringField('folderId', 'Folder id'),
 	stringField('name', 'Name'),
-	body('content')
-		.exists()
-		.withMessage('Content is required')
-		.isString()
-		.withMessage('Content must be a string'),
+	stringField('content', 'Content'),
 	body('exposure')
 		.exists()
 		.withMessage('Exposure type is required')
@@ -16,6 +12,13 @@ export const createFileRules = [
 		.withMessage("Exposure type can't be empty")
 		.isIn(['PRIVATE', 'PUBLIC'])
 		.withMessage('Exposure type must be either "PRIVATE" or "PUBLIC"'),
+	body('type')
+		.exists()
+		.withMessage('Type is required')
+		.notEmpty()
+		.withMessage("Type can't be empty")
+		.isIn(['POST', 'NOTE'])
+		.withMessage('Type must be either "POST" or "NOTE"'),
 	body('expiresAt').optional().isISO8601().withMessage('Invalid date format'),
 ]
 
@@ -51,5 +54,14 @@ export const updateFileRules = [
 		.withMessage("Exposure type can't be empty")
 		.isIn(['PRIVATE', 'PUBLIC'])
 		.withMessage('Exposure type must be either "PRIVATE" or "PUBLIC"'),
+	body('type')
+		.optional()
+		.withMessage('Type is required')
+		.notEmpty()
+		.withMessage("Type can't be empty")
+		.isIn(['POST', 'NOTE'])
+		.withMessage('Type must be either "POST" or "NOTE"'),
 	body('expiresAt').optional().isISO8601().withMessage('Invalid date format'),
 ]
+
+export const updateFileContentRules = [stringField('content', 'Content')]

@@ -1,6 +1,6 @@
 import PrivateUser from './private.user.dto'
 
-export default class PublicUser extends PrivateUser {
+export default class User extends PrivateUser {
 	email: string
 
 	constructor(model: any) {

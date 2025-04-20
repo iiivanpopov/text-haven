@@ -1,7 +1,7 @@
 import type { ValidationError } from 'express-validator'
 
-type TError = Error | ValidationError
-type Errors = TError[]
+type IncomingError = Error | ValidationError
+type Errors = IncomingError[]
 
 class ApiError extends Error {
 	status: number
@@ -13,8 +13,8 @@ class ApiError extends Error {
 		this.errors = errors
 	}
 
-	static BadRequest(message = 'Bad request', errors: Errors = []) {
-		return new ApiError(400, message, errors)
+	static BadRequest(message = 'Bad request') {
+		return new ApiError(400, message)
 	}
 
 	static Unauthorized(message = 'Unauthorized') {

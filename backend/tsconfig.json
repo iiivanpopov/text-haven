@@ -28,8 +28,8 @@
 			"@exceptions/*": ["./exceptions/*"],
 			"@middleware/*": ["./middleware/*"],
 			"@modules/*": ["./modules/*"],
-			"@shared/*": ["./modules/shared/*"],
-			"@generated/*": ["./../generated/*"],
+			"@shared/*": ["./shared/*"],
+			"@dtos/*": ["./dtos/*"],
 			"@prisma": ["./../generated/prisma_client"]
 		}
 	}
