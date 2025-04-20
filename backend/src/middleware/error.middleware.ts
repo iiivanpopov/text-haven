@@ -18,7 +18,7 @@ export default (
   logger.error({
     message: err.message,
     stack: err.stack,
-    statusCo,
+    status: statusCode,
   });
 
   res.status(statusCode).json({
