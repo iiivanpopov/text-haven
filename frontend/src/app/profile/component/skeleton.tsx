@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { memo } from "react";
 
 function LoadingSkeleton() {
@@ -16,13 +15,6 @@ function LoadingSkeleton() {
           <span className="text-gray-400 dark:text-gray-500 text-sm">...</span>
         </div>
       </div>
-      <Link
-        href="/profile/settings"
-        aria-label="Go to profile settings"
-        className="flex items-center justify-center transition-colors cursor-pointer bg-blue-400 dark:bg-blue-500 w-64 h-16 rounded-md text-3xl dark:hover:bg-blue-600 hover:bg-blue-500 text-gray-100"
-      >
-        Edit
-      </Link>
     </div>
   );
 }

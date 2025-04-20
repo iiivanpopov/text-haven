@@ -1,19 +1,19 @@
 "use client";
 
 import { useEffect } from "react";
-import { fetchUser } from "@store/reducers/ActionCreators";
 import { useAppDispatch, useAppSelector } from "@hooks/redux";
-import UserData from "@/app/profile/component/userProfile";
+import UserProfile from "@/app/profile/component/userProfile";
 import Skeleton from "@/app/profile/component/skeleton";
+import { fetchUser } from "@store/reducers/ActionCreators";
 
-export default function Profile() {
+export default function Profile({ id }: { id?: string }) {
   const { user, isLoading, error } = useAppSelector(
     (state) => state.userReducer,
   );
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(fetchUser());
+    dispatch(fetchUser(id));
   }, []);
 
   if (isLoading) {
@@ -25,8 +25,8 @@ export default function Profile() {
   }
 
   if (!user) {
-    return <div>User not found.</div>;
+    return null;
   }
 
-  return <UserData user={user} />;
+  return <UserProfile user={user} canEdit={user.canEdit} />;
 }

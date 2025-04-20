@@ -26,13 +26,27 @@
     ],
     "baseUrl": "src",
     "paths": {
-      "@components/*": ["./components/*"],
-      "@utils/*": ["./utils/*"],
-      "@hooks/*": ["./hooks/*"],
-      "@/*": ["./*"],
+      "@components/*": [
+        "./components/*"
+      ],
+      "@utils/*": [
+        "./utils/*"
+      ],
+      "@hooks/*": [
+        "./hooks/*"
+      ],
+      "@/*": [
+        "./*"
+      ],
       "@store/*": [
-        "./store/*"],
-      "@models/*": ["./models/*"]
+        "./store/*"
+      ],
+      "@api": [
+        "./api/api"
+      ],
+      "@models/*": [
+        "./models/*"
+      ]
     }
   },
   "include": [

@@ -5,15 +5,38 @@ import Input from "@components/shared/Input";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import ModalWrapper from "../ModalWrapper";
+import axios from "axios";
+import type { AuthResponse, ValidationError } from "@api";
+import Errors from "@components/Errors";
 
 export default function Login() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<ValidationError | string | null>(null);
 
   const router = useRouter();
   const pathname = usePathname();
 
-  const handleSubmit = () => {};
+  const handleSubmit = async () => {
+    try {
+      const response = await axios.post<AuthResponse>(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/login`,
+        {
+          email,
+          password,
+        },
+      );
+
+      localStorage.setItem("accessToken", response.data.accessToken);
+      router.push(pathname);
+    } catch (e) {
+      if ("errors" in e.response.data) {
+        setError(e.response.data);
+      } else {
+        setError("Unknown error.");
+      }
+    }
+  };
 
   return (
     <ModalWrapper
@@ -22,17 +45,17 @@ export default function Login() {
       }}
     >
       <main className="flex justify-center items-center bg-gray-100 dark:bg-gray-950 p-10 rounded-md">
-        <div className="grid grid-rows-3 gap-y-5">
+        <div className="grid grid-rows-4 gap-y-5">
           <div className="flex flex-col">
             <span className="dark:text-gray-200 text-gray-700 text-md">
-              Username
+              Email
             </span>
             <Input
-              name={"username"}
-              value={username}
+              name={"Email"}
+              value={email}
               className="w-64"
               ariaLabel="Username input field"
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className="flex flex-col">
@@ -54,6 +77,7 @@ export default function Login() {
             ariaLabel="Login button"
             onClick={handleSubmit}
           />
+          {error && <Errors error={error} />}
         </div>
       </main>
     </ModalWrapper>

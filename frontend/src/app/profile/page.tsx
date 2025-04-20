@@ -1,9 +1,7 @@
-import Profile from "@/app/profile/component/profile";
+import Profile from "./[id]/page";
 
 export default function ProfilePage() {
   return (
-    <main className="mt-20 h-[25vh]">
-      <Profile />
-    </main>
+    <Profile params={new Promise((resolve) => resolve({ id: undefined }))} />
   );
 }

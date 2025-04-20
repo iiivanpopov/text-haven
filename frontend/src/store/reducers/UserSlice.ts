@@ -1,9 +1,8 @@
 import { type User } from "@/models/User";
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchUser } from "@store/reducers/ActionCreators";
 
 interface UserState {
-  user: User | undefined;
+  user: (User & { canEdit: boolean }) | undefined;
   isLoading: boolean;
   error: string;
 }
@@ -17,21 +16,19 @@ const initialState: UserState = {
 export const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {},
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchUser.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(fetchUser.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.error = "";
-        state.user = action.payload;
-      })
-      .addCase(fetchUser.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload as string;
-      });
+  reducers: {
+    userFetching: (state) => {
+      state.isLoading = true;
+    },
+    userFetchingSuccess: (state, action) => {
+      state.isLoading = false;
+      state.error = "";
+      state.user = action.payload;
+    },
+    userFetchingError: (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    },
   },
 });
 

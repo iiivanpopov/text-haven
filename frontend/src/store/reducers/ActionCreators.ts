@@ -1,14 +1,16 @@
-import axios from "axios";
+import $api from "@/api/api";
 import { User } from "@models/User";
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import { userSlice } from "@store/reducers/UserSlice";
+import { AppDispatch } from "@store/store";
 
-export const fetchUser = createAsyncThunk("user/fetch", async (_, thunkAPI) => {
+export const fetchUser = (id?: string) => async (dispatch: AppDispatch) => {
   try {
-    const response = await axios.get<User>(
-      "https://jsonplaceholder.typicode.com/users",
+    dispatch(userSlice.actions.userFetching());
+    const response = await $api.get<{ user: User }>(
+      `/api/user${id ? "/" + id : ""}`,
     );
-    return { ...response.data[0], exposure: "PUBLIC" };
+    dispatch(userSlice.actions.userFetchingSuccess(response.data.user));
   } catch (e) {
-    return thunkAPI.rejectWithValue(e.message);
+    dispatch(userSlice.actions.userFetchingError(e));
   }
-});
+};

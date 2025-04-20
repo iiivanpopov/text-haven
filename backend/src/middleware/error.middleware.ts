@@ -1,24 +1,29 @@
-import ApiError from '@exceptions/ApiError'
-import logger from '@utils/logger'
-import { NextFunction, Request, Response } from 'express'
+import ApiError from "@exceptions/ApiError";
+import logger from "@utils/logger";
+import { NextFunction, Request, Response } from "express";
 
-export default (err: Error | ApiError, _req: Request, res: Response, _next: NextFunction) => {
-	const statusCode = err instanceof ApiError ? err.status : 500
-	const message =
-		process.env.NODE_ENV === 'production' && statusCode === 500
-			? 'Internal Server Error'
-			: err.message
-	const errors = err instanceof ApiError ? err.errors : undefined
+export default (
+  err: Error | ApiError,
+  _req: Request,
+  res: Response,
+  _next: NextFunction,
+) => {
+  const statusCode = err instanceof ApiError ? err.status : 500;
+  const message =
+    process.env.NODE_ENV === "production" && statusCode === 500
+      ? "Internal Server Error"
+      : err.message;
+  const errors = err instanceof ApiError ? err.errors : undefined;
 
-	logger.error({
-		message: err.message,
-		stack: err.stack,
-		statusCode,
-	})
+  logger.error({
+    message: err.message,
+    stack: err.stack,
+    statusCo,
+  });
 
-	res.status(statusCode).json({
-		status: 'error',
-		message,
-		errors,
-	})
-}
+  res.status(statusCode).json({
+    status: "error",
+    message,
+    errors,
+  });
+};

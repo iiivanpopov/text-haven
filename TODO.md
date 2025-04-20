@@ -4,7 +4,6 @@
 
 ### Frontend
 
-- Connect frontend to backend
 - Optimize frontend components
 - Dockerize
 
@@ -15,6 +14,7 @@
 
 ## WIP (Work in Progress)
 
+- Connect frontend to backend
 - Integrate Redux Toolkit for state management
 
 ---
