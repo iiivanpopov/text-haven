@@ -7,12 +7,8 @@ function LoadingSkeleton() {
         <div className="rounded-full min-w-[150px] min-h-[150px] size-[150px] bg-gray-300 dark:bg-gray-900"></div>
         <div className="flex flex-col justify-between">
           <h4 className="text-gray-800 dark:text-gray-100 text-2xl">
-            Loading username
+            Loading user
           </h4>
-          <span className="text-gray-700 dark:text-gray-200 text-xl">
-            Loading email
-          </span>
-          <span className="text-gray-400 dark:text-gray-500 text-sm">...</span>
         </div>
       </div>
     </div>

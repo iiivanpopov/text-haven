@@ -1,6 +1,6 @@
 import React, { lazy, Suspense } from "react";
 import "./globals.css";
-import ReduxProvider from "@store/reduxProvider";
+import ReduxProvider from "@store/StoreProvider";
 
 const LazyModalRouter = lazy(() => import("@components/ModalRouter"));
 

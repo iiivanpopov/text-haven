@@ -2,7 +2,7 @@ import Link from "next/link";
 import { memo } from "react";
 import { User } from "@models/User";
 
-function UserProfile({ user, canEdit }: { canEdit: boolean; user: User }) {
+function UserProfile({ user }: { user: User & { canEdit: boolean } }) {
   return (
     <div className="flex flex-col gap-y-5">
       <div className="flex gap-x-10">
@@ -19,7 +19,7 @@ function UserProfile({ user, canEdit }: { canEdit: boolean; user: User }) {
           </span>
         </div>
       </div>
-      {canEdit && (
+      {user.canEdit && (
         <Link
           href="/profile/settings"
           aria-label="Go to profile settings"

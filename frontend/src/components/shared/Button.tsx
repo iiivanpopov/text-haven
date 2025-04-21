@@ -34,7 +34,7 @@ export default function Button({
         "inline-flex items-center justify-center gap-2 px-4 h-10 rounded-md text-md cursor-pointer transition-colors duration-300 select-none",
         style == "outline"
           ? "border border-gray-400 text-gray-300 hover:bg-gray-800"
-          : "bg-gray-700 hover:bg-gray-800 dark:bg-gray-900 dark:hover:bg-black/30 text-gray-100",
+          : "bg-gray-700 hover:bg-gray-800 dark:bg-gray-900 dark:hover:bg-gray-950 text-gray-100",
         disabled || loading
           ? "opacity-50 cursor-not-allowed pointer-events-none"
           : "",

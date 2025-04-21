@@ -1,25 +1,5 @@
 import axios from "axios";
-import type { User } from "@models/User";
-
-export interface ValidationError {
-  status: string;
-  message: string;
-  errors: {
-    type: string;
-    value: string;
-    msg: string;
-    path: string;
-    location: string;
-  }[];
-}
-
-type UserPayload = {
-  user: User;
-  accessToken: string;
-  refreshToken: string;
-};
-
-export type AuthResponse = UserPayload;
+import { AuthResponse } from "@/api/types";
 
 const $api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,

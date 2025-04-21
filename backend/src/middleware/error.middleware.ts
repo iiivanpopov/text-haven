@@ -15,11 +15,7 @@ export default (
       : err.message;
   const errors = err instanceof ApiError ? err.errors : undefined;
 
-  logger.error({
-    message: err.message,
-    stack: err.stack,
-    status: statusCode,
-  });
+  logger.error(err);
 
   res.status(statusCode).json({
     status: "error",

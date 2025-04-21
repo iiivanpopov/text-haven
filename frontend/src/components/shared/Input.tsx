@@ -1,7 +1,7 @@
 import React, { HTMLInputTypeAttribute } from "react";
 import { twMerge } from "tailwind-merge";
 
-interface InputProps {
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   type?: HTMLInputTypeAttribute;
   name: string;
   value: string;
@@ -19,9 +19,11 @@ export default function Input({
   placeholder,
   ariaLabel,
   className,
+  ...props
 }: InputProps) {
   return (
     <input
+      {...props}
       id={name}
       name={name}
       type={type}

@@ -1,41 +1,32 @@
 "use client";
 
-import Button from "@components/shared/Button";
-import Input from "@components/shared/Input";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import React from "react";
 import ModalWrapper from "../ModalWrapper";
-import axios from "axios";
-import type { AuthResponse, ValidationError } from "@api";
-import Errors from "@components/Errors";
+import { useAppDispatch } from "@hooks/redux";
+import { login } from "@store/actions/authActions";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import ValidatedInput from "@components/shared/ValidatedInput";
+import Submit from "@components/shared/Submit";
+
+type LoginForm = {
+  email: string;
+  password: string;
+};
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<ValidationError | string | null>(null);
+  const { control, handleSubmit } = useForm<LoginForm>({
+    defaultValues: { email: "", password: "" },
+  });
 
   const router = useRouter();
   const pathname = usePathname();
 
-  const handleSubmit = async () => {
-    try {
-      const response = await axios.post<AuthResponse>(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/login`,
-        {
-          email,
-          password,
-        },
-      );
+  const dispatch = useAppDispatch();
 
-      localStorage.setItem("accessToken", response.data.accessToken);
-      router.push(pathname);
-    } catch (e) {
-      if ("errors" in e.response.data) {
-        setError(e.response.data);
-      } else {
-        setError("Unknown error.");
-      }
-    }
+  const onSubmit: SubmitHandler<LoginForm> = async (data) => {
+    dispatch(login({ ...data }));
+    router.push(pathname);
   };
 
   return (
@@ -44,42 +35,47 @@ export default function Login() {
         router.push(pathname);
       }}
     >
-      <main className="flex justify-center items-center bg-gray-100 dark:bg-gray-950 p-10 rounded-md">
-        <div className="grid grid-rows-4 gap-y-5">
-          <div className="flex flex-col">
-            <span className="dark:text-gray-200 text-gray-700 text-md">
-              Email
-            </span>
-            <Input
-              name={"Email"}
-              value={email}
-              className="w-64"
-              ariaLabel="Username input field"
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          <div className="flex flex-col">
-            <span className="dark:text-gray-200 text-gray-700 text-md">
-              Password
-            </span>
-            <Input
-              name={"password"}
-              value={password}
-              className="w-64"
-              ariaLabel="Password input field"
-              type="password"
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-          <Button
-            name={"Login"}
-            className="self-end bg-blue-400 dark:bg-blue-500 hover:bg-blue-500 dark:hover:bg-blue-600"
-            ariaLabel="Login button"
-            onClick={handleSubmit}
+      <div className="flex justify-center items-center bg-gray-100 dark:bg-gray-950 p-10 rounded-md w-[30wv] h-[30vh]">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className={"grid grid-rows-3 h-full"}
+        >
+          <Controller
+            name="email"
+            control={control}
+            rules={{
+              required: { value: true, message: "Email is required" },
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: "Invalid email address",
+              },
+            }}
+            render={({ field, formState: { errors } }) => (
+              <ValidatedInput
+                {...field}
+                error={errors.email?.message ? errors.email.message : null}
+              />
+            )}
           />
-          {error && <Errors error={error} />}
-        </div>
-      </main>
+          <Controller
+            name="password"
+            control={control}
+            rules={{
+              required: { value: true, message: "Password is required" },
+            }}
+            render={({ field, formState: { errors } }) => (
+              <ValidatedInput
+                {...field}
+                type={"password"}
+                error={
+                  errors.password?.message ? errors.password.message : null
+                }
+              />
+            )}
+          />
+          <Submit />
+        </form>
+      </div>
     </ModalWrapper>
   );
 }
