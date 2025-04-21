@@ -1,6 +1,4 @@
-import { memo } from "react";
-
-function LoadingSkeleton() {
+export default function LoadingSkeleton() {
   return (
     <div className="flex flex-col gap-x-5">
       <div className="flex gap-x-10">
@@ -14,5 +12,3 @@ function LoadingSkeleton() {
     </div>
   );
 }
-
-export default memo(LoadingSkeleton);

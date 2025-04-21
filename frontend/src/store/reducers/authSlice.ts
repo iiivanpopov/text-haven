@@ -1,5 +1,5 @@
 import { User } from "@models/User";
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, isAnyOf, PayloadAction } from "@reduxjs/toolkit";
 import {
   login,
   logout,
@@ -11,7 +11,7 @@ interface AuthState {
   isAuth: boolean;
   isLoading: boolean;
   error: string;
-  user: User | undefined;
+  user: User | null;
   accessToken: string;
 }
 
@@ -20,7 +20,35 @@ const initialState: AuthState = {
   isLoading: false,
   error: "",
   accessToken: "",
-  user: undefined,
+  user: null,
+};
+
+const handlePending = (state: AuthState) => {
+  state.isLoading = true;
+};
+
+const handleRejected = (state: AuthState, action: any) => {
+  state.error = action.error.message || "Something went wrong";
+  state.isLoading = false;
+};
+
+const handleAuthFulfilled = (
+  state: AuthState,
+  action: PayloadAction<{ user: User; accessToken: string }>,
+) => {
+  state.user = action.payload.user;
+  state.error = "";
+  state.isAuth = true;
+  state.isLoading = false;
+  state.accessToken = action.payload.accessToken;
+};
+
+const handleLogoutFulfilled = (state: AuthState) => {
+  state.user = null;
+  state.error = "";
+  state.isAuth = false;
+  state.isLoading = false;
+  state.accessToken = "";
 };
 
 const authSlice = createSlice({
@@ -29,71 +57,28 @@ const authSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(login.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(login.fulfilled, (state, action) => {
-        state.user = action.payload.user;
-        state.error = "";
-        state.isAuth = true;
-        state.isLoading = false;
-
-        localStorage.setItem("accessToken", action.payload.accessToken);
-      })
-      .addCase(login.rejected, (state, action) => {
-        state.error = action.error.message || "Something went wrong";
-        state.isLoading = false;
-      })
-
-      .addCase(registration.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(registration.fulfilled, (state, action) => {
-        state.user = action.payload.user;
-        state.error = "";
-        state.isAuth = true;
-        state.isLoading = false;
-
-        localStorage.setItem("accessToken", action.payload.accessToken);
-      })
-      .addCase(registration.rejected, (state, action) => {
-        state.error = action.error.message || "Something went wrong";
-        state.isLoading = false;
-      })
-
-      .addCase(refresh.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(refresh.fulfilled, (state, action) => {
-        state.user = action.payload.user;
-        state.error = "";
-        state.isAuth = true;
-        state.isLoading = false;
-
-        localStorage.setItem("accessToken", action.payload.accessToken);
-      })
-      .addCase(refresh.rejected, (state, action) => {
-        state.error = action.error.message || "Something went wrong";
-        state.isLoading = false;
-
-        localStorage.removeItem("accessToken");
-      })
-
-      .addCase(logout.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(logout.fulfilled, (state) => {
-        state.user = undefined;
-        state.error = "";
-        state.isAuth = false;
-        state.isLoading = false;
-
-        localStorage.removeItem("accessToken");
-      })
-      .addCase(logout.rejected, (state, action) => {
-        state.error = action.error.message || "Something went wrong";
-        state.isLoading = false;
-      });
+      .addCase(login.fulfilled, handleAuthFulfilled)
+      .addCase(registration.fulfilled, handleAuthFulfilled)
+      .addCase(refresh.fulfilled, handleAuthFulfilled)
+      .addCase(logout.fulfilled, handleLogoutFulfilled)
+      .addMatcher(
+        isAnyOf(
+          login.pending,
+          registration.pending,
+          refresh.pending,
+          logout.pending,
+        ),
+        handlePending,
+      )
+      .addMatcher(
+        isAnyOf(
+          login.rejected,
+          registration.rejected,
+          refresh.rejected,
+          logout.rejected,
+        ),
+        handleRejected,
+      );
   },
 });
 

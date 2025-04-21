@@ -28,6 +28,10 @@ export default class AuthService {
       data: { email, password: hash_password, username },
     });
 
+    await this.prisma.settings.create({
+      data: { userId: user.id, textDefaultType: "NOTE", theme: "light" },
+    });
+
     return this.jwtService.updateTokens(user);
   }
 

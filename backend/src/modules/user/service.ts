@@ -88,10 +88,9 @@ export default class UserService {
   ): Promise<Settings> {
     const settingsDto = new SettingsDto(settings);
     await this.cache.flush("settings", userId);
-    return this.prisma.settings.upsert({
+    return this.prisma.settings.update({
       where: { userId },
-      update: { ...settingsDto },
-      create: { userId, ...settingsDto },
+      data: { ...settingsDto },
     });
   }
 

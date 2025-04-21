@@ -16,6 +16,7 @@ export const login = createAsyncThunk(
         { withCredentials: true },
       );
 
+      localStorage.setItem("accessToken", response.data.accessToken);
       return response.data;
     } catch (e) {
       return rejectWithValue(e.response.data.error ?? "Unknown error");
@@ -40,6 +41,7 @@ export const registration = createAsyncThunk(
         { withCredentials: true },
       );
 
+      localStorage.setItem("accessToken", response.data.accessToken);
       return response.data;
     } catch (e) {
       return rejectWithValue(e.response.data.error ?? "Unknown error");
@@ -56,8 +58,10 @@ export const refresh = createAsyncThunk(
         { withCredentials: true },
       );
 
+      localStorage.setItem("accessToken", response.data.accessToken);
       return response.data;
     } catch (e) {
+      localStorage.removeItem("accessToken");
       return rejectWithValue(e.response.data.error ?? "Unknown error");
     }
   },
@@ -71,8 +75,10 @@ export const logout = createAsyncThunk(
         `${process.env.NEXT_PUBLIC_API_URL}/api/logout`,
       );
 
+      localStorage.removeItem("accessToken");
       return response.data;
     } catch (e) {
+      localStorage.removeItem("accessToken");
       return rejectWithValue(e.response.data.error ?? "Unknown error");
     }
   },

@@ -3,13 +3,13 @@ import { createSlice } from "@reduxjs/toolkit";
 import { fetchUser } from "@store/actions/userActions";
 
 interface UserState {
-  user: (User & { canEdit: boolean }) | undefined;
+  user: (User & { canEdit: boolean }) | null;
   isLoading: boolean;
   error: string;
 }
 
 const initialState: UserState = {
-  user: undefined,
+  user: null,
   isLoading: false,
   error: "",
 };

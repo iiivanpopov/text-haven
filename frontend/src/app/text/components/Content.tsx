@@ -1,7 +1,10 @@
-import { memo } from "react";
 import { twMerge } from "tailwind-merge";
 
-const Content = ({ children }: { children: string | undefined }) => {
+export default function Content({
+  children,
+}: {
+  children: string | undefined;
+}) {
   return (
     <div
       className={twMerge(
@@ -14,6 +17,4 @@ const Content = ({ children }: { children: string | undefined }) => {
       {children ? children : "No content"}
     </div>
   );
-};
-
-export default memo(Content);
+}

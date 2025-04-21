@@ -73,7 +73,8 @@ model Settings {
   id     String @id @default(cuid())
   userId String @unique
 
-  defaultTextType FileType
+  textDefaultType FileType @default(NOTE)
+  theme           Theme    @default(light)
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -93,4 +94,9 @@ enum Exposure {
 enum FileType {
   NOTE
   POST
+}
+
+enum Theme {
+  light
+  dark
 }
