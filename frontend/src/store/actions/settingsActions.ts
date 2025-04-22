@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import $api from "@/api";
 import { setSettings, setTheme } from "@store/slices/settingsSlice";
-import { Settings } from "@/models/Settings";
+import { Settings, Theme } from "@/models/Settings";
 import { AppDispatch, RootState } from "@store/store";
 
 import {
@@ -11,57 +11,63 @@ import {
 } from "@/utils/settings";
 
 export const parseSettings = () => (dispatch: AppDispatch) => {
-  const parsedSettings = loadSettingsFromStorage();
-  if (!parsedSettings) return;
+  const storedSettings = loadSettingsFromStorage();
+  if (!storedSettings) return;
 
-  dispatch(setSettings(parsedSettings));
-  applyTheme(parsedSettings.theme);
+  dispatch(setSettings(storedSettings));
+  applyTheme(storedSettings.theme);
 };
 
 export const toggleTheme =
   () => (dispatch: AppDispatch, getState: () => RootState) => {
-    const currentTheme = getState().settingsSlice.settings.theme;
-    const newTheme = currentTheme === "dark" ? "light" : "dark";
+    const currentSettings = getState().settingsSlice.settings;
+    const newTheme: Theme = currentSettings.theme === "dark" ? "light" : "dark";
+
+    const updatedSettings = {
+      ...currentSettings,
+      theme: newTheme,
+    };
 
     applyTheme(newTheme);
     dispatch(setTheme(newTheme));
+    saveSettingsToStorage(updatedSettings);
   };
 
-export const fetchSettings = createAsyncThunk(
-  "settings/fetch",
-  async (_, { rejectWithValue, dispatch }) => {
-    try {
-      const response = await $api.get<{ settings: Settings }>(
-        "/api/user/settings",
-      );
+export const fetchSettings = createAsyncThunk<
+  Settings,
+  void,
+  { rejectValue: unknown; dispatch: AppDispatch }
+>("settings/fetch", async (_, { rejectWithValue, dispatch }) => {
+  try {
+    const { data } = await $api.get<{ settings: Settings }>("user/settings");
+    const settings = data.settings;
 
-      const settings = response.data.settings;
+    dispatch(setSettings(settings));
+    dispatch(setTheme(settings.theme));
+    applyTheme(settings.theme);
+    saveSettingsToStorage(settings);
 
-      dispatch(setTheme(settings.theme === "dark" ? "light" : "dark"));
-      applyTheme(settings.theme);
-      saveSettingsToStorage(settings);
+    return settings;
+  } catch (error) {
+    return rejectWithValue(error);
+  }
+});
 
-      return response.data.settings;
-    } catch (e) {
-      return rejectWithValue(e);
-    }
-  },
-);
+export const saveSettings = createAsyncThunk<
+  Settings,
+  Settings,
+  { rejectValue: unknown }
+>("settings/save", async (settings, { rejectWithValue }) => {
+  try {
+    const { data } = await $api.patch<{ settings: Settings }>(
+      "user/settings",
+      settings,
+    );
 
-export const saveSettings = createAsyncThunk(
-  "settings/save",
-  async (settings: Settings, { rejectWithValue }) => {
-    try {
-      const response = await $api.patch<{ settings: Settings }>(
-        "/api/user/settings",
-        settings,
-      );
+    saveSettingsToStorage(settings);
 
-      saveSettingsToStorage(settings);
-
-      return response.data.settings;
-    } catch (e) {
-      return rejectWithValue(e);
-    }
-  },
-);
+    return data.settings;
+  } catch (error) {
+    return rejectWithValue(error);
+  }
+});

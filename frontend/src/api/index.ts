@@ -1,35 +1,49 @@
 import axios from "axios";
 import { AuthResponse } from "@/api/types";
 
-const $api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
+const baseURL = process.env.NEXT_PUBLIC_API_URL;
+const accessTokenKey = "accessToken";
+
+export const publicApi = axios.create({
+  baseURL,
+});
+
+const authApi = axios.create({
+  baseURL,
   withCredentials: true,
 });
 
-$api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("accessToken");
+authApi.interceptors.request.use((config) => {
+  const token = localStorage.getItem(accessTokenKey);
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
 
-$api.interceptors.response.use(
-  (config) => {
-    return config;
-  },
+authApi.interceptors.response.use(
+  (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    if (error.response.status == 401 && error.config?._isRetry == false) {
+
+    if (error.response?.status === 401 && !originalRequest._isRetry) {
       originalRequest._isRetry = true;
-      const response = await axios.get<AuthResponse>(`/api/refresh`, {
-        withCredentials: true,
-      });
-      localStorage.setItem("accessToken", response.data.accessToken);
-      return $api.request(originalRequest);
+
+      try {
+        const { data } = await publicApi.get<AuthResponse>("refresh", {
+          withCredentials: true,
+        });
+
+        localStorage.setItem(accessTokenKey, data.accessToken);
+
+        return authApi(originalRequest);
+      } catch (refreshError) {
+        localStorage.removeItem(accessTokenKey);
+      }
     }
+
     throw error;
   },
 );
 
-export default $api;
+export default authApi;

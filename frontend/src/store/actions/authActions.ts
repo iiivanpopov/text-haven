@@ -1,7 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
 import { AuthResponse } from "@/api/types";
-import $api from "@/api";
+import { publicApi } from "@/api";
 
 export const login = createAsyncThunk(
   "auth/login",
@@ -10,12 +9,14 @@ export const login = createAsyncThunk(
     { rejectWithValue },
   ) => {
     try {
-      const response = await axios.post<AuthResponse>(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/login`,
-        { email, password },
+      const response = await publicApi.post<AuthResponse>(
+        "login",
+        {
+          email,
+          password,
+        },
         { withCredentials: true },
       );
-
       localStorage.setItem("accessToken", response.data.accessToken);
       return response.data;
     } catch (e) {
@@ -35,8 +36,8 @@ export const registration = createAsyncThunk(
     { rejectWithValue },
   ) => {
     try {
-      const response = await axios.post<AuthResponse>(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/register`,
+      const response = await publicApi.post<AuthResponse>(
+        `register`,
         { email, password, username },
         { withCredentials: true },
       );
@@ -53,10 +54,9 @@ export const refresh = createAsyncThunk(
   "auth/refresh",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get<AuthResponse>(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/refresh`,
-        { withCredentials: true },
-      );
+      const response = await publicApi.get<AuthResponse>(`refresh`, {
+        withCredentials: true,
+      });
 
       localStorage.setItem("accessToken", response.data.accessToken);
       return response.data;
@@ -71,9 +71,9 @@ export const logout = createAsyncThunk(
   "auth/logout",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await $api.post<AuthResponse>(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/logout`,
-      );
+      const response = await publicApi.post<AuthResponse>(`logout`, null, {
+        withCredentials: true,
+      });
 
       localStorage.removeItem("accessToken");
       return response.data;
