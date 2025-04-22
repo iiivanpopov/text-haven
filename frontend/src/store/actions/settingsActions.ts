@@ -1,21 +1,21 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import $api from "@/api";
-import { setSettings, setTheme } from "@store/reducers/settingsSlice";
+import { setSettings, setTheme } from "@store/slices/settingsSlice";
 import { Settings } from "@/models/Settings";
 import { AppDispatch, RootState } from "@store/store";
 
-export const parseSettings = () => (dispatch: AppDispatch) => {
-  const settings = localStorage.getItem("settings");
-  if (!settings) return;
+import {
+  applyTheme,
+  loadSettingsFromStorage,
+  saveSettingsToStorage,
+} from "@/utils/settings";
 
-  const parsedSettings: Settings = JSON.parse(settings);
+export const parseSettings = () => (dispatch: AppDispatch) => {
+  const parsedSettings = loadSettingsFromStorage();
+  if (!parsedSettings) return;
 
   dispatch(setSettings(parsedSettings));
-
-  document.documentElement.classList.toggle(
-    "dark",
-    parsedSettings.theme === "dark",
-  );
+  applyTheme(parsedSettings.theme);
 };
 
 export const toggleTheme =
@@ -23,8 +23,7 @@ export const toggleTheme =
     const currentTheme = getState().settingsSlice.settings.theme;
     const newTheme = currentTheme === "dark" ? "light" : "dark";
 
-    document.documentElement.classList.toggle("dark", newTheme === "dark");
-
+    applyTheme(newTheme);
     dispatch(setTheme(newTheme));
   };
 
@@ -36,16 +35,11 @@ export const fetchSettings = createAsyncThunk(
         "/api/user/settings",
       );
 
-      dispatch(
-        setTheme(response.data.settings.theme === "dark" ? "light" : "dark"),
-      );
+      const settings = response.data.settings;
 
-      document.documentElement.classList.toggle(
-        "dark",
-        response.data.settings.theme === "dark",
-      );
-
-      localStorage.setItem("settings", JSON.stringify(response.data.settings));
+      dispatch(setTheme(settings.theme === "dark" ? "light" : "dark"));
+      applyTheme(settings.theme);
+      saveSettingsToStorage(settings);
 
       return response.data.settings;
     } catch (e) {
@@ -63,7 +57,7 @@ export const saveSettings = createAsyncThunk(
         settings,
       );
 
-      localStorage.setItem("settings", JSON.stringify(settings));
+      saveSettingsToStorage(settings);
 
       return response.data.settings;
     } catch (e) {

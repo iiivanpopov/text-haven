@@ -60,7 +60,9 @@ const authSlice = createSlice({
       .addCase(login.fulfilled, handleAuthFulfilled)
       .addCase(registration.fulfilled, handleAuthFulfilled)
       .addCase(refresh.fulfilled, handleAuthFulfilled)
+
       .addCase(logout.fulfilled, handleLogoutFulfilled)
+
       .addMatcher(
         isAnyOf(
           login.pending,
