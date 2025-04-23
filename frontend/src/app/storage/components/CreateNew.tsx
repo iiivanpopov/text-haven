@@ -7,7 +7,11 @@ import Link from "next/link";
 import { useState } from "react";
 import { twMerge } from "tailwind-merge";
 
-export default function CreateNew() {
+export default function CreateNew({
+  canCreateFile,
+}: {
+  canCreateFile: boolean;
+}) {
   const [showInput, setShowInput] = useState(false);
   const [title, setTitle] = useState("");
 
@@ -36,18 +40,6 @@ export default function CreateNew() {
       <Plus size={32} className="text-gray-700 dark:text-gray-200" />
       <span className="pl-10">Add new</span>
 
-      <Link
-        href="/storage/new"
-        className={twMerge(
-          "absolute left-0 w-1/2 h-full flex items-center justify-center px-5",
-          "bg-gray-200 hover:bg-gray-300 dark:bg-gray-900 dark:hover:bg-gray-950 text-gray-700 dark:text-gray-200",
-          "opacity-0 group-hover:opacity-100 focus:opacity-100 transition-all",
-        )}
-        aria-label="Create new file"
-      >
-        Create new file
-      </Link>
-
       <Button
         onClick={() => setShowInput(true)}
         className={twMerge(
@@ -58,6 +50,20 @@ export default function CreateNew() {
         name="Create new folder"
         ariaLabel="Create new folder"
       />
+
+      {canCreateFile && (
+        <Link
+          href="/storage/new"
+          className={twMerge(
+            "absolute left-0 w-1/2 h-full flex items-center justify-center px-5",
+            "bg-gray-200 hover:bg-gray-300 dark:bg-gray-900 dark:hover:bg-gray-950 text-gray-700 dark:text-gray-200",
+            "opacity-0 group-hover:opacity-100 focus:opacity-100 transition-all",
+          )}
+          aria-label="Create new file"
+        >
+          Create new file
+        </Link>
+      )}
 
       {showInput && (
         <>

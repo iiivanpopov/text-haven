@@ -1,12 +1,13 @@
-import { Exposure } from '@prisma'
+import { Exposure } from "@prisma";
 
-export type CacheKeyFields = (keyof CacheKeyParams)[]
-export type CacheEntityType = 'file' | 'folder' | 'settings' | 'user'
+export type CacheKeyFields = (keyof CacheKeyParams)[];
+export type CacheEntityType = "file" | "folder" | "settings" | "user";
 export type CacheKeyParams = {
-	exposure?: Exposure // Public | Private
-	userId?: string
-	parentId?: string
-	folderId?: string
-	fileId?: string
-}
-export type CacheKeyFieldMap = Record<CacheEntityType, CacheKeyFields>
+  exposure?: Exposure; // Public | Private
+  includeChildren?: boolean; // Public | Private
+  userId?: string;
+  parentId?: string;
+  folderId?: string;
+  fileId?: string;
+};
+export type CacheKeyFieldMap = Record<CacheEntityType, CacheKeyFields>;

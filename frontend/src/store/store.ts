@@ -4,12 +4,14 @@ import userReducer from "./slices/userSlice";
 import authReducer from "./slices/authSlice";
 import settingsReducer from "./slices/settingsSlice";
 import postsReducer from "./slices/postsSlice";
+import storageReducer from "./slices/storageSlice";
 
 const rootReducer = combineReducers({
   authReducer,
   userReducer,
   settingsReducer,
   postsReducer,
+  storageReducer,
 });
 
 export const setupStore = () => {

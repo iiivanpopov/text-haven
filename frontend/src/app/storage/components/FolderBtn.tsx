@@ -10,6 +10,7 @@ export default function File({
   folderId: string;
   className?: string;
   title: string;
+  key: string;
 }) {
   return (
     <Link

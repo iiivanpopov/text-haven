@@ -1,7 +1,7 @@
-export type TextDefaultType = "POST" | "NOTE";
+export type TextType = "POST" | "NOTE";
 export type Theme = "dark" | "light";
 
 export type Settings = {
-  textDefaultType: TextDefaultType;
+  textDefaultType: TextType;
   theme: Theme;
 };

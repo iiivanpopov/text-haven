@@ -17,5 +17,7 @@
 
 ## WIP (Work in Progress)
 
-- Connect frontend to backend
 - Integrate Redux Toolkit for state management
+- Connect frontend to backend
+  - text edit/view
+  - storage

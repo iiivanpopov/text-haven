@@ -10,13 +10,13 @@ import Submit from "@components/shared/Submit";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import ValidatedSelect from "@components/shared/ValidatedSelect";
 import { TEXT_TYPE_OPTIONS } from "@/app/settings/constants";
-import type { TextDefaultType } from "@models/Settings";
+import type { TextType } from "@models/Settings";
 import Button from "@components/shared/Button";
 import { useEffect } from "react";
 import { saveSettingsToStorage } from "@utils/settings";
 
 interface SettingsForm {
-  textDefaultType: TextDefaultType;
+  textDefaultType: TextType;
 }
 
 export default function SettingsPage() {
@@ -41,7 +41,7 @@ export default function SettingsPage() {
     const subscription = watch((value) => {
       saveSettingsToStorage({
         ...settings,
-        textDefaultType: value.textDefaultType as TextDefaultType,
+        textDefaultType: value.textDefaultType as TextType,
       });
     });
     return () => subscription.unsubscribe();

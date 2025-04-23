@@ -12,6 +12,7 @@ import {
 import { Cache } from "@shared/cache";
 import type { S3 } from "@shared/S3";
 import logger from "@utils/logger";
+import { CacheEntityType, CacheKeyParams } from "@shared/cache/types.ts";
 
 type Post = Pick<File, "createdAt" | "id" | "name"> & {
   content: string;
@@ -23,6 +24,46 @@ export default class CloudService {
     private prisma: PrismaClient,
     private cache: Cache,
   ) {}
+
+  async getStorage(
+    userId: string,
+    folderId?: string,
+  ): Promise<
+    | (Folder & {
+        folders: { id: string; name: string }[];
+        files: { id: string; name: string }[];
+      })
+    | Folder[]
+  > {
+    if (!folderId) {
+      return this.prisma.folder.findMany({
+        where: { userId, parentId: null },
+      });
+    }
+
+    const storage = await this.prisma.folder.findFirst({
+      where: { id: folderId, userId },
+      include: {
+        children: {
+          select: { id: true, name: true },
+        },
+        files: {
+          select: { id: true, name: true },
+        },
+      },
+    });
+
+    if (!storage) {
+      throw ApiError.NotFound("Storage not found");
+    }
+
+    const { children, ...rest } = storage;
+
+    return {
+      ...rest,
+      folders: children,
+    };
+  }
 
   async clearExpiredFiles(): Promise<void> {
     const expiredFiles = await this.prisma.file.findMany({
@@ -130,29 +171,26 @@ export default class CloudService {
 
   async getSingleFolder(
     userId: string,
-    { folderId, targetUserId }: { folderId?: string; targetUserId?: string },
+    { folderId, targetUserId }: { folderId: string; targetUserId?: string },
   ): Promise<Folder> {
-    const cacheKey = Cache.mapKey("folder", { folderId, userId: targetUserId });
-    if (cacheKey) {
-      const cached = await this.cache.get<Folder>(cacheKey);
-      if (
-        cached &&
-        (cached.userId == userId || cached.exposure == Exposure.PUBLIC)
-      ) {
-        return cached;
-      }
-    }
+    const isOther = targetUserId && userId != targetUserId;
+    const effectiveUserId = isOther ? targetUserId : userId;
 
-    const folder = await this.prisma.folder.findFirst({
-      where: { id: folderId },
-    });
-    if (!folder) throw ApiError.NotFound("Folder not found");
-    if (folder.userId != userId && folder.exposure != Exposure.PUBLIC)
-      throw ApiError.Forbidden();
+    return this.withCache<Folder>(
+      "folder",
+      { folderId, userId: effectiveUserId },
+      async () => {
+        const folder = await this.prisma.folder.findFirst({
+          where: { id: folderId },
+        });
+        if (!folder) throw ApiError.NotFound("Folder not found");
+        if (folder.userId != userId && folder.exposure != Exposure.PUBLIC) {
+          throw ApiError.Forbidden();
+        }
 
-    if (cacheKey) await this.cache.set(cacheKey, folder);
-
-    return folder;
+        return folder;
+      },
+    );
   }
 
   async getFolderList(
@@ -162,28 +200,21 @@ export default class CloudService {
     const isOtherUser = targetUserId && userId != targetUserId;
     const effectiveUserId = isOtherUser ? targetUserId : userId;
 
-    const where: any = { userId: effectiveUserId, parentId };
+    const where: any = { userId: effectiveUserId };
+    if (parentId) where.parentId = parentId;
     if (isOtherUser) where.exposure = Exposure.PUBLIC;
 
-    if (targetUserId && targetUserId != userId) {
-      where.exposure = Exposure.PUBLIC;
-    }
-
-    const cacheKey = Cache.mapKey("folder", {
-      userId: effectiveUserId,
-      parentId,
-      exposure: where.exposure,
-    });
-    if (cacheKey) {
-      const cached = await this.cache.get<Folder[]>(cacheKey);
-      if (cached) return cached;
-    }
-
-    const folders = await this.prisma.folder.findMany({ where });
-
-    if (cacheKey) await this.cache.set(cacheKey, folders);
-
-    return folders;
+    return this.withCache<Folder[]>(
+      "folder",
+      {
+        userId: effectiveUserId,
+        parentId,
+        exposure: where.exposure,
+      },
+      async () => {
+        return this.prisma.folder.findMany({ where });
+      },
+    );
   }
 
   async deleteFolder(userId: string, id: string): Promise<Folder> {
@@ -284,75 +315,79 @@ export default class CloudService {
   async getFilesOrFile(
     userId: string,
     options: { folderId?: string; targetUserId?: string; fileId?: string },
-  ): Promise<File | File[]> {
+  ): Promise<{ data: File | File[]; user: PrivateUser }> {
     const { folderId, targetUserId, fileId } = options;
 
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+
+    if (!user) throw ApiError.NotFound("User not found");
+
     if (fileId) {
-      return this.getSingleFile(userId, { fileId, targetUserId, folderId });
+      const file = await this.getSingleFile(userId, {
+        fileId,
+      });
+      return { data: file, user: new PrivateUser(user) };
     }
 
-    return this.getFileList(userId, { folderId, targetUserId });
+    const files = await this.getFileList(userId, { folderId, targetUserId });
+    return { data: files, user: new PrivateUser(user) };
   }
 
-  private async getSingleFile(
-    userId: string,
-    {
-      fileId,
-      targetUserId,
-      folderId,
-    }: { fileId: string; targetUserId?: string; folderId?: string },
-  ): Promise<File> {
-    const cacheKey = Cache.mapKey("file", {
-      fileId,
-      userId: targetUserId,
-      folderId,
-    });
+  // TODO: integrate this fn and(maybe) move it to Cache class
+  private async withCache<T>(
+    type: CacheEntityType,
+    keyOpts: CacheKeyParams,
+    loader: () => Promise<T>,
+  ): Promise<T> {
+    const cacheKey = Cache.mapKey(type, keyOpts);
     if (cacheKey) {
-      const cached = await this.cache.get<File>(cacheKey);
-
-      if (
-        cached &&
-        (cached.userId == userId || cached.exposure == Exposure.PUBLIC)
-      ) {
+      const cached = await this.cache.get<T>(cacheKey);
+      if (cached) {
         return cached;
       }
     }
 
-    const file = await this.prisma.file.findFirst({ where: { id: fileId } });
-    if (!file) throw ApiError.BadRequest("File not found");
-    if (file.userId != userId && file.exposure != Exposure.PUBLIC)
-      throw ApiError.Forbidden();
-
-    if (cacheKey) await this.cache.set(cacheKey, file);
-    return file;
+    const result = await loader();
+    if (cacheKey) {
+      await this.cache.set(cacheKey, result);
+    }
+    return result;
   }
 
-  private async getFileList(
+  async getSingleFile(
+    userId: string,
+    { fileId }: { fileId: string },
+  ): Promise<File> {
+    return this.withCache<File>("file", { fileId }, async () => {
+      const file = await this.prisma.file.findUnique({
+        where: { id: fileId },
+      });
+      if (!file) {
+        throw ApiError.BadRequest("File not found");
+      }
+      if (file.userId !== userId && file.exposure !== Exposure.PUBLIC) {
+        throw ApiError.Forbidden();
+      }
+      return file;
+    });
+  }
+
+  async getFileList(
     userId: string,
     { folderId, targetUserId }: { folderId?: string; targetUserId?: string },
   ): Promise<File[]> {
-    const isOtherUser = targetUserId && userId != targetUserId;
-    const effectiveUserId = isOtherUser ? targetUserId : userId;
+    const isOther = targetUserId && targetUserId !== userId;
+    const effectiveUser = isOther ? targetUserId! : userId;
+    const where: Record<string, any> = { userId: effectiveUser };
 
-    const where: any = { userId: effectiveUserId };
     if (folderId) where.folderId = folderId;
-    if (isOtherUser) where.exposure = Exposure.PUBLIC;
+    if (isOther) where.exposure = Exposure.PUBLIC;
 
-    const cacheKey = Cache.mapKey("file", {
-      userId: effectiveUserId,
-      folderId,
-      exposure: where.exposure,
-    });
-
-    if (cacheKey) {
-      const cached = await this.cache.get<File[]>(cacheKey);
-      if (cached) return cached;
-    }
-
-    const files = await this.prisma.file.findMany({ where });
-    if (cacheKey) await this.cache.set(cacheKey, files);
-
-    return files;
+    return this.withCache<File[]>(
+      "file",
+      { userId: effectiveUser, folderId, exposure: where.exposure },
+      () => this.prisma.file.findMany({ where }),
+    );
   }
 
   async getFileContent(id: string, userId: string): Promise<string> {

@@ -29,7 +29,7 @@ const postsSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(fetchPosts.rejected, (state, action) => {
-        state.error = "";
+        state.error = action.error.message || "Unknown error";
         state.isLoading = false;
       });
   },
