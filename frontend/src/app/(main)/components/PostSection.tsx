@@ -1,34 +1,14 @@
-import Post from "@components/Post";
-
-const date = new Date();
-
-const date1 = new Date(date.setHours(10));
-const date2 = new Date(date.setHours(5));
-const date3 = new Date(date.setHours(2));
+import Posts from "@/app/(main)/components/Posts";
 
 export default function PostSection() {
   return (
-    <>
-      <Post
-        id="a"
-        title="Sample code"
-        content={Array.from({ length: 100 }, () => "H").join("")}
-        date={date1}
-      />
-      <Post
-        id="b"
-        title="Meeting notes"
-        content={Array.from({ length: 30 }, () => "H").join("")}
-        date={date2}
-      />
-      <Post
-        id="2"
-        title="Favorite quote"
-        content={
-          "Hello a sdsad sadas dsa sadsa sasadas dsa sadsa as asdas asdworld dsa sadsa as asdas asdworld dsa sadsa as asdas asdworld dsa sadsa as asdas asdworld dsa sadsa as asdas asdworld dsa sadsa as asdas asdworld dsa sadsa as asdas asdworld dsa sadsa as asdas asdworld dsa sadsa as asdas asdworld dsa sadsa as asdas asdworld dsa sadsa as asdas asdworld\n\ttest"
-        }
-        date={date3}
-      />
-    </>
+    <section className="flex flex-col justify-between">
+      <h3 className="text-5xl text-gray-800 dark:text-gray-100">
+        Latest posts
+      </h3>
+      <div className="mt-5 grid grid-rows-3 h-full gap-y-10">
+        <Posts />
+      </div>
+    </section>
   );
 }

@@ -7,6 +7,7 @@ import {
 } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 
+// TODO: pass error as string
 type ValidatedInputProps<T extends FieldValues> =
   React.InputHTMLAttributes<HTMLInputElement> & {
     name: keyof T;

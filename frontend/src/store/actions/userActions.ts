@@ -7,7 +7,7 @@ export const fetchUser = createAsyncThunk(
   async (id: string | undefined, { rejectWithValue }) => {
     try {
       const response = await $api.get<{ user: User & { canEdit: boolean } }>(
-        `user${id ? "/" + id : ""}`,
+        `user${id ? `/${id}` : ""}`,
       );
       return response.data.user;
     } catch (e) {

@@ -1,5 +1,7 @@
-export const calculateTimeAgo = (date: Date) => {
-  const pastMillis = Date.now() - date.getTime();
+export const calculateTimeAgo = (date: Date | string) => {
+  const pastMillis =
+    Date.now() -
+    (typeof date == "string" ? new Date(date).getTime() : date.getTime());
 
   const minutes = Math.ceil(pastMillis / 1000 / 60);
   const hours = Math.floor(minutes / 60);

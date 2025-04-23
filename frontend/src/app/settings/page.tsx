@@ -13,6 +13,7 @@ import { TEXT_TYPE_OPTIONS } from "@/app/settings/constants";
 import type { TextDefaultType } from "@models/Settings";
 import Button from "@components/shared/Button";
 import { useEffect } from "react";
+import { saveSettingsToStorage } from "@utils/settings";
 
 interface SettingsForm {
   textDefaultType: TextDefaultType;
@@ -20,63 +21,66 @@ interface SettingsForm {
 
 export default function SettingsPage() {
   const dispatch = useAppDispatch();
-  const {
-    settings: { textDefaultType, theme },
-    isLoading,
-    error,
-  } = useAppSelector((state) => state.settingsSlice);
+  const settings = useAppSelector((state) => state.settingsReducer.settings);
 
-  const { control, handleSubmit, setValue } = useForm<SettingsForm>({
-    defaultValues: {
-      textDefaultType,
-    },
+  const { control, handleSubmit, setValue, watch } = useForm<SettingsForm>({
+    defaultValues: { textDefaultType: settings.textDefaultType },
   });
 
   useEffect(() => {
     dispatch(parseSettings());
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
-    if (textDefaultType) {
-      setValue("textDefaultType", textDefaultType);
+    if (settings.textDefaultType) {
+      setValue("textDefaultType", settings.textDefaultType);
     }
-  }, [textDefaultType]);
+  }, [settings.textDefaultType, setValue]);
+
+  useEffect(() => {
+    const subscription = watch((value) => {
+      saveSettingsToStorage({
+        ...settings,
+        textDefaultType: value.textDefaultType as TextDefaultType,
+      });
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, settings]);
 
   const onSubmit: SubmitHandler<SettingsForm> = (data) => {
-    dispatch(saveSettings({ ...data, theme }));
+    dispatch(saveSettings({ ...data, theme: settings.theme }));
   };
 
   return (
     <main className="mt-20 h-[20vh]">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className={"grid grid-rows-2 gap-y-10"}
+        className="grid grid-rows-2 gap-y-10"
       >
-        <div className={"flex space-x-10 items-center"}>
+        <div className="flex space-x-10 items-center">
           <h1 className="text-gray-800 dark:text-gray-100 text-5xl">
             Settings
           </h1>
           <Submit />
-          <Button name={"Fetch"} onClick={() => dispatch(fetchSettings())} />
+          <Button name="Fetch" onClick={() => dispatch(fetchSettings())} />
         </div>
+
         <div className="flex items-center gap-x-5">
           <span className="font-semibold text-gray-800 dark:text-gray-100 text-2xl">
             Text default type
           </span>
-          {!isLoading && !error && (
-            <Controller
-              name="textDefaultType"
-              control={control}
-              rules={{ required: true }}
-              render={({ field, formState: { errors } }) => (
-                <ValidatedSelect
-                  {...field}
-                  options={TEXT_TYPE_OPTIONS}
-                  errors={errors}
-                />
-              )}
-            />
-          )}
+          <Controller
+            name="textDefaultType"
+            control={control}
+            rules={{ required: true }}
+            render={({ field, fieldState }) => (
+              <ValidatedSelect
+                {...field}
+                options={TEXT_TYPE_OPTIONS}
+                error={fieldState.error ? fieldState.error.message : undefined}
+              />
+            )}
+          />
         </div>
       </form>
     </main>

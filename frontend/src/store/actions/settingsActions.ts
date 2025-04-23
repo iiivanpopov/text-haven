@@ -20,7 +20,7 @@ export const parseSettings = () => (dispatch: AppDispatch) => {
 
 export const toggleTheme =
   () => (dispatch: AppDispatch, getState: () => RootState) => {
-    const currentSettings = getState().settingsSlice.settings;
+    const currentSettings = getState().settingsReducer.settings;
     const newTheme: Theme = currentSettings.theme === "dark" ? "light" : "dark";
 
     const updatedSettings = {
@@ -43,7 +43,6 @@ export const fetchSettings = createAsyncThunk<
     const settings = data.settings;
 
     dispatch(setSettings(settings));
-    dispatch(setTheme(settings.theme));
     applyTheme(settings.theme);
     saveSettingsToStorage(settings);
 

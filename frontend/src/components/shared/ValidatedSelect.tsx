@@ -1,21 +1,16 @@
 import React, { SelectHTMLAttributes } from "react";
-import { DeepRequired, FieldErrors, FieldValues } from "react-hook-form";
 
-type ValidatedSelectType<T extends FieldValues> =
-  SelectHTMLAttributes<HTMLSelectElement> & {
-    name: keyof T;
-    options: { value: string; name: string }[];
-    errors: Partial<FieldErrors<DeepRequired<T>>>;
-  };
-
-export default function ValidatedSelect<T extends FieldValues>({
+export default function ValidatedSelect({
   name,
-  errors,
+  error,
   className,
   options,
   ...props
-}: ValidatedSelectType<T>) {
-  const error = errors[name] as FieldValues | undefined;
+}: SelectHTMLAttributes<HTMLSelectElement> & {
+  name: string;
+  options: { value: string; name: string }[];
+  error: string | undefined;
+}) {
   return (
     <div className={"flex flex-col"}>
       <select
@@ -34,9 +29,7 @@ export default function ValidatedSelect<T extends FieldValues>({
           </option>
         ))}
       </select>
-      <span className={"text-red-400 dark:text-red-500"}>
-        {error?.message && error.message}
-      </span>
+      <span className={"text-red-400 dark:text-red-500"}>{error}</span>
     </div>
   );
 }

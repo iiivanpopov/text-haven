@@ -12,7 +12,7 @@ type Props = {
 
 function ThemeButton({ className }: Props) {
   const dispatch = useAppDispatch();
-  const theme = useAppSelector((state) => state.settingsSlice.settings.theme);
+  const theme = useAppSelector((state) => state.settingsReducer.settings.theme);
   const [mounted, setMounted] = useState(false);
 
   const Icon = useMemo(() => (theme === "light" ? Sun : Moon), [theme]);
