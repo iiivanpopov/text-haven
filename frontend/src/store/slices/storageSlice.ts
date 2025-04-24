@@ -1,12 +1,12 @@
 import { TextType } from "@models/Settings";
 import { Exposure } from "@models/User";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { fetchStorage } from "@store/actions/storageActions";
+import { createFolder, fetchStorage } from "@store/actions/storageActions";
 
 export interface Folder {
   id: string;
   userId: string;
-  parentId: string | null;
+  parentId: string | undefined;
   name: string;
   exposure: Exposure;
   createdAt: string;
@@ -68,6 +68,19 @@ const storageSlice = createSlice({
         state.isLoading = false;
       })
       .addCase(fetchStorage.pending, (state) => {
+        state.isLoading = true;
+      })
+
+      // TODO: update storage state after creating folder
+      .addCase(createFolder.fulfilled, (state) => {
+        state.error = "";
+        state.isLoading = false;
+      })
+      .addCase(createFolder.rejected, (state, action) => {
+        state.error = action.error.message || "Unknown error";
+        state.isLoading = false;
+      })
+      .addCase(createFolder.pending, (state) => {
         state.isLoading = true;
       });
   },

@@ -40,7 +40,7 @@ export default function Storage({ params }: StorageProps) {
 
     const regex = new RegExp(search, "idu");
     dispatch(filterStorage(regex));
-  }, [search, dispatch]);
+  }, [search]);
 
   if (error) return <div>{error}</div>;
   if (isLoading) return <div>Loading...</div>;
@@ -59,7 +59,6 @@ export default function Storage({ params }: StorageProps) {
       />
 
       <CreateNew canCreateFile={!isRoot} />
-
       {(isRoot
         ? (filteredStorage as Folder[])
         : (filteredStorage as Storage).folders

@@ -22,6 +22,21 @@ export const fetchStorage = createAsyncThunk(
   },
 );
 
+export const createFolder = createAsyncThunk(
+  "storage/create_folder",
+  async (
+    folder: Omit<Folder, "id" | "createdAt" | "userId">,
+    { rejectWithValue },
+  ) => {
+    try {
+      const response = await api.post("folders", { ...folder });
+      return response.data;
+    } catch (e) {
+      return rejectWithValue(e);
+    }
+  },
+);
+
 export const filterStorage =
   (regex: RegExp | null) =>
   (dispatch: AppDispatch, getState: () => RootState) => {

@@ -6,12 +6,18 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { twMerge } from "tailwind-merge";
+import { useAppDispatch, useAppSelector } from "@hooks/redux";
+import { createFolder } from "@store/actions/storageActions";
+import { Storage } from "@store/slices/storageSlice";
 
 export default function CreateNew({
   canCreateFile,
 }: {
   canCreateFile: boolean;
 }) {
+  const dispatch = useAppDispatch();
+  const { storage, isRoot } = useAppSelector((state) => state.storageReducer);
+
   const [showInput, setShowInput] = useState(false);
   const [title, setTitle] = useState("");
 
@@ -21,10 +27,18 @@ export default function CreateNew({
   };
 
   const handleSave = () => {
-    if (!title) {
+    if (!title.trim()) {
       return;
     }
-    console.log("Saving folder:", title);
+
+    dispatch(
+      createFolder({
+        name: title.trim(),
+        parentId: isRoot ? undefined : ((storage as Storage)?.id ?? undefined),
+        exposure: "PRIVATE",
+      }),
+    );
+
     setShowInput(false);
   };
 
