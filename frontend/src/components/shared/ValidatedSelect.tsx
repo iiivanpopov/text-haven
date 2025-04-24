@@ -1,4 +1,5 @@
 import React, { SelectHTMLAttributes } from "react";
+import { twMerge } from "tailwind-merge";
 
 export default function ValidatedSelect({
   name,
@@ -15,9 +16,10 @@ export default function ValidatedSelect({
     <div className={"flex flex-col"}>
       <select
         {...props}
-        className={
-          "px-5 bg-gray-100 dark:bg-gray-950 h-10 rounded-md text-md text-gray-700 dark:text-gray-300 outline-none transition-colors duration-300 cursor-pointer"
-        }
+        className={twMerge(
+          "px-5 bg-gray-100 dark:bg-gray-950 h-10 rounded-md text-md text-gray-700 dark:text-gray-300 outline-none transition-colors duration-300 cursor-pointer",
+          className,
+        )}
       >
         {options.map(({ name, value }) => (
           <option

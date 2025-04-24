@@ -1,2 +1,2 @@
 export type Exposure = "PUBLIC" | "PRIVATE";
-export type Expiration = number | "never";
+export type Expiration = string;

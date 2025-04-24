@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "@/api";
 import {
+  File,
   Folder,
   setFilteredStorage,
   Storage,
@@ -22,6 +23,19 @@ export const fetchStorage = createAsyncThunk(
   },
 );
 
+export const fetchFolders = createAsyncThunk(
+  "storage/fetch_folders",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get<{ data: Folder[] }>(`folders`);
+
+      return response.data.data;
+    } catch (e) {
+      return rejectWithValue(e);
+    }
+  },
+);
+
 export const createFolder = createAsyncThunk(
   "storage/create_folder",
   async (
@@ -30,6 +44,21 @@ export const createFolder = createAsyncThunk(
   ) => {
     try {
       const response = await api.post("folders", { ...folder });
+      return response.data;
+    } catch (e) {
+      return rejectWithValue(e);
+    }
+  },
+);
+
+export const createFile = createAsyncThunk(
+  "storage/create_file",
+  async (
+    file: Omit<File, "createdAt" | "id" | "userId"> & { content: string },
+    { rejectWithValue },
+  ) => {
+    try {
+      const response = await api.post<{ file: File }>("files", { ...file });
       return response.data;
     } catch (e) {
       return rejectWithValue(e);

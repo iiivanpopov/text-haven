@@ -25,6 +25,7 @@ export default class CloudService {
     private cache: Cache,
   ) {}
 
+  // TODO: rework? add caching.
   async getStorage(
     userId: string,
     folderId?: string,

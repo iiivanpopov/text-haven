@@ -23,6 +23,7 @@ class Logger {
         console.error(
           `[${timestamp}] [ERROR]: ${message} - ${error.message} (Status: ${error.status})`,
         );
+        console.log(error.errors);
       } else if (error instanceof Error) {
         console.error(
           `[${timestamp}] [ERROR]: ${message} - ${error.message}\nStack: ${error.stack}`,
@@ -37,6 +38,7 @@ class Logger {
         console.error(
           `[${timestamp}] [ERROR]: ${error.message} (Status: ${error.status})`,
         );
+        console.log(error.errors);
       } else if (error instanceof Error) {
         console.error(
           `[${timestamp}] [ERROR]: ${error.message}\nStack: ${error.stack}`,

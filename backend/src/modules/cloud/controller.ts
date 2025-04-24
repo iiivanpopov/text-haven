@@ -61,7 +61,6 @@ class CloudController {
     try {
       const userId = req.user.id;
       const { name, folderId, expiresAt, exposure, content, type } = req.body;
-
       const file = await this.cloudService.createFile(
         userId,
         folderId,

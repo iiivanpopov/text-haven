@@ -1,85 +1,176 @@
 "use client";
 
-import Button from "@components/shared/Button";
-import Input from "@components/shared/Input";
-import Select from "@components/shared/Select";
-import TextArea from "@components/shared/TextArea";
-import { useState } from "react";
-import {
-  EXPIRY_OPTIONS,
-  EXPOSURE_OPTIONS,
-  FOLDER_OPTIONS,
-} from "./constants/constants";
+import { EXPIRY_OPTIONS, EXPOSURE_OPTIONS } from "./constants/constants";
 import type { Expiration, Exposure } from "./types/types";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { useAppDispatch, useAppSelector } from "@hooks/redux";
+import ValidatedInput from "@components/shared/ValidatedInput";
+import ValidatedSelect from "@components/shared/ValidatedSelect";
+import Submit from "@components/shared/Submit";
+import { useEffect, useMemo } from "react";
+import ValidatedTextarea from "@components/shared/ValidatedTextarea";
+import { createFile, fetchFolders } from "@store/actions/storageActions";
+import { TextType } from "@models/Settings";
+import { TEXT_TYPE_OPTIONS } from "@/app/settings/constants";
 
-export default function New() {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [exposure, setExposure] = useState<Exposure>("PRIVATE");
-  const [expiresIn, setExpiresIn] = useState<Expiration>(
-    EXPIRY_OPTIONS[0].value,
-  );
-  const [folderId, setFolderId] = useState<string>(FOLDER_OPTIONS[0].value);
+interface NewFileFields {
+  folderId: string;
+  exposure: Exposure;
+  content: string;
+  title: string;
+  type: TextType;
+  expiresIn: Expiration;
+}
 
-  const handleCreate = () => {
-    console.log({ title, content, exposure, expiresIn, folderId });
+export default function NewFile() {
+  useEffect(() => {
+    dispatch(fetchFolders());
+  }, []);
+
+  const { allFolders } = useAppSelector((state) => state.storageReducer);
+  const dispatch = useAppDispatch();
+
+  const { control, handleSubmit, setValue } = useForm<NewFileFields>({
+    defaultValues: {
+      folderId: "",
+      exposure: EXPOSURE_OPTIONS[0].value,
+      content: "",
+      title: "",
+      type: TEXT_TYPE_OPTIONS[0].value,
+      expiresIn: EXPIRY_OPTIONS[0].value,
+    },
+  });
+
+  const onSubmit: SubmitHandler<NewFileFields> = (data) => {
+    // TODO: use single object type
+    const now = new Date();
+    dispatch(
+      createFile({
+        name: data.title,
+        expiresAt:
+          data.expiresIn == "never"
+            ? new Date(Number.MAX_SAFE_INTEGER).toISOString()
+            : new Date(now + data.expiresIn).toISOString(),
+        folderId: data.folderId,
+        exposure: data.exposure,
+        type: data.type,
+        content: data.content,
+      }),
+    );
   };
+
+  const FOLDERS: { name: string; value: string }[] = useMemo(() => {
+    return allFolders.map((folder) => {
+      return { name: folder.name, value: folder.id };
+    });
+  }, [allFolders]);
+
+  useEffect(() => {
+    if (FOLDERS[0]) {
+      setValue("folderId", FOLDERS[0].value);
+    }
+  }, [FOLDERS]);
 
   return (
     <div className="mt-20 grid grid-cols-[2fr_7fr]">
-      <div className="flex flex-col">
-        <Input
-          className="p-2"
-          placeholder="Enter a title"
-          value={title}
-          name="Title"
-          onChange={(e) => setTitle(e.target.value)}
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
+        <Controller
+          control={control}
+          name={"title"}
+          rules={{ required: { message: "Title is required", value: true } }}
+          render={({ field, formState: { errors } }) => (
+            <ValidatedInput
+              {...field}
+              errors={errors}
+              placeholder="Enter a title"
+              className="p-0"
+            />
+          )}
         />
 
         <div className="flex flex-wrap gap-4">
-          <Select
-            value={exposure}
-            name="Exposure"
-            options={EXPOSURE_OPTIONS}
-            onChange={(e) => {
-              const value = e.target.value as Exposure;
-              setExposure(value);
+          <Controller
+            control={control}
+            name={"exposure"}
+            rules={{
+              required: { message: "Exposure is required", value: true },
             }}
+            render={({ field, fieldState: { error } }) => (
+              <ValidatedSelect
+                {...field}
+                error={error ? error.message : undefined}
+                options={EXPOSURE_OPTIONS}
+                className="p-0"
+              />
+            )}
           />
 
-          <Select
-            value={String(expiresIn)}
-            name="Expires In"
-            options={EXPIRY_OPTIONS.map((opt) => ({
-              name: opt.name,
-              value: String(opt.value),
-            }))}
-            onChange={(e) => {
-              const val = e.target.value;
-              setExpiresIn(val == "never" ? "never" : Number(val));
+          <Controller
+            control={control}
+            name={"expiresIn"}
+            rules={{
+              required: { message: "Expiration time is required", value: true },
             }}
+            render={({ field, fieldState: { error } }) => (
+              <ValidatedSelect
+                {...field}
+                error={error ? error.message : undefined}
+                options={EXPIRY_OPTIONS}
+                className="p-0"
+              />
+            )}
+          />
+
+          <Controller
+            control={control}
+            name={"type"}
+            rules={{
+              required: { message: "Text type is required", value: true },
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <ValidatedSelect
+                {...field}
+                error={error ? error.message : undefined}
+                options={TEXT_TYPE_OPTIONS}
+                className="p-0"
+              />
+            )}
           />
         </div>
 
-        <Select
-          value={folderId}
-          name={"Folder name"}
-          options={FOLDER_OPTIONS}
-          onChange={(e) => setFolderId(e.target.value)}
+        <Controller
+          control={control}
+          name={"folderId"}
+          rules={{
+            required: { message: "Folder is required", value: true },
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <ValidatedSelect
+              {...field}
+              error={error ? error.message : undefined}
+              options={FOLDERS}
+              className="p-0"
+            />
+          )}
         />
 
-        <Button
-          onClick={handleCreate}
-          name="Create New"
-          className="mt-4 bg-green-500 dark:bg-green-600 hover:bg-green-600 dark:hover:bg-green-700"
-        />
-      </div>
+        <Submit />
+      </form>
 
-      <TextArea
-        className="p-2"
-        placeholder="Enter your content"
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
+      <Controller
+        control={control}
+        name={"content"}
+        rules={{
+          required: { message: "Content is required", value: true },
+        }}
+        render={({ field, fieldState: { error } }) => (
+          <ValidatedTextarea
+            {...field}
+            error={error ? error.message : undefined}
+            className="p-2"
+            placeholder="Enter your content"
+          />
+        )}
       />
     </div>
   );

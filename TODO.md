@@ -5,6 +5,8 @@
 ### Frontend
 
 - Optimize frontend components
+- Refactor shared components
+- Refactor whole project
 - Dockerize
 
 ### Backend

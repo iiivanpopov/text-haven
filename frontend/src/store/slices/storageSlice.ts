@@ -1,7 +1,11 @@
 import { TextType } from "@models/Settings";
 import { Exposure } from "@models/User";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { createFolder, fetchStorage } from "@store/actions/storageActions";
+import {
+  createFolder,
+  fetchFolders,
+  fetchStorage,
+} from "@store/actions/storageActions";
 
 export interface Folder {
   id: string;
@@ -12,13 +16,13 @@ export interface Folder {
   createdAt: string;
 }
 
-interface File {
+export interface File {
   id: string;
   userId: string;
   folderId: string;
   name: string;
   exposure: Exposure;
-  expiresAt: string;
+  expiresAt: Date | string;
   type: TextType;
   createdAt: string;
 }
@@ -34,6 +38,7 @@ interface StorageState {
   isLoading: boolean;
   error: string;
   storage: Storage | Folder[];
+  allFolders: Folder[];
   isRoot: boolean;
   filteredStorage: Storage | Folder[];
 }
@@ -44,6 +49,7 @@ const initialState: StorageState = {
   isRoot: true,
   storage: [],
   filteredStorage: [],
+  allFolders: [],
 };
 
 const storageSlice = createSlice({
@@ -81,6 +87,19 @@ const storageSlice = createSlice({
         state.isLoading = false;
       })
       .addCase(createFolder.pending, (state) => {
+        state.isLoading = true;
+      })
+
+      .addCase(fetchFolders.fulfilled, (state, action) => {
+        state.error = "";
+        state.allFolders = action.payload;
+        state.isLoading = false;
+      })
+      .addCase(fetchFolders.rejected, (state, action) => {
+        state.error = action.error.message || "Unknown error";
+        state.isLoading = false;
+      })
+      .addCase(fetchFolders.pending, (state) => {
         state.isLoading = true;
       });
   },
