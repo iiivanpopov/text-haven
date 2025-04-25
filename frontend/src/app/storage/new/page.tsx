@@ -10,7 +10,7 @@ import Submit from "@components/shared/Submit";
 import { useEffect, useMemo } from "react";
 import ValidatedTextarea from "@components/shared/ValidatedTextarea";
 import { createFile, fetchFolders } from "@store/actions/storageActions";
-import { TextType } from "@models/Settings";
+import type { TextType } from "@models/Settings";
 import { TEXT_TYPE_OPTIONS } from "@/app/settings/constants";
 
 interface NewFileFields {
@@ -47,10 +47,9 @@ export default function NewFile() {
     dispatch(
       createFile({
         name: data.title,
-        expiresAt:
-          data.expiresIn == "never"
-            ? new Date(Number.MAX_SAFE_INTEGER).toISOString()
-            : new Date(now + data.expiresIn).toISOString(),
+        expiresAt: new Date(
+          now.getTime() + Number(data.expiresIn),
+        ).toISOString(),
         folderId: data.folderId,
         exposure: data.exposure,
         type: data.type,

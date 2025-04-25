@@ -3,6 +3,7 @@ import { Exposure } from "@models/User";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
   createFolder,
+  fetchFile,
   fetchFolders,
   fetchStorage,
 } from "@store/actions/storageActions";
@@ -39,6 +40,7 @@ interface StorageState {
   error: string;
   storage: Storage | Folder[];
   allFolders: Folder[];
+  currentFile: (File & { content: string }) | undefined;
   isRoot: boolean;
   filteredStorage: Storage | Folder[];
 }
@@ -49,6 +51,7 @@ const initialState: StorageState = {
   isRoot: true,
   storage: [],
   filteredStorage: [],
+  currentFile: undefined,
   allFolders: [],
 };
 
@@ -100,6 +103,19 @@ const storageSlice = createSlice({
         state.isLoading = false;
       })
       .addCase(fetchFolders.pending, (state) => {
+        state.isLoading = true;
+      })
+
+      .addCase(fetchFile.fulfilled, (state, action) => {
+        state.error = "";
+        state.currentFile = action.payload;
+        state.isLoading = false;
+      })
+      .addCase(fetchFile.rejected, (state, action) => {
+        state.error = action.error.message || "Unknown error";
+        state.isLoading = false;
+      })
+      .addCase(fetchFile.pending, (state) => {
         state.isLoading = true;
       });
   },

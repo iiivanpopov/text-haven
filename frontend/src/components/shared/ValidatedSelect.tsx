@@ -1,4 +1,4 @@
-import React, { SelectHTMLAttributes } from "react";
+import React, { type SelectHTMLAttributes } from "react";
 import { twMerge } from "tailwind-merge";
 
 export default function ValidatedSelect({
@@ -9,7 +9,7 @@ export default function ValidatedSelect({
   ...props
 }: SelectHTMLAttributes<HTMLSelectElement> & {
   name: string;
-  options: { value: string; name: string }[];
+  options: { value: string | number; name: string }[];
   error: string | undefined;
 }) {
   return (
@@ -24,7 +24,7 @@ export default function ValidatedSelect({
         {options.map(({ name, value }) => (
           <option
             key={value}
-            value={value}
+            value={String(value)}
             className={"bg-inherit text-inherit"}
           >
             {name}

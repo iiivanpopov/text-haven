@@ -1,74 +1,35 @@
 "use client";
 
-type FileStructure = {
-  name: string;
-  id: string;
-  content: string;
-};
-
-type FolderStructure = {
-  name: string;
-  id: string;
-};
-
-type FileSystem = {
-  folders?: FolderStructure[];
-  files?: FileStructure[];
-};
-
-//example api response
-const fakeResponse: {
-  status: number;
-  data: FileSystem;
-} = {
-  status: 200,
-  data: {
-    files: [
-      {
-        name: "Root File 1",
-        id: "a",
-        content:
-          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi voluptas amet sed adipisci fugit neque quo ipsa veniam aliquid officia? Fugiat a accusamus quo. Ut iure possimus odit reiciendis aliquid.",
-      },
-      { name: "Root File 2", id: "b", content: "Content 1" },
-    ],
-  },
-};
-
 import Input from "@components/shared/Input";
 import TextArea from "@components/shared/TextArea";
 import { use, useEffect, useState } from "react";
 import ChangeModeBtn from "../components/ChangeModeBtn";
 import Content from "../components/Content";
+import { useAppDispatch, useAppSelector } from "@hooks/redux";
+import { fetchFile } from "@store/actions/storageActions";
 
 const isUserOwner = true;
 
 export default function Text({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
 
+  const { currentFile } = useAppSelector((state) => state.storageReducer);
+  const dispatch = useAppDispatch();
+
   const [mode, setMode] = useState<"edit" | "read">("read");
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
 
   useEffect(() => {
-    const fileData = fakeResponse.data.files?.find((file) => file.id == id);
-    if (!fileData) {
-      return;
-    }
-
-    setTitle(fileData.name);
-    setContent(fileData.content);
+    if (id.trim()) dispatch(fetchFile(id));
   }, []);
 
-  if (fakeResponse.status !== 200) {
-    return (
-      <div className="mt-10">
-        <h3 className="text-red-400 dark:text-red-500 text-6xl font-semibold">
-          Not found
-        </h3>
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (!currentFile) return;
+
+    setTitle(currentFile.name);
+    setContent(currentFile.content);
+  }, [currentFile]);
 
   return (
     <div className="mt-10 grid grid-rows-[5vh_1fr]">

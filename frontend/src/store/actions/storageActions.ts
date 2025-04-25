@@ -8,6 +8,25 @@ import {
 } from "@store/slices/storageSlice";
 import { AppDispatch, RootState } from "@store/store";
 
+export const fetchFile = createAsyncThunk(
+  "storage/fetch_file",
+  async (fileId: string, { rejectWithValue }) => {
+    try {
+      // FIXME: its terrible
+      const metadata = await api.get<{ data: { data: File } }>(
+        `files?fileId=${fileId}`,
+      );
+      const response = await api.get<{ content: string }>(
+        `files/${fileId}/content`,
+      );
+
+      return { ...metadata.data.data.data, content: response.data.content };
+    } catch (e) {
+      return rejectWithValue(e);
+    }
+  },
+);
+
 export const fetchStorage = createAsyncThunk(
   "storage/fetch",
   async (folderId: string | undefined, { rejectWithValue }) => {
