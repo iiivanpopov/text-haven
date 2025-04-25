@@ -30,7 +30,7 @@ class CloudController {
   ): Promise<void> => {
     try {
       const posts = await this.cloudService.getLatestPosts();
-      res.status(200).json({ posts });
+      res.status(200).json({ message: "Fetched latest posts", data: posts });
     } catch (error) {
       next(error);
     }
@@ -51,7 +51,7 @@ class CloudController {
         name,
         exposure,
       );
-      res.status(201).json({ folder });
+      res.status(201).json({ message: "Folder created", data: folder });
     } catch (error) {
       next(error);
     }
@@ -70,7 +70,7 @@ class CloudController {
         type,
         expiresAt,
       );
-      res.status(201).json({ file });
+      res.status(201).json({ message: "File created", data: file });
     } catch (error) {
       next(error);
     }
@@ -91,7 +91,7 @@ class CloudController {
         folderId: folderId as string,
       });
 
-      res.status(200).json({ data });
+      res.status(200).json({ message: "Fetched folders", data });
     } catch (error) {
       next(error);
     }
@@ -108,7 +108,7 @@ class CloudController {
         fileId: fileId as string,
       });
 
-      res.status(200).json({ data });
+      res.status(200).json({ message: "Fetched files", data });
     } catch (error) {
       next(error);
     }
@@ -120,7 +120,7 @@ class CloudController {
       const userId = req.user.id;
 
       const content = await this.cloudService.getFileContent(id, userId);
-      res.status(200).json({ content });
+      res.status(200).json({ message: "Fetched file content", data: content });
     } catch (error) {
       next(error);
     }
@@ -136,7 +136,7 @@ class CloudController {
       const userId = req.user.id;
 
       const folders = await this.cloudService.deleteFolder(userId, id);
-      res.status(200).json({ folders });
+      res.status(200).json({ message: "Folder deleted", data: folders });
     } catch (error) {
       next(error);
     }
@@ -148,7 +148,7 @@ class CloudController {
       const { id } = req.params;
 
       const file = await this.cloudService.deleteFile(userId, id);
-      res.status(200).json({ file });
+      res.status(200).json({ message: "File deleted", data: file });
     } catch (error) {
       next(error);
     }
@@ -161,7 +161,7 @@ class CloudController {
       const { body: payload } = req;
 
       const folder = await this.cloudService.updateFolder(userId, id, payload);
-      res.status(200).json({ folder });
+      res.status(200).json({ message: "Folder updated", data: folder });
     } catch (error) {
       next(error);
     }
@@ -174,7 +174,7 @@ class CloudController {
       const userId = req.user.id;
 
       const file = await this.cloudService.updateFile(userId, id, payload);
-      res.status(200).json({ file });
+      res.status(200).json({ message: "File updated", data: file });
     } catch (error) {
       next(error);
     }
@@ -195,7 +195,7 @@ class CloudController {
         id,
         content,
       );
-      res.status(200).json({ file });
+      res.status(200).json({ message: "File content updated", data: file });
     } catch (error) {
       next(error);
     }

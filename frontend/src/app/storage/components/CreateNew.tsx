@@ -1,23 +1,17 @@
 "use client";
 
-import Button from "@components/shared/Button";
-import Input from "@components/shared/Input";
+import Button from "@shared/ui/user-input/button";
+import Input from "@shared/ui/user-input/input";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { twMerge } from "tailwind-merge";
-import { useAppDispatch, useAppSelector } from "@hooks/redux";
-import { createFolder } from "@store/actions/storageActions";
-import { Storage } from "@store/slices/storageSlice";
 
 export default function CreateNew({
   canCreateFile,
 }: {
   canCreateFile: boolean;
 }) {
-  const dispatch = useAppDispatch();
-  const { storage, isRoot } = useAppSelector((state) => state.storageReducer);
-
   const [showInput, setShowInput] = useState(false);
   const [title, setTitle] = useState("");
 
@@ -30,14 +24,6 @@ export default function CreateNew({
     if (!title.trim()) {
       return;
     }
-
-    dispatch(
-      createFolder({
-        name: title.trim(),
-        parentId: isRoot ? undefined : ((storage as Storage)?.id ?? undefined),
-        exposure: "PRIVATE",
-      }),
-    );
 
     setShowInput(false);
   };
@@ -62,7 +48,7 @@ export default function CreateNew({
           "opacity-0 group-hover:opacity-100 focus:opacity-100 transition-all",
         )}
         name="Create new folder"
-        ariaLabel="Create new folder"
+        aria-label="Create new folder"
       />
 
       {canCreateFile && (
@@ -87,7 +73,7 @@ export default function CreateNew({
             name="Input new folder name"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            ariaLabel="New folder name"
+            aria-label="New folder name"
           />
 
           <div className="absolute right-0 z-30 flex space-x-2 mr-5">
@@ -95,14 +81,14 @@ export default function CreateNew({
               className="bg-red-400 hover:bg-red-500 text-white"
               name="Cancel"
               onClick={handleCancel}
-              ariaLabel="Cancel"
+              aria-label="Cancel"
             />
 
             <Button
               className="bg-green-400 hover:bg-green-500 text-white"
               name="Save"
               onClick={handleSave}
-              ariaLabel="Save"
+              aria-label="Save"
             />
           </div>
         </>

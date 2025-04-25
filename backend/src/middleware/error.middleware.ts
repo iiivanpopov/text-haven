@@ -9,17 +9,11 @@ export default (
   _next: NextFunction,
 ) => {
   const statusCode = err instanceof ApiError ? err.status : 500;
-  const message =
-    process.env.NODE_ENV === "production" && statusCode === 500
-      ? "Internal Server Error"
-      : err.message;
-  const errors = err instanceof ApiError ? err.errors : undefined;
 
   logger.error(err);
 
   res.status(statusCode).json({
-    status: "error",
-    message,
-    errors,
+    message: err.message || "Unknown error",
+    error: err instanceof ApiError ? err : ApiError.Internal(),
   });
 };

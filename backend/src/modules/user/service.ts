@@ -2,7 +2,7 @@ import ApiError from "@exceptions/ApiError";
 
 import PrivateUser from "@dtos/private.user.dto";
 import User from "@dtos/public.user.dto";
-import { FileType, type PrismaClient, type Settings } from "@prisma";
+import { type PrismaClient, type Settings, TextCategory } from "@prisma";
 import { Cache } from "@shared/cache";
 import { Jwt } from "@shared/jwt";
 import SettingsDto from "../../dtos/settings.dto";
@@ -44,7 +44,7 @@ export default class UserService {
   async fetchUser(
     userId: string,
     targetId?: string,
-  ): Promise<(PrivateUser | User) & { canEdit: boolean }> {
+  ): Promise<PrivateUser | User> {
     const isOtherUser = targetId && userId !== targetId;
     const effectiveUserId = isOtherUser ? targetId : userId;
 
@@ -58,7 +58,7 @@ export default class UserService {
             ? new PrivateUser(cached)
             : new User(cached);
 
-        return { ...userInstance, canEdit: !isOtherUser };
+        return { ...userInstance };
       }
     }
 
@@ -79,18 +79,19 @@ export default class UserService {
         ? new PrivateUser(user)
         : new User(user);
 
-    return { ...userInstance, canEdit: !isOtherUser };
+    return { ...userInstance };
   }
 
   async saveSettings(
     userId: string,
-    settings: { defaultTextType: FileType },
+    settings: { defaultTextType: TextCategory },
   ): Promise<Settings> {
     const settingsDto = new SettingsDto(settings);
     await this.cache.flush("settings", userId);
-    return this.prisma.settings.update({
+    return this.prisma.settings.upsert({
       where: { userId },
-      data: { ...settingsDto },
+      update: { ...settingsDto },
+      create: { userId, ...settingsDto },
     });
   }
 

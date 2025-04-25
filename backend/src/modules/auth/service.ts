@@ -29,7 +29,7 @@ export default class AuthService {
     });
 
     await this.prisma.settings.create({
-      data: { userId: user.id, textDefaultType: "NOTE", theme: "light" },
+      data: { userId: user.id, theme: "light", textCategory: "NOTE" },
     });
 
     return this.jwtService.updateTokens(user);
@@ -37,11 +37,11 @@ export default class AuthService {
 
   async login(email: string, password: string) {
     const user = await this.prisma.user.findUnique({ where: { email } });
-    if (!user) throw ApiError.NotFound("Password or user is incorrect");
+    if (!user) throw ApiError.NotFound("Password or email is incorrect");
 
     const isPassEquals = await Bun.password.verify(password, user.password);
     if (!isPassEquals) {
-      throw ApiError.BadRequest("Password or user is incorrect");
+      throw ApiError.BadRequest("Password or email is incorrect");
     }
 
     return this.jwtService.updateTokens(user);

@@ -1,13 +1,12 @@
 import FileDto from "@dtos/file.dto";
 import FolderDto from "@dtos/folder.dto";
-import PrivateUser from "@dtos/private.user.dto";
 import ApiError from "@exceptions/ApiError";
 import {
   Exposure,
   type File,
-  FileType,
   type Folder,
   type PrismaClient,
+  TextCategory,
 } from "@prisma";
 import { Cache } from "@shared/cache";
 import type { S3 } from "@shared/S3";
@@ -84,7 +83,7 @@ export default class CloudService {
     let clearPosts = false;
 
     const cacheTasks = expiredFiles.map(({ id, userId, folderId, type }) => {
-      if (type == FileType.POST) {
+      if (type == TextCategory.POST) {
         clearPosts = true;
       }
       return this.cache.flush("file", userId, { fileId: id, folderId });
@@ -135,7 +134,7 @@ export default class CloudService {
     if (cached) return cached;
 
     const latestPosts = await this.prisma.file.findMany({
-      where: { type: FileType.POST },
+      where: { type: TextCategory.POST },
       take: 3,
       orderBy: { createdAt: "desc" },
       select: { createdAt: true, userId: true, id: true, name: true },
@@ -144,7 +143,7 @@ export default class CloudService {
 
     const postsWithContent = await Promise.all(
       latestPosts.map(async (post) => {
-        const content = await this.getFileContent(post.id, post.userId);
+        const { content } = await this.getFileContent(post.id, post.userId);
         return {
           ...post,
           content: content.slice(0, 100),
@@ -235,7 +234,7 @@ export default class CloudService {
     parentId?: string,
     name: string = "Untitled",
     exposure: Exposure = Exposure.PRIVATE,
-  ): Promise<Folder & { user: PrivateUser }> {
+  ): Promise<Folder> {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) throw ApiError.BadRequest("User not found");
 
@@ -257,7 +256,7 @@ export default class CloudService {
 
     await this.cache.flush("folder", userId);
 
-    return { ...folder, user: new PrivateUser(user) };
+    return folder;
   }
 
   async createFile(
@@ -266,16 +265,14 @@ export default class CloudService {
     content: string,
     name: string = "Untitled",
     exposure: Exposure = Exposure.PRIVATE,
-    type: FileType = FileType.NOTE,
+    type: TextCategory = TextCategory.NOTE,
     expiresAt: Date = new Date(Number.MAX_SAFE_INTEGER),
-  ): Promise<File & { user: PrivateUser }> {
-    const [folder, user] = await Promise.all([
-      this.prisma.folder.findFirst({ where: { id: folderId } }),
-      this.prisma.user.findUnique({ where: { id: userId } }),
-    ]);
+  ): Promise<File> {
+    const folder = await this.prisma.folder.findFirst({
+      where: { id: folderId },
+    });
 
     if (!folder) throw ApiError.BadRequest("Folder not found");
-    if (!user) throw ApiError.BadRequest("User not found");
 
     const existingFile = await this.prisma.file.findFirst({
       where: { name, userId, folderId },
@@ -288,11 +285,11 @@ export default class CloudService {
 
     await this.cache.flush("file", userId, { folderId });
 
-    if (type == FileType.POST) await this.cache.remove("post");
+    if (type == TextCategory.POST) await this.cache.remove("post");
 
     await this.storageService.writeFile(file.id, content);
 
-    return { ...file, user: new PrivateUser(user) };
+    return file;
   }
 
   async deleteFile(userId: string, id: string): Promise<File> {
@@ -306,7 +303,7 @@ export default class CloudService {
       folderId: file.folderId,
     });
 
-    if (file.type == FileType.POST) await this.cache.remove("post");
+    if (file.type == TextCategory.POST) await this.cache.remove("post");
 
     await this.storageService.deleteFile(id);
 
@@ -316,7 +313,7 @@ export default class CloudService {
   async getFilesOrFile(
     userId: string,
     options: { folderId?: string; targetUserId?: string; fileId?: string },
-  ): Promise<{ data: File | File[]; user: PrivateUser }> {
+  ): Promise<File | File[]> {
     const { folderId, targetUserId, fileId } = options;
 
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
@@ -324,14 +321,12 @@ export default class CloudService {
     if (!user) throw ApiError.NotFound("User not found");
 
     if (fileId) {
-      const file = await this.getSingleFile(userId, {
+      return await this.getSingleFile(userId, {
         fileId,
       });
-      return { data: file, user: new PrivateUser(user) };
     }
 
-    const files = await this.getFileList(userId, { folderId, targetUserId });
-    return { data: files, user: new PrivateUser(user) };
+    return this.getFileList(userId, { folderId, targetUserId });
   }
 
   // TODO: integrate this fn and(maybe) move it to Cache class
@@ -391,7 +386,10 @@ export default class CloudService {
     );
   }
 
-  async getFileContent(id: string, userId: string): Promise<string> {
+  async getFileContent(
+    id: string,
+    userId: string,
+  ): Promise<{ content: string }> {
     const file = await this.prisma.file.findUnique({
       where: { id },
       select: { userId: true, exposure: true },
@@ -400,7 +398,8 @@ export default class CloudService {
     if (file.userId != userId && file.exposure != Exposure.PUBLIC)
       throw ApiError.Forbidden();
 
-    return this.storageService.getFileContent(id);
+    const content = await this.storageService.getFileContent(id);
+    return { content };
   }
 
   async updateFolder(
@@ -437,7 +436,7 @@ export default class CloudService {
       folderId: oldFile.folderId,
       fileId: id,
     });
-    if (oldFile.type == FileType.POST) await this.cache.remove("post");
+    if (oldFile.type == TextCategory.POST) await this.cache.remove("post");
 
     return this.prisma.file.update({ where: { id }, data: updateData });
   }

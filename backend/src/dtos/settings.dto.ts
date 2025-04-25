@@ -1,11 +1,11 @@
-import { FileType, Theme } from "@prisma";
+import { TextCategory, Theme } from "@prisma";
 
 export default class SettingsDto {
-  textDefaultType: FileType;
+  textCategory: TextCategory;
   theme: Theme;
 
   constructor(model: any) {
-    this.textDefaultType = model.textDefaultType;
+    this.textCategory = model.textCategory;
     this.theme = model.theme;
   }
 }

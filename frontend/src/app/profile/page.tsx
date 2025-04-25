@@ -1,7 +1,11 @@
-import Profile from "./[id]/page";
+import type { Metadata } from "next";
+import UserProfile from "@features/profile/ui/user-profile";
 
-export default function ProfilePage() {
-  return (
-    <Profile params={new Promise((resolve) => resolve({ id: undefined }))} />
-  );
+export const metadata: Metadata = {
+  title: "Profile | TextHaven",
+  description: "View your account here",
+};
+
+export default function Profile() {
+  return <UserProfile />;
 }

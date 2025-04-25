@@ -22,7 +22,7 @@ export default class AuthController {
           httpOnly: true,
         })
         .status(200)
-        .json(userData);
+        .json({ message: "Registration is successful", data: userData });
     } catch (error) {
       next(error);
     }
@@ -40,7 +40,7 @@ export default class AuthController {
           httpOnly: true,
         })
         .status(200)
-        .json(userData);
+        .json({ message: "Login is successful", data: userData });
     } catch (error) {
       next(error);
     }
@@ -69,7 +69,7 @@ export default class AuthController {
           httpOnly: true,
         })
         .status(200)
-        .json(userData);
+        .json({ message: "Refreshed access token", data: userData });
     } catch (error) {
       next(error);
     }

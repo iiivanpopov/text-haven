@@ -26,27 +26,10 @@
     ],
     "baseUrl": "src",
     "paths": {
-      "@components/*": [
-        "./components/*"
-      ],
-      "@utils/*": [
-        "./utils/*"
-      ],
-      "@hooks/*": [
-        "./hooks/*"
-      ],
-      "@/*": [
-        "./*"
-      ],
-      "@store/*": [
-        "./store/*"
-      ],
-      "@api": [
-        "./api/api"
-      ],
-      "@models/*": [
-        "./models/*"
-      ]
+      "@shared/*" : ["./shared/*"],
+      "@features/*": ["./features/*"],
+      "@entities/*": ["./entities/*"],
+      "@widgets/*": ["./widgets/*"]
     }
   },
   "include": [

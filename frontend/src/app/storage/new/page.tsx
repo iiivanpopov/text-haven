@@ -1,74 +1,26 @@
 "use client";
 
-import { EXPIRY_OPTIONS, EXPOSURE_OPTIONS } from "./constants/constants";
-import type { Expiration, Exposure } from "./types/types";
+import ValidatedInput from "@shared/ui/user-input/input";
+import { EXPIRY_OPTIONS, EXPOSURE_OPTIONS } from "./constants";
+import type { Expiration, Exposure } from "./types";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { useAppDispatch, useAppSelector } from "@hooks/redux";
-import ValidatedInput from "@components/shared/ValidatedInput";
-import ValidatedSelect from "@components/shared/ValidatedSelect";
-import Submit from "@components/shared/Submit";
-import { useEffect, useMemo } from "react";
-import ValidatedTextarea from "@components/shared/ValidatedTextarea";
-import { createFile, fetchFolders } from "@store/actions/storageActions";
-import type { TextType } from "@models/Settings";
-import { TEXT_TYPE_OPTIONS } from "@/app/settings/constants";
+import ValidatedSelect from "@shared/ui/user-input/select";
+import Submit from "@shared/ui/user-input/submit";
+import Textarea from "@shared/ui/user-input/textarea";
 
 interface NewFileFields {
   folderId: string;
   exposure: Exposure;
   content: string;
   title: string;
-  type: TextType;
+  type: string;
   expiresIn: Expiration;
 }
 
 export default function NewFile() {
-  useEffect(() => {
-    dispatch(fetchFolders());
-  }, []);
+  const { control, handleSubmit } = useForm<NewFileFields>();
 
-  const { allFolders } = useAppSelector((state) => state.storageReducer);
-  const dispatch = useAppDispatch();
-
-  const { control, handleSubmit, setValue } = useForm<NewFileFields>({
-    defaultValues: {
-      folderId: "",
-      exposure: EXPOSURE_OPTIONS[0].value,
-      content: "",
-      title: "",
-      type: TEXT_TYPE_OPTIONS[0].value,
-      expiresIn: EXPIRY_OPTIONS[0].value,
-    },
-  });
-
-  const onSubmit: SubmitHandler<NewFileFields> = (data) => {
-    // TODO: use single object type
-    const now = new Date();
-    dispatch(
-      createFile({
-        name: data.title,
-        expiresAt: new Date(
-          now.getTime() + Number(data.expiresIn),
-        ).toISOString(),
-        folderId: data.folderId,
-        exposure: data.exposure,
-        type: data.type,
-        content: data.content,
-      }),
-    );
-  };
-
-  const FOLDERS: { name: string; value: string }[] = useMemo(() => {
-    return allFolders.map((folder) => {
-      return { name: folder.name, value: folder.id };
-    });
-  }, [allFolders]);
-
-  useEffect(() => {
-    if (FOLDERS[0]) {
-      setValue("folderId", FOLDERS[0].value);
-    }
-  }, [FOLDERS]);
+  const onSubmit: SubmitHandler<NewFileFields> = (data) => {};
 
   return (
     <div className="mt-20 grid grid-cols-[2fr_7fr]">
@@ -77,10 +29,10 @@ export default function NewFile() {
           control={control}
           name={"title"}
           rules={{ required: { message: "Title is required", value: true } }}
-          render={({ field, formState: { errors } }) => (
+          render={({ field, fieldState: { error } }) => (
             <ValidatedInput
               {...field}
-              errors={errors}
+              error={error ? error.message : undefined}
               placeholder="Enter a title"
               className="p-0"
             />
@@ -130,7 +82,7 @@ export default function NewFile() {
               <ValidatedSelect
                 {...field}
                 error={error ? error.message : undefined}
-                options={TEXT_TYPE_OPTIONS}
+                options={[]}
                 className="p-0"
               />
             )}
@@ -147,7 +99,7 @@ export default function NewFile() {
             <ValidatedSelect
               {...field}
               error={error ? error.message : undefined}
-              options={FOLDERS}
+              options={[]}
               className="p-0"
             />
           )}
@@ -163,7 +115,7 @@ export default function NewFile() {
           required: { message: "Content is required", value: true },
         }}
         render={({ field, fieldState: { error } }) => (
-          <ValidatedTextarea
+          <Textarea
             {...field}
             error={error ? error.message : undefined}
             className="p-2"

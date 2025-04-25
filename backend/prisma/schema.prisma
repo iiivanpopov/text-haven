@@ -52,13 +52,13 @@ model Folder {
 }
 
 model File {
-  id        String   @id @default(cuid())
+  id        String       @id @default(cuid())
   userId    String
   folderId  String
-  name      String   @default("Untitled")
-  exposure  Exposure @default(PRIVATE)
+  name      String       @default("Untitled")
+  exposure  Exposure     @default(PRIVATE)
   expiresAt DateTime
-  type      FileType @default(NOTE)
+  type      TextCategory @default(NOTE)
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   folder Folder @relation(fields: [folderId], references: [id], onDelete: Cascade)
@@ -73,8 +73,8 @@ model Settings {
   id     String @id @default(cuid())
   userId String @unique
 
-  textDefaultType FileType @default(NOTE)
-  theme           Theme    @default(light)
+  textCategory TextCategory @default(NOTE)
+  theme        Theme        @default(light)
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -91,7 +91,7 @@ enum Exposure {
   PRIVATE
 }
 
-enum FileType {
+enum TextCategory {
   NOTE
   POST
 }
