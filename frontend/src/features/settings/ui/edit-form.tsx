@@ -8,10 +8,10 @@ import {
   useLazyGetSettingsQuery,
   useUpdateSettingsMutation,
 } from "@entities/settings/model/api";
-import type { TextCategory, Theme } from "@shared/types";
+import type { TextCategory } from "@shared/types";
 import { useEffect, useRef } from "react";
 import { setLocalSettings } from "@shared/lib/local-storage";
-import type { Settings } from "@entities/settings/types";
+import type { Settings, Theme } from "@entities/settings/types";
 import { TEXT_CATEGORIES, THEMES } from "@shared/constants/input-fields";
 import { useAppSelector } from "@shared/hooks/redux";
 import { applyTheme } from "@shared/lib/theme";

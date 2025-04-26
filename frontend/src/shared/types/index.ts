@@ -6,7 +6,6 @@ export type ApiResponse<T> = {
 
 export type Exposure = "PUBLIC" | "PRIVATE";
 export type TextCategory = "POST" | "NOTE";
-export type Theme = "dark" | "light";
-export type Role = "ADMIN" | "USER";
+
 type SelectOption<T = string> = { name: string; value: T };
 export type SelectOptions<T = string> = SelectOption<T>[];

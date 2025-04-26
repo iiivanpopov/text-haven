@@ -1,4 +1,6 @@
-import type { Exposure, Role } from "@shared/types";
+import type { Exposure } from "@shared/types";
+
+export type Role = "ADMIN" | "USER";
 
 export interface User {
   id: string;
