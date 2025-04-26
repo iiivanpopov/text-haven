@@ -2,25 +2,25 @@ import { Folder as Icon } from "lucide-react";
 import Link from "next/link";
 import { twMerge } from "tailwind-merge";
 
-export default function File({
+export default function Folder({
   className,
-  title,
-  folderId,
+  name,
+  id,
 }: {
-  folderId: string;
+  id: string;
   className?: string;
-  title: string;
+  name: string;
 }) {
   return (
     <Link
-      href={`/storage/${folderId}`}
+      href={`/storage/${id}`}
       className={twMerge(
         "hover:bg-gray-200 dark:hover:bg-gray-900 transition-colors flex items-center border-b-2 border-gray-300 dark:border-gray-700 text-xl text-gray-700 dark:text-gray-200 h-14",
         className,
       )}
     >
       <Icon size={32} className="text-gray-700 dark:text-gray-200" />
-      <span className="pl-10">{title}</span>
+      <span className="pl-10">{name}</span>
     </Link>
   );
 }

@@ -1,14 +1,10 @@
-import React from "react";
+import { type ReactNode } from "react";
 import "./globals.css";
 import StoreProvider from "@shared/ui/providers/store-provider";
 import Header from "@widgets/header";
 import Footer from "@widgets/footer";
 
-export default async function Layout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function Layout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body className="bg-gray-100 dark:bg-gray-950 text-gray-800 dark:text-gray-100 font-urbanist">

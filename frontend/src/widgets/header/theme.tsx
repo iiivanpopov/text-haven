@@ -1,20 +1,42 @@
 "use client";
 
 import { Moon, Sun } from "lucide-react";
-import { memo, useMemo } from "react";
+import { memo, useEffect, useMemo } from "react";
 import { twMerge } from "tailwind-merge";
-
-const theme = "light";
+import { setLocalSettings } from "@shared/lib/local-storage";
+import { setTheme } from "@entities/settings/model/slice";
+import { useAppDispatch, useAppSelector } from "@shared/hooks/redux";
+import { applyTheme } from "@shared/lib/theme";
 
 function Theme({ className }: { className: string }) {
-  const Icon = useMemo(() => (theme === "light" ? Sun : Moon), [theme]);
+  const { settings } = useAppSelector((state) => state.settingsReducer);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    applyTheme(settings.theme);
+  }, [settings.theme]);
+
+  const handleTheme = () => {
+    if (!settings.theme) return;
+    setLocalSettings({
+      ...settings,
+      theme: settings.theme == "light" ? "dark" : "light",
+    });
+
+    dispatch(setTheme(settings.theme == "light" ? "dark" : "light"));
+  };
+
+  const Icon = useMemo(
+    () => (settings.theme == "light" ? Sun : Moon),
+    [settings.theme],
+  );
 
   return (
     <button
       aria-label="Switch theme"
       title="Switch theme"
       role="switch"
-      onClick={() => {}}
+      onClick={handleTheme}
       className={twMerge(
         "group relative flex flex-col items-center text-gray-800 dark:text-gray-100 transition-colors duration-300",
         "cursor-pointer",

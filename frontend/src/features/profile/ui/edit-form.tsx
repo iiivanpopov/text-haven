@@ -1,15 +1,17 @@
+"use client";
+
 import { Controller, type SubmitHandler, useForm } from "react-hook-form";
 import ValidatedInput from "@shared/ui/user-input/input";
 import ValidatedSelect from "@shared/ui/user-input/select";
 import Submit from "@shared/ui/user-input/submit";
 import type { Exposure } from "@shared/types";
-import { EXPOSURES } from "features/profile/constants";
 import { useEffect } from "react";
 import {
   useGetUserQuery,
   useUpdateUserMutation,
-} from "@features/profile/model/api";
+} from "@entities/user/model/api";
 import { User } from "@entities/user/types";
+import { EXPOSURES } from "@shared/constants/input-fields";
 
 interface ProfileEditFields {
   username: string;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useGetUserQuery } from "@features/profile/model/api";
+import { useGetUserQuery } from "@entities/user/model/api";
 import UserCard from "@entities/user/ui/user";
 
 export default function UserProfile() {

@@ -28,17 +28,20 @@ export default class CloudService {
   async getStorage(
     userId: string,
     folderId?: string,
-  ): Promise<
-    | (Folder & {
-        folders: { id: string; name: string }[];
-        files: { id: string; name: string }[];
-      })
-    | Folder[]
-  > {
+  ): Promise<{
+    data:
+      | Folder[]
+      | (Folder & {
+          folders: { id: string; name: string }[];
+          files: { id: string; name: string }[];
+        });
+    isRoot: boolean;
+  }> {
     if (!folderId) {
-      return this.prisma.folder.findMany({
+      const storage = await this.prisma.folder.findMany({
         where: { userId, parentId: null },
       });
+      return { data: storage, isRoot: true };
     }
 
     const storage = await this.prisma.folder.findFirst({
@@ -60,8 +63,8 @@ export default class CloudService {
     const { children, ...rest } = storage;
 
     return {
-      ...rest,
-      folders: children,
+      data: { ...rest, folders: children },
+      isRoot: false,
     };
   }
 

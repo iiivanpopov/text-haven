@@ -1,11 +1,11 @@
-import { api } from "@shared/api";
+import { $api } from "@shared/api";
 import type {
   AuthResponse,
   LoginCredentials,
   RegisterCredentials,
 } from "@features/auth/types";
 
-const authApi = api.injectEndpoints({
+const authApi = $api.injectEndpoints({
   endpoints: (build) => ({
     login: build.mutation<AuthResponse, LoginCredentials, AuthResponse>({
       query: (credentials) => ({

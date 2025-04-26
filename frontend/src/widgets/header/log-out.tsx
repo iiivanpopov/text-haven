@@ -5,6 +5,7 @@ import { memo } from "react";
 import { twMerge } from "tailwind-merge";
 import { useAppDispatch } from "@shared/hooks/redux";
 import { logout } from "@features/auth/model/actions";
+import { removeSettings } from "@shared/lib/local-storage";
 
 interface LogOutProps {
   className?: string;
@@ -16,6 +17,7 @@ const LogOutBtn = ({ iconSize = 32, className, ariaLabel }: LogOutProps) => {
   const dispatch = useAppDispatch();
 
   const handleLogout = () => {
+    removeSettings();
     dispatch(logout());
   };
 

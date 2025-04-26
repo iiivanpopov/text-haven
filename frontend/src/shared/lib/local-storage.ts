@@ -1,31 +1,28 @@
-import { AuthResponse } from "@features/auth/types";
-import { Settings } from "@entities/settings/types";
+import type { AuthResponse } from "@features/auth/types";
+import type { Settings } from "@entities/settings/types";
 
-export const setAccessToken = (response: AuthResponse): void => {
-  if (
-    "accessToken" in response.data &&
-    typeof response.data.accessToken == "string"
-  ) {
-    localStorage.setItem("accessToken", response.data.accessToken);
+const ACCESS_TOKEN_KEY = "accessToken";
+const SETTINGS_KEY = "settings";
+
+export const setAccessToken = ({ data }: AuthResponse): void => {
+  if (typeof data?.accessToken === "string") {
+    localStorage.setItem(ACCESS_TOKEN_KEY, data.accessToken);
   }
 };
 
 export const removeAccessToken = (): void => {
-  localStorage.removeItem("accessToken");
+  localStorage.removeItem(ACCESS_TOKEN_KEY);
 };
 
-export const setSettings = (settings: Settings): Settings => {
-  if (settings) {
-    localStorage.setItem("settings", JSON.stringify(settings));
-    return settings;
-  }
+export const setLocalSettings = (settings: Settings): void => {
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
 };
 
 export const parseSettings = (): Settings | undefined => {
-  const saved = localStorage.getItem("settings");
+  const saved = localStorage.getItem(SETTINGS_KEY);
   return saved ? JSON.parse(saved) : undefined;
 };
 
-export const removeSettings = () => {
-  localStorage.removeItem("settings");
+export const removeSettings = (): void => {
+  localStorage.removeItem(SETTINGS_KEY);
 };

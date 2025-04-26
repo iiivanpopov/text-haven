@@ -7,7 +7,7 @@ export const logout = createAsyncThunk(
   "logout",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await $axios.post<AuthResponse>("logout");
+      const response = await $axios.post<AuthResponse>("/logout");
       removeAccessToken();
       return response.data;
     } catch (e) {

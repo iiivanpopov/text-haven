@@ -1,8 +1,8 @@
-import { api } from "@shared/api";
+import { $api } from "@shared/api";
 import type { ApiResponse } from "@shared/types";
 import type { User } from "@entities/user/types";
 
-const userApi = api.injectEndpoints({
+const userApi = $api.injectEndpoints({
   endpoints: (build) => ({
     getUser: build.query<User, void, ApiResponse<User>>({
       query: () => `/user`,
