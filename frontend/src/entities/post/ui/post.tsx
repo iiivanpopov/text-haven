@@ -1,6 +1,6 @@
-import { calculateTimeAgo } from "@shared/lib/time";
 import Link from "next/link";
 import type { Post } from "@entities/post/types";
+import { calculateTimeAgo } from "@shared/lib/time";
 
 export default function Post({ post }: { post: Post }) {
   return (

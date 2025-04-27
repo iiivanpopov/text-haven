@@ -6,6 +6,6 @@ export const metadata: Metadata = {
   description: "View your account here",
 };
 
-export default function Profile() {
+export default function ProfilePage() {
   return <UserProfile />;
 }

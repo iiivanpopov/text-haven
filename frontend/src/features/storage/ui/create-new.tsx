@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
 import { Plus } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 import { twMerge } from "tailwind-merge";
+import { useCreateFolderMutation } from "@features/storage/model/api";
 import Button from "@shared/ui/user-input/button";
 import Input from "@shared/ui/user-input/input";
-import { useCreateFolderMutation } from "@features/storage/model/api";
 
 interface CreateNewProps {
   canCreateFile: boolean;
@@ -31,7 +31,7 @@ export default function CreateNew({
     if (!title.trim()) return;
     await createFolder({
       name: title,
-      parentId: currentFolderId,
+      parentId: currentFolderId ?? null,
       exposure: "PRIVATE",
     });
 
@@ -66,7 +66,7 @@ export default function CreateNew({
 
           {canCreateFile && (
             <Link
-              href="/storage/new"
+              href="/text/new"
               className={twMerge(
                 "absolute left-0 w-1/2 h-full flex items-center justify-center px-5",
                 "bg-gray-200 hover:bg-gray-300 dark:bg-gray-900 dark:hover:bg-gray-950 text-gray-700 dark:text-gray-200",

@@ -1,5 +1,5 @@
-import type { Exposure, SelectOptions, TextCategory } from "@shared/types";
 import { Theme } from "@entities/settings/types";
+import type { Exposure, SelectOptions, TextCategory } from "@shared/types";
 
 export const TEXT_CATEGORIES: SelectOptions<TextCategory> = [
   {

@@ -3,33 +3,32 @@
 import { Moon, Sun } from "lucide-react";
 import { memo, useEffect, useMemo } from "react";
 import { twMerge } from "tailwind-merge";
-import { setLocalSettings } from "@shared/lib/local-storage";
 import { setTheme } from "@entities/settings/model/slice";
 import { useAppDispatch, useAppSelector } from "@shared/hooks/redux";
+import { setLocalSettings } from "@shared/lib/local-storage";
 import { applyTheme } from "@shared/lib/theme";
 
 function Theme({ className }: { className: string }) {
-  const { settings } = useAppSelector((state) => state.settingsReducer);
+  const {
+    settings: { theme, ...settings },
+  } = useAppSelector((state) => state.settingsReducer);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    applyTheme(settings.theme);
-  }, [settings.theme]);
+    applyTheme(theme);
+  }, [theme]);
 
   const handleTheme = () => {
-    if (!settings.theme) return;
+    if (!theme) return;
     setLocalSettings({
       ...settings,
-      theme: settings.theme == "light" ? "dark" : "light",
+      theme: theme == "light" ? "dark" : "light",
     });
 
-    dispatch(setTheme(settings.theme == "light" ? "dark" : "light"));
+    dispatch(setTheme(theme == "light" ? "dark" : "light"));
   };
 
-  const Icon = useMemo(
-    () => (settings.theme == "light" ? Sun : Moon),
-    [settings.theme],
-  );
+  const Icon = useMemo(() => (theme == "light" ? Sun : Moon), [theme]);
 
   return (
     <button

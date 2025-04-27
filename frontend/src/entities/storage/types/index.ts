@@ -3,7 +3,7 @@ import type { Exposure, TextCategory } from "@shared/types";
 export type Folder = {
   id: string;
   userId: string;
-  parentId: any;
+  parentId: string | null;
   name: string;
   exposure: string;
   createdAt: string;

@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import type { Text } from "@features/text/types";
 import { $axios } from "@shared/api";
 import type { ApiResponse } from "@shared/types";
-import type { Text } from "@features/text/types";
 
 export const fetchFile = createAsyncThunk(
   "text/fetch",

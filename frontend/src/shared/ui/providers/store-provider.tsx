@@ -1,11 +1,11 @@
 "use client";
 
-import { Provider } from "react-redux";
 import { type ReactNode, useEffect } from "react";
-import { store } from "@shared/store";
-import { parseSettings } from "@shared/lib/local-storage";
+import { Provider } from "react-redux";
 import { setSettings } from "@entities/settings/model/slice";
 import { getUser } from "@entities/user/model/actions";
+import { parseSettings } from "@shared/lib/local-storage";
+import { store } from "@shared/store";
 
 export default function StoreProvider({ children }: { children: ReactNode }) {
   useEffect(() => {

@@ -1,15 +1,16 @@
 "use client";
 
-import { use, useEffect } from "react";
+import { useParams } from "next/navigation";
+import { useEffect } from "react";
+import { twMerge } from "tailwind-merge";
+import { fetchFile } from "@features/text/model/actions";
+import ChangeMode from "@features/text/ui/change-mode";
 import EditForm from "@features/text/ui/edit-form";
 import Preview from "@features/text/ui/preview";
-import ChangeMode from "@features/text/ui/change-mode";
 import { useAppDispatch, useAppSelector } from "@shared/hooks/redux";
-import { fetchFile } from "@features/text/model/actions";
-import { twMerge } from "tailwind-merge";
 
-export default function Text({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+export default function Text() {
+  const { id } = useParams<{ id: string }>();
 
   const {
     mode,

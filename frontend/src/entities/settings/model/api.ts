@@ -1,5 +1,5 @@
-import { $api } from "@shared/api";
 import type { Settings } from "@entities/settings/types";
+import { $api } from "@shared/api";
 import type { ApiResponse } from "@shared/types";
 
 const settingsApi = $api.injectEndpoints({

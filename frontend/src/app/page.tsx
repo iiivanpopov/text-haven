@@ -1,13 +1,13 @@
-import PostList from "@features/posts/ui/post-list";
-import Link from "next/link";
 import { Metadata } from "next";
+import Link from "next/link";
+import PostList from "@features/posts/ui/post-list";
 
 export const metadata: Metadata = {
   title: "TextHaven",
   description: "An app to share and post texts",
 };
 
-export default function Main() {
+export default function Home() {
   return (
     <main className="mt-20 grid grid-cols-1 lg:grid-cols-[5fr_2fr] gap-10 px-6 sm:px-10 lg:px-20 ">
       <section className="flex flex-col justify-between h-[40vh]">

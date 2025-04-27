@@ -1,9 +1,9 @@
 "use client";
 
-import Textarea from "@shared/ui/user-input/textarea";
-import Input from "@shared/ui/user-input/input";
-import { useAppDispatch, useAppSelector } from "@shared/hooks/redux";
 import { setContent, setName } from "@features/text/model/slice";
+import { useAppDispatch, useAppSelector } from "@shared/hooks/redux";
+import Input from "@shared/ui/user-input/input";
+import Textarea from "@shared/ui/user-input/textarea";
 
 export default function EditForm() {
   const { text } = useAppSelector((state) => state.textReducer);

@@ -1,6 +1,6 @@
+import type { File, Folder, Storage } from "@entities/storage/types";
 import { $api } from "@shared/api";
 import type { ApiResponse } from "@shared/types";
-import type { File, Folder, Storage } from "@entities/storage/types";
 
 const storageApi = $api.injectEndpoints({
   endpoints: (build) => ({

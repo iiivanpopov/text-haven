@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { Settings, Theme } from "@entities/settings/types";
 import settingsApi from "@entities/settings/model/api";
+import type { Settings, Theme } from "@entities/settings/types";
 
 interface SettingsState {
   settings: Settings;

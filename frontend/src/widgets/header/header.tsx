@@ -34,10 +34,7 @@ export default function Header() {
           className="hover:text-blue-400 dark:hover:text-blue-500"
           ariaLabel="Settings"
         />
-        <LogOutBtn
-          className="text-red-400 hover:text-red-500 dark:text-red-500 dark:hover:text-red-600"
-          ariaLabel="Log Out"
-        />
+        <LogOutBtn className="text-red-400 hover:text-red-500 dark:text-red-500 dark:hover:text-red-600" />
       </div>
     </header>
   );

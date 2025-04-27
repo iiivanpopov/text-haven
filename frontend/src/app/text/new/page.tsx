@@ -6,6 +6,6 @@ export const metadata: Metadata = {
   description: "Create new file",
 };
 
-export default function NewFile() {
+export default function TextNew() {
   return <NewFileForm />;
 }

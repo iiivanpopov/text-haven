@@ -1,5 +1,5 @@
-import LoginForm from "@features/auth/ui/login";
 import type { Metadata } from "next";
+import LoginForm from "@features/auth/ui/login";
 
 export const metadata: Metadata = {
   title: "Login | TextHaven",

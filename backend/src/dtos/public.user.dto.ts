@@ -1,10 +1,10 @@
-import PrivateUser from './private.user.dto'
+import PrivateUser from "./private.user.dto";
 
 export default class User extends PrivateUser {
-	email: string
+  email: string;
 
-	constructor(model: any) {
-		super(model)
-		this.email = model.email
-	}
+  constructor(model: any) {
+    super(model);
+    this.email = model.email;
+  }
 }

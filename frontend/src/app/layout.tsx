@@ -1,8 +1,8 @@
 import { type ReactNode } from "react";
-import "./globals.css";
-import StoreProvider from "@shared/ui/providers/store-provider";
-import Header from "@widgets/header";
+import "@shared/styles/globals.css";
 import Footer from "@widgets/footer";
+import Header from "@widgets/header";
+import StoreProvider from "@shared/ui/providers/store-provider";
 
 export default async function Layout({ children }: { children: ReactNode }) {
   return (

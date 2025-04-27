@@ -1,9 +1,9 @@
 import config from "@config";
 import auth from "@middleware/auth.middleware";
-import cache from "@shared/cache";
-import S3 from "@shared/S3";
 import validate from "@utils/validate";
 import { Router } from "express";
+import cache from "@shared/cache";
+import S3 from "@shared/S3";
 import CloudController from "./controller";
 import {
   createFileRules,

@@ -1,12 +1,12 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-
 import type {
   BaseQueryFn,
   FetchArgs,
   FetchBaseQueryError,
 } from "@reduxjs/toolkit/query";
-import { removeAccessToken, setAccessToken } from "@shared/lib/local-storage";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+
 import { AuthResponse } from "@features/auth/types";
+import { removeAccessToken, setAccessToken } from "@shared/lib/local-storage";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: process.env.API_URL,

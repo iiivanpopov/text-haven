@@ -1,11 +1,11 @@
 "use client";
 
-import Button from "@shared/ui/user-input/button";
 import { Check, Wrench } from "lucide-react";
-import { useAppDispatch, useAppSelector } from "@shared/hooks/redux";
 import type { MouseEvent } from "react";
-import { setMode } from "@features/text/model/slice";
 import { updateFile } from "@features/text/model/actions";
+import { setMode } from "@features/text/model/slice";
+import { useAppDispatch, useAppSelector } from "@shared/hooks/redux";
+import Button from "@shared/ui/user-input/button";
 
 export default function ChangeMode() {
   const {

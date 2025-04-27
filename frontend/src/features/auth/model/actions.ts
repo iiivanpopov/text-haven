@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { $axios } from "@shared/api";
 import type { AuthResponse } from "@features/auth/types";
-import { removeAccessToken } from "@shared/lib/local-storage";
+import { $axios } from "@shared/api";
+import { removeAccessToken, removeSettings } from "@shared/lib/local-storage";
 
 export const logout = createAsyncThunk(
   "logout",
@@ -9,6 +9,7 @@ export const logout = createAsyncThunk(
     try {
       const response = await $axios.post<AuthResponse>("/logout");
       removeAccessToken();
+      removeSettings();
       return response.data;
     } catch (e) {
       return rejectWithValue(e);

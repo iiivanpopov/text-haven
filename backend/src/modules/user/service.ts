@@ -1,7 +1,6 @@
-import ApiError from "@exceptions/ApiError";
-
 import PrivateUser from "@dtos/private.user.dto";
 import User from "@dtos/public.user.dto";
+import ApiError from "@exceptions/ApiError";
 import { type PrismaClient, type Settings, TextCategory } from "@prisma";
 import { Cache } from "@shared/cache";
 import { Jwt } from "@shared/jwt";

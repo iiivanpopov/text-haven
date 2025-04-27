@@ -1,9 +1,9 @@
 import config from "@config";
 import auth from "@middleware/auth.middleware";
-import Cache from "@shared/cache";
-import jwt from "@shared/jwt";
 import validate from "@utils/validate";
 import { Router } from "express";
+import Cache from "@shared/cache";
+import jwt from "@shared/jwt";
 import UserController from "./controller";
 import { updateRules } from "./rules";
 import UserService from "./service";

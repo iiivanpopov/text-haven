@@ -22,5 +22,5 @@ COPY --from=prerelease /usr/src/app/prisma prisma
 COPY --from=prerelease /usr/src/app/package.json ./
 
 USER bun
-EXPOSE ${PORT}
+EXPOSE 3013
 ENTRYPOINT ["bun", "run", "prisma:migrate:start"]

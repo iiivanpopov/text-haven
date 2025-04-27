@@ -6,6 +6,6 @@ export const metadata: Metadata = {
   description: "Storage of your texts",
 };
 
-export default function Storage() {
+export default function StoragePage() {
   return <Directory />;
 }

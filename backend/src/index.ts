@@ -1,9 +1,9 @@
-import config from "@config";
-import logger from "@utils/logger";
 import type { Server } from "http";
-import app from "./app";
 import * as https from "node:https";
 import path from "path";
+import config from "@config";
+import logger from "@utils/logger";
+import app from "./app";
 
 let server: Server;
 

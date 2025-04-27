@@ -1,8 +1,7 @@
 # 📈 Plan
 
-- Install linters (ESLint, Prettier) and set up pre-commit hooks (Husky)
 - Set up basic CI/CD
-- Organize the project using FSD (feature-sliced design)
+- Organize the project using FSD (backend)
 - Implement client-side role checking (`admin`, `user`)
 - Display a list of files and folders
 - Implement basic file deletion

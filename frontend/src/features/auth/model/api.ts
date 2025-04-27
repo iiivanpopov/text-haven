@@ -1,9 +1,9 @@
-import { $api } from "@shared/api";
 import type {
   AuthResponse,
   LoginCredentials,
   RegisterCredentials,
 } from "@features/auth/types";
+import { $api } from "@shared/api";
 
 const authApi = $api.injectEndpoints({
   endpoints: (build) => ({

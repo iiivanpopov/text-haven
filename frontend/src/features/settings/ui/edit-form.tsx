@@ -1,20 +1,20 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import ValidatedSelect from "@shared/ui/user-input/select";
-import Submit from "@shared/ui/user-input/submit";
-import Button from "@shared/ui/user-input/button";
 import {
   useLazyGetSettingsQuery,
   useUpdateSettingsMutation,
 } from "@entities/settings/model/api";
-import type { TextCategory } from "@shared/types";
-import { useEffect, useRef } from "react";
-import { setLocalSettings } from "@shared/lib/local-storage";
 import type { Settings, Theme } from "@entities/settings/types";
 import { TEXT_CATEGORIES, THEMES } from "@shared/constants/input-fields";
 import { useAppSelector } from "@shared/hooks/redux";
+import { setLocalSettings } from "@shared/lib/local-storage";
 import { applyTheme } from "@shared/lib/theme";
+import type { TextCategory } from "@shared/types";
+import Button from "@shared/ui/user-input/button";
+import ValidatedSelect from "@shared/ui/user-input/select";
+import Submit from "@shared/ui/user-input/submit";
 
 interface SettingsForm {
   textCategory: TextCategory;

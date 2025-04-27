@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: "Register",
 };
 
-export default function Register() {
+export default function RegisterPage() {
   return (
     <div className="flex justify-center items-center w-[30wv] h-[35vh]">
       <RegisterForm />
