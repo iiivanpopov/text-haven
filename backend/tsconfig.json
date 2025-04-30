@@ -23,13 +23,10 @@
     "alwaysStrict": true,
     "baseUrl": "./src",
     "paths": {
-      "@utils/*": ["./utils/*"],
-      "@config": ["./config/index"],
-      "@exceptions/*": ["./exceptions/*"],
-      "@middleware/*": ["./middleware/*"],
-      "@modules/*": ["./modules/*"],
+      "@features/*": ["./features/*"],
+      "@entities/*": ["./entities/*"],
       "@shared/*": ["./shared/*"],
-      "@dtos/*": ["./dtos/*"],
+      "@app/*": ["./app/*"],
       "@prisma": ["./../generated/prisma_client"]
     }
   }

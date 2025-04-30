@@ -1,0 +1,23 @@
+import { env } from "bun";
+
+export default {
+  // AWS
+  BUCKET: env.S3_BUCKET || "",
+  ACCESS_KEY_ID: env.AWS_ACCESS_KEY || "",
+  SECRET_ACCESS_KEY: env.AWS_SECRET_ACCESS_KEY || "",
+
+  // JWT
+  JWT_SECRET_KEY: env.JWT_SECRET_KEY || "",
+  JWT_EXPIRATION_TIME: env.JWT_EXPIRATION_TIME || "1d",
+  REFRESH_SECRET_KEY: env.REFRESH_SECRET_KEY || "",
+  REFRESH_EXPIRATION_TIME: env.REFRESH_EXPIRATION_TIME || "30d",
+
+  // DATABASE
+  DATABASE_URL: env.DATABASE_URL || "",
+
+  // HTTP SERVER
+  PORT: +env.PORT,
+
+  // REDIS
+  CACHE_EXPIRE_TIME: 24 * 60 * 60,
+};
