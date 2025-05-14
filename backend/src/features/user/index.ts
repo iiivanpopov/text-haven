@@ -1,1 +1,1 @@
-export { default } from "./user.router.ts";
+export { default } from "@features/user/api/user.router.ts";

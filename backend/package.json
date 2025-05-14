@@ -9,13 +9,13 @@
     "start": "NODE_ENV=production bun ./dist/index.js",
     "prisma:migrate": "bunx prisma migrate deploy",
     "prisma:migrate:start": "bun run prisma:migrate && bun run start",
-    "build": "rm -rf ./dist && bun build --entrypoints ./src/index.ts ./src/worker.ts --outdir ./dist --minify --target bun",
+    "build": "rm -rf ./dist && bun build --entrypoints ./src/index.ts ./src/app/lib/worker.ts --outdir ./dist --minify --target bun",
     "build:dev": "bun build --entrypoints ./src/index.ts ./src/worker.ts --outdir ./dist --minify --sourcemap=inline --target bun"
   },
   "devDependencies": {
-    "@types/bun": "^1.2.11",
+    "@types/bun": "^1.2.13",
     "@types/cookie-parser": "^1.4.8",
-    "@types/cors": "^2.8.17",
+    "@types/cors": "^2.8.18",
     "@types/express": "^5.0.1",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/pino": "^7.0.5",

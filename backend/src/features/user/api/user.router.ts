@@ -1,15 +1,16 @@
 import { Router } from "express";
-import UserController from "@features/user/user.controller.ts";
-import UserService from "@features/user/user.service.ts";
+import UserController from "@features/user/api/user.controller.ts";
+import UserService from "@features/user/api/user.service.ts";
 import {
   updateUserRules,
   updateUserSettingsRules,
-} from "@features/user/validation/rules.ts";
+} from "@features/user/lib/validation/rules.ts";
 import cache from "@shared/lib/cache";
+import auth from "@shared/lib/middleware/auth.middleware";
 import prisma from "@shared/lib/prisma.ts";
+import validate from "@shared/lib/validation/validate.ts";
+
 const router = Router();
-import auth from "@shared/middleware/auth.middleware";
-import validate from "@shared/validation/validate.ts";
 
 const userService = new UserService(prisma, cache);
 const userController = new UserController(userService);

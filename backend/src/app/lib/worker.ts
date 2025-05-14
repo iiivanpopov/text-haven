@@ -1,4 +1,4 @@
-import CloudService from "@features/cloud/cloud.service.ts";
+import CloudService from "@features/cloud/api/cloud.service.ts";
 import cache from "@shared/lib/cache";
 import prisma from "@shared/lib/prisma.ts";
 import storage from "@shared/lib/storage";

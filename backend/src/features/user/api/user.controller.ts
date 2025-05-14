@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import UserService from "@features/user/user.service.ts";
+import UserService from "@features/user/api/user.service.ts";
 
 export default class UserController {
   constructor(private userService: UserService) {}

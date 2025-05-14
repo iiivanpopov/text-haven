@@ -1,9 +1,9 @@
 import { Router } from "express";
+import { loginRules, registerRules } from "@features/auth/lib/validation/rules";
 import prisma from "@shared/lib/prisma.ts";
-import validate from "@shared/validation/validate";
+import validate from "@shared/lib/validation/validate";
 import AuthController from "./auth.controller";
 import AuthService from "./auth.service.ts";
-import { loginRules, registerRules } from "./validation/rules";
 
 const router = Router();
 

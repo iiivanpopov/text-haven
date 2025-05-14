@@ -3,7 +3,7 @@ import {
   enumField,
   optionalStringField,
   stringField,
-} from "@shared/validation/validators";
+} from "@shared/lib/validation/validators";
 
 export const createFileRules = [
   stringField("folderId", "Folder id"),

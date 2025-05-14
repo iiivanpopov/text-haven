@@ -16,26 +16,6 @@ export class Cache {
     private prisma: PrismaClient,
   ) {}
 
-  async withCache<T>(
-    type: CacheEntityType,
-    keyOpts: CacheKeyParams,
-    loader: () => Promise<T>,
-  ): Promise<T> {
-    const cacheKey = Cache.mapKey(type, keyOpts);
-    if (cacheKey) {
-      const cached = await this.get<T>(cacheKey);
-      if (cached) {
-        return cached;
-      }
-    }
-
-    const result = await loader();
-    if (cacheKey) {
-      await this.set(cacheKey, result);
-    }
-    return result;
-  }
-
   static mapKey(
     type: CacheEntityType,
     args: CacheKeyParams = {},
@@ -165,6 +145,26 @@ export class Cache {
     }
 
     return descendants;
+  }
+
+  async withCache<T>(
+    type: CacheEntityType,
+    keyOpts: CacheKeyParams,
+    loader: () => Promise<T>,
+  ): Promise<T> {
+    const cacheKey = Cache.mapKey(type, keyOpts);
+    if (cacheKey) {
+      const cached = await this.get<T>(cacheKey);
+      if (cached) {
+        return cached;
+      }
+    }
+
+    const result = await loader();
+    if (cacheKey) {
+      await this.set(cacheKey, result);
+    }
+    return result;
   }
 }
 

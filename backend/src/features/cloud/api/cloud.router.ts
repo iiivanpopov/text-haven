@@ -5,12 +5,12 @@ import {
   updateFileContentRules,
   updateFileRules,
   updateFolderRules,
-} from "@features/cloud/validation/rules.ts";
+} from "@features/cloud/lib/validation/rules.ts";
 import cache from "@shared/lib/cache";
+import auth from "@shared/lib/middleware/auth.middleware";
 import prisma from "@shared/lib/prisma.ts";
 import storage from "@shared/lib/storage";
-import auth from "@shared/middleware/auth.middleware";
-import validate from "@shared/validation/validate";
+import validate from "@shared/lib/validation/validate";
 import CloudController from "./cloud.controller.ts";
 import CloudService from "./cloud.service.ts";
 

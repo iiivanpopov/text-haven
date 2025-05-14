@@ -1,4 +1,7 @@
-import { enumField, optionalStringField } from "@shared/validation/validators";
+import {
+  enumField,
+  optionalStringField,
+} from "@shared/lib/validation/validators";
 
 export const updateUserRules = [
   optionalStringField("email", "Email")

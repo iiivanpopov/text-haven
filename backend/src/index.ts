@@ -1,7 +1,7 @@
 import type { Server } from "http";
 import https from "node:https";
 import path from "path";
-import app from "app/router";
+import app from "@app/lib/router";
 import config from "@shared/config";
 import logger from "@shared/lib/logger.ts";
 import prisma from "@shared/lib/prisma.ts";
@@ -9,8 +9,8 @@ import prisma from "@shared/lib/prisma.ts";
 let server: Server;
 
 const options = {
-  key: await Bun.file(path.resolve("creds/server.key")).text(),
-  cert: await Bun.file(path.resolve("creds/server.crt")).text(),
+  key: await Bun.file(path.resolve("creds", "server.key")).text(),
+  cert: await Bun.file(path.resolve("creds", "server.crt")).text(),
 };
 
 prisma.$connect().then(() => {

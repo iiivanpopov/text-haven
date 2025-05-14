@@ -1,4 +1,4 @@
-import { stringField } from "@shared/validation/validators";
+import { stringField } from "@shared/lib/validation/validators";
 
 const emailValidator = () =>
   stringField("email", "Email").isEmail().withMessage("Email is invalid");

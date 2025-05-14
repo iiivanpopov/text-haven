@@ -6,6 +6,7 @@ export const KEYS: CacheKeyFieldMap = {
   folder: ["folderId", "parentId", "userId"],
   settings: ["userId"],
   user: ["userId"],
+  storage: ["userId"],
 };
 
 export const EXPOSURES: [Exposure, undefined] = ["PUBLIC", undefined];

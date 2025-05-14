@@ -4,8 +4,8 @@ import express from "express";
 import authRoutes from "features/auth";
 import cloudRoutes from "features/cloud";
 import userRoutes from "features/user";
-import errorHandler from "@shared/middleware/error.middleware";
-import loggerMiddleware from "@shared/middleware/logger.middleware";
+import errorHandler from "@shared/lib/middleware/error.middleware";
+import loggerMiddleware from "@shared/lib/middleware/logger.middleware";
 
 const app = express();
 
