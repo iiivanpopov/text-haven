@@ -2,12 +2,9 @@ import { Exposure, PrismaClient } from "@prisma";
 
 export default new PrismaClient();
 
-/**
- * Checks whether a user has access to a given file or folder
- */
 export function canAccessResource(
-  resource: { userId: string; exposure?: Exposure },
-  userId: string,
+  resource: { userId: string; exposure?: Exposure }, // targetUserId
+  userId: string, // req.user.id
 ): boolean {
   return resource.userId === userId || resource.exposure === Exposure.PUBLIC;
 }

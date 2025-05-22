@@ -9,8 +9,8 @@ import prisma from "@shared/lib/prisma.ts";
 let server: Server;
 
 const options = {
-  key: await Bun.file(path.resolve("creds", "server.key")).text(),
-  cert: await Bun.file(path.resolve("creds", "server.crt")).text(),
+  key: await Bun.file(path.resolve("credentials", "server.key")).text(),
+  cert: await Bun.file(path.resolve("credentials", "server.crt")).text(),
 };
 
 prisma.$connect().then(() => {

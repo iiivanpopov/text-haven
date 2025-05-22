@@ -4,7 +4,7 @@ import CloudService from "./cloud.service.ts";
 class CloudController {
   constructor(private cloudService: CloudService) {}
 
-  getStorage = async (
+  getUserContent = async (
     req: Request,
     res: Response,
     next: NextFunction,
@@ -13,10 +13,7 @@ class CloudController {
     const userId = req.user.id;
 
     try {
-      const storage = await this.cloudService.getStorage(
-        userId,
-        folderId as string | undefined,
-      );
+      const storage = await this.cloudService.getUserContent(userId, folderId);
       res.status(200).json({ message: "Fetched storage", data: storage });
     } catch (error) {
       next(error);

@@ -11,7 +11,7 @@ export default class UserController {
 
       const updateData = { email, password, username };
 
-      const user = await this.userService.updateUser(userId, updateData); // userId to update
+      const user = await this.userService.updateUser(userId, updateData);
 
       res.status(200).json({ message: "Updated user", data: user });
     } catch (error) {

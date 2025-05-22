@@ -1,6 +1,5 @@
 # 📈 Plan
 
-- Review authorization
 - Implement file/folder deletion
 - Skeleton loaders
 - Notifications

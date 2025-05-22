@@ -2,11 +2,7 @@ import type { PrismaClient } from "@prisma";
 import type { RedisClient } from "bun";
 import config from "@shared/config";
 import { EXPOSURES, KEYS } from "@shared/lib/cache/constants";
-import type {
-  CacheEntityType,
-  CacheKeyFields,
-  CacheKeyParams,
-} from "@shared/lib/cache/types";
+import type { CacheEntityType, CacheKeyParams } from "@shared/lib/cache/types";
 import prisma from "@shared/lib/prisma";
 import redis from "@shared/lib/redis";
 
@@ -20,42 +16,51 @@ export class Cache {
     type: CacheEntityType,
     args: CacheKeyParams = {},
   ): string | null {
-    const eligibleKeys: CacheKeyFields = KEYS[type];
+    const eligibleKeys = KEYS[type];
     const parts: string[] = [type];
 
     for (const key of eligibleKeys) {
       const value = args[key];
-      if (!value) continue;
-
-      parts.push(value, args.exposure ?? "", key);
-      break;
-    }
-
-    return parts.length === 1 ? null : parts.filter(Boolean).join(":");
-  }
-
-  async flush(
-    type: CacheEntityType,
-    userId: string,
-    opts: Omit<CacheKeyParams, "userId" | "exposure"> = {},
-  ): Promise<void> {
-    const keysToRemove: string[] = [];
-
-    for (const [key, value] of Object.entries(opts)) {
-      if (!value) continue;
-
-      for (const exposure of EXPOSURES) {
-        const mappedKey = Cache.mapKey(type, { [key]: value, exposure });
-        if (mappedKey) keysToRemove.push(mappedKey);
+      if (value) {
+        parts.push(String(value));
+        if (args.exposure) parts.push(args.exposure);
+        if (args.foreign != null) parts.push(String(args.foreign));
+        break; // only the first matching key is used
       }
     }
 
-    for (const exposure of EXPOSURES) {
-      const mappedKey = Cache.mapKey(type, { userId, exposure });
-      if (mappedKey) keysToRemove.push(mappedKey);
+    return parts.length > 1 ? parts.join(":") : null;
+  }
+
+  async flush(
+    type: Exclude<CacheEntityType, "post">,
+    userId: string,
+    opts: Partial<Omit<CacheKeyParams, "userId" | "exposure" | "foreign">> = {},
+  ): Promise<void> {
+    const keysToRemove = new Set<string>();
+
+    if (type === "user") {
+      for (const foreign of [true, false]) {
+        const key = Cache.mapKey("user", { userId, foreign });
+        if (key) keysToRemove.add(key);
+      }
+    } else {
+      for (const exposure of EXPOSURES) {
+        const keyWithUser = Cache.mapKey(type, { userId, exposure });
+        if (keyWithUser) keysToRemove.add(keyWithUser);
+
+        for (const [key, value] of Object.entries(opts)) {
+          if (value == null) continue;
+          const paramKey = Cache.mapKey(type, {
+            [key]: value,
+            exposure,
+          });
+          if (paramKey) keysToRemove.add(paramKey);
+        }
+      }
     }
 
-    await this.remove(keysToRemove);
+    await this.remove([...keysToRemove]);
   }
 
   async set(
@@ -63,11 +68,11 @@ export class Cache {
     value: unknown,
     expiration = config.CACHE_EXPIRE_TIME,
   ): Promise<void> {
-    await this.redis.set(key, JSON.stringify(value), "PX", expiration);
+    const ttl = Number.isFinite(expiration) ? expiration : 3600_000;
+    await this.redis.set(key, JSON.stringify(value), "PX", ttl);
   }
 
-  async remove(key: string | string[]): Promise<void> {
-    const keys = Array.isArray(key) ? key : [key];
+  async remove(keys: string[]): Promise<void> {
     await Promise.all(keys.map((k) => this.redis.del(k)));
   }
 
@@ -97,7 +102,7 @@ export class Cache {
       fileIds.push(file.id);
     }
 
-    const keysToRemove: string[] = [];
+    const keysToRemove: (CacheEntityType | string)[] = ["post", "storage"];
 
     for (const exposure of EXPOSURES) {
       const userFiles = Cache.mapKey("file", { exposure, userId });

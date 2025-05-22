@@ -4,6 +4,7 @@ import UserDto from "@entities/user/model/dto";
 import { Cache } from "@shared/lib/cache";
 import ApiError from "@shared/lib/exceptions/ApiError";
 import { updateTokens } from "@shared/lib/jwt";
+import { resolveUserContext } from "@shared/lib/prisma.ts";
 
 export default class UserService {
   constructor(
@@ -37,24 +38,26 @@ export default class UserService {
   }
 
   async fetchUser(userId: string, targetId?: string): Promise<UserDto> {
-    const isOtherUser = targetId && userId !== targetId;
-    const effectiveUserId = isOtherUser ? targetId : userId;
+    const [isOther, effectiveUser] = resolveUserContext(userId, targetId);
 
     return this.cache.withCache<UserDto>(
       "user",
-      { userId: effectiveUserId },
+      {
+        userId: effectiveUser,
+        foreign: isOther,
+      },
       async () => {
         const user = await this.prisma.user.findUnique({
-          where: { id: effectiveUserId },
+          where: { id: effectiveUser },
         });
         if (!user) throw ApiError.NotFound();
 
         return new UserDto(
-          isOtherUser
-            ? user.exposure == "PUBLIC"
-              ? user
-              : { ...user, email: undefined }
-            : user,
+          isOther
+            ? user.exposure == "PRIVATE"
+              ? { ...user, email: undefined } // foreign private profile
+              : user // foreign public profile
+            : user, // own profile
         );
       },
     );

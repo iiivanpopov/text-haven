@@ -8,9 +8,9 @@ declare namespace NodeJS {
 
     // JWT
     JWT_SECRET_KEY: string;
-    JWT_EXPIRATION_TIME: TimeType;
+    JWT_EXPIRATION_TIME: string;
     REFRESH_SECRET_KEY: string;
-    REFRESH_EXPIRATION_TIME: TimeType;
+    REFRESH_EXPIRATION_TIME: string;
 
     // DATABASE
     DB_NAME: string;
@@ -27,6 +27,6 @@ declare namespace NodeJS {
     REDIS_PORT: string;
     REDIS_HOST: string;
     REDIS_URL: string;
-    CACHE_EXPIRATION_TIME: TimeType;
+    CACHE_EXPIRE_TIME: string;
   }
 }

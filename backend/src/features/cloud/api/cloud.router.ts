@@ -79,7 +79,7 @@ router.patch(
 router.delete("/files/:id", auth, cloudController.deleteFile);
 
 // Storage
-router.get("/storage/:id", auth, cloudController.getStorage);
-router.get("/storage", auth, cloudController.getStorage);
+router.get("/storage/:id", auth, cloudController.getUserContent);
+router.get("/storage", auth, cloudController.getUserContent);
 
 export default router;

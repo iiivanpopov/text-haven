@@ -1,5 +1,6 @@
-import type { File } from "@prisma";
-
-export type Post = Pick<File, "createdAt" | "id" | "name"> & {
+export type Post = {
+  id: string;
+  name: string;
+  createdAt: Date | string;
   content: string;
 };

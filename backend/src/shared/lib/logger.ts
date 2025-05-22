@@ -8,18 +8,39 @@ const logger = pino({
 });
 
 class Logger {
-  info(message: string, data?: unknown) {
+  info(message: string, data?: object) {
     logger.info(data ?? {}, message);
+  }
+
+  warn(message: string, data?: object) {
+    logger.warn(data ?? {}, message);
+  }
+
+  debug(message: string, data?: object) {
+    logger.debug(data ?? {}, message);
   }
 
   error(error: unknown, message?: string) {
     if (error instanceof ApiError) {
       logger.error(
-        { status: error.status, stack: error.stack, errors: error.errors },
+        {
+          status: error.status,
+          name: error.name,
+          stack: error.stack,
+          errors: error.errors,
+        },
         message ?? error.message,
       );
     } else if (error instanceof Error) {
-      logger.error({ stack: error.stack }, message ?? error.message);
+      logger.error(
+        {
+          name: error.name,
+          stack: error.stack,
+        },
+        message ?? error.message,
+      );
+    } else if (typeof error === "string") {
+      logger.error({}, error);
     } else {
       logger.error({}, message ?? "Unknown error");
     }
