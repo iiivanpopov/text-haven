@@ -31,7 +31,7 @@ export default function LoginForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className={"grid grid-rows-3 h-full"}
+      className={"grid grid-rows-3 h-full w-50"}
     >
       <Controller
         name="email"

@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import {
@@ -22,7 +23,7 @@ interface NewFileFields {
   exposure: Exposure;
   content: string;
   name: string;
-  type: TextCategory;
+  textCategory: TextCategory;
   expiresAt: string;
 }
 
@@ -33,12 +34,13 @@ export default function NewFileForm() {
       exposure: EXPOSURES[0].value,
       content: "",
       name: "",
-      type: TEXT_CATEGORIES[0].value,
+      textCategory: TEXT_CATEGORIES[0].value,
       expiresAt: EXPIRY_OPTIONS[0].value,
     },
   });
   const [createFile] = useCreateFileMutation();
   const { data, isError, isLoading } = useGetFoldersQuery();
+  const router = useRouter();
 
   const FOLDERS: SelectOptions = useMemo(() => {
     if (!data) return [];
@@ -58,10 +60,13 @@ export default function NewFileForm() {
   }
 
   const onSubmit: SubmitHandler<NewFileFields> = async (data) => {
-    await createFile({
+    const response = await createFile({
       ...data,
       expiresAt: new Date(Date.now() + Number(data.expiresAt)).toISOString(),
     });
+    if (!response.error) {
+      router.push(`/text/${response.data.id}`);
+    }
   };
 
   return (
@@ -116,9 +121,9 @@ export default function NewFileForm() {
 
           <Controller
             control={control}
-            name={"type"}
+            name={"textCategory"}
             rules={{
-              required: { message: "Text type is required", value: true },
+              required: { message: "Text category is required", value: true },
             }}
             render={({ field, fieldState: { error } }) => (
               <ValidatedSelect
@@ -160,7 +165,7 @@ export default function NewFileForm() {
           <Textarea
             {...field}
             error={error ? error.message : undefined}
-            className="p-2"
+            className="p-2 h-full"
             placeholder="Enter your content"
           />
         )}

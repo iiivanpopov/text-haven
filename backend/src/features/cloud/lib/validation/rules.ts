@@ -1,6 +1,7 @@
 import { body } from "express-validator";
 import {
   enumField,
+  optionalEnumField,
   optionalStringField,
   stringField,
 } from "@shared/lib/validation/validators";
@@ -23,14 +24,14 @@ export const createFolderRules = [
 export const updateFolderRules = [
   optionalStringField("name", "Name"),
   optionalStringField("parentId", "Parent id"),
-  enumField("exposure", "Exposure", ["PRIVATE", "PUBLIC"]),
+  optionalEnumField("exposure", "Exposure", ["PRIVATE", "PUBLIC"]),
 ];
 
 export const updateFileRules = [
   optionalStringField("name", "Name"),
   optionalStringField("folderId", "Folder id"),
-  enumField("exposure", "Exposure", ["PRIVATE", "PUBLIC"]),
-  enumField("textCategory", "textCategory", ["NOTE", "POST"]),
+  optionalEnumField("exposure", "Exposure", ["PRIVATE", "PUBLIC"]),
+  optionalEnumField("textCategory", "textCategory", ["NOTE", "POST"]),
   body("expiresAt").optional().isISO8601().withMessage("Invalid date format"),
 ];
 

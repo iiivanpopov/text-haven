@@ -5,7 +5,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "NODE_ENV=development bun run --watch ./src/index.ts",
+    "dev": "NODE_ENV=development bun run --watch ./src/index.ts | pino-pretty",
     "start": "NODE_ENV=production bun ./dist/index.js",
     "prisma:migrate": "bunx prisma migrate deploy",
     "prisma:migrate:start": "bun run prisma:migrate && bun run start",
@@ -19,6 +19,7 @@
     "@types/express": "^5.0.2",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/pino": "^7.0.5",
+    "pino-pretty": "^13.0.0",
     "typescript": "^5.8.3"
   },
   "dependencies": {
@@ -28,6 +29,7 @@
     "express-validator": "^7.2.1",
     "jsonwebtoken": "^9.0.2",
     "pino": "^9.7.0",
+    "pino-http": "^10.4.0",
     "prisma": "^6.8.2"
   },
   "license": "MIT"

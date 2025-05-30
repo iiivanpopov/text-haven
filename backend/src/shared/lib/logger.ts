@@ -1,11 +1,7 @@
 import pino from "pino";
 import ApiError from "@shared/lib/exceptions/ApiError";
 
-const logger = pino({
-  level: process.env.LOG_LEVEL || "info",
-  timestamp: pino.stdTimeFunctions.isoTime,
-  base: undefined,
-});
+const logger = pino();
 
 class Logger {
   info(message: string, data?: object) {

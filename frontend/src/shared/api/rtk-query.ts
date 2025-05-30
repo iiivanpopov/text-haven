@@ -50,7 +50,7 @@ const $api = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithReAuth,
   endpoints: () => ({}),
-  tagTypes: ["User", "Text"],
+  tagTypes: ["User", "Text", "Storage"],
 });
 
 export default $api;

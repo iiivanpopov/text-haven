@@ -38,7 +38,7 @@ export async function updateTokens(
   user: User,
 ): Promise<{ accessToken: string; refreshToken: string; user: UserDto }> {
   const userDto = new UserDto(user);
-  const tokens = generateTokens(userDto);
+  const tokens = generateTokens({ ...userDto });
 
   await prisma.token.upsert({
     where: { userId: userDto.id },

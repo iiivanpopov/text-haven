@@ -57,14 +57,15 @@ class CloudController {
   createFile = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const userId = req.user.id;
-      const { name, folderId, expiresAt, exposure, content, type } = req.body;
+      const { name, folderId, expiresAt, exposure, content, textCategory } =
+        req.body;
       const file = await this.cloudService.createFile(
         userId,
         folderId,
         content,
         name,
         exposure,
-        type,
+        textCategory,
         expiresAt,
       );
       res.status(201).json({ message: "File created", data: file });

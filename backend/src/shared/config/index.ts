@@ -46,7 +46,7 @@ export default {
 
   // REDIS
   CACHE_EXPIRE_TIME: (() => {
-    const val = env.CACHE_EXPIRE_TIME ?? "86400"; // default to 24h (seconds)
+    const val = env.CACHE_EXPIRE_TIME ?? "86400000"; // default to 24h (seconds)
     const num = Number(val);
     if (isNaN(num) || num <= 0) {
       throw new Error("Invalid CACHE_EXPIRE_TIME environment variable");

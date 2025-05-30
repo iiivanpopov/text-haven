@@ -3,7 +3,7 @@ import Directory from "@features/storage/ui/directory";
 
 export const metadata: Metadata = {
   title: "TextHaven | Root",
-  description: "Storage of your texts",
+  description: "Your storage of TextHaven",
 };
 
 export default function StoragePage() {

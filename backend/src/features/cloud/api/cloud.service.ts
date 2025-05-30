@@ -12,6 +12,7 @@ import { Cache } from "@shared/lib/cache";
 import { CacheEntityType } from "@shared/lib/cache/types";
 import ApiError from "@shared/lib/exceptions/ApiError";
 import logger from "@shared/lib/logger";
+import Logger from "@shared/lib/logger";
 import { canAccessResource, resolveUserContext } from "@shared/lib/prisma";
 import type { Storage } from "@shared/lib/storage";
 
@@ -33,7 +34,8 @@ export default class CloudService {
     const key: CacheEntityType = "storage";
 
     if (folderId) {
-      return this.cache.withCache(key, { userId, folderId }, async () => {
+      Logger.info(folderId);
+      return this.cache.withCache(key, { folderId }, async () => {
         const storage = await this.prisma.folder.findUnique({
           where: { id: folderId },
           include: { children: true, files: true },
@@ -57,7 +59,7 @@ export default class CloudService {
   async clearExpiredFiles(): Promise<void> {
     const expired = await this.prisma.file.findMany({
       where: { expiresAt: { lt: new Date() } },
-      select: { id: true, userId: true, folderId: true, type: true },
+      select: { id: true, userId: true, folderId: true, textCategory: true },
     });
 
     if (expired.length === 0) {
@@ -70,8 +72,8 @@ export default class CloudService {
 
     let clearPosts = false;
 
-    const cacheTasks = expired.map(({ id, userId, folderId, type }) => {
-      if (type === TextCategory.POST) clearPosts = true;
+    const cacheTasks = expired.map(({ id, userId, folderId, textCategory }) => {
+      if (textCategory === TextCategory.POST) clearPosts = true;
       return this.cache.flush("file", userId, { fileId: id, folderId });
     });
 
@@ -120,7 +122,7 @@ export default class CloudService {
   async getLatestPosts(): Promise<Post[]> {
     return this.cache.withCache("post", {}, async () => {
       const latest = await this.prisma.file.findMany({
-        where: { type: TextCategory.POST },
+        where: { textCategory: TextCategory.POST },
         take: 3,
         orderBy: { createdAt: "desc" },
         select: { createdAt: true, userId: true, id: true, name: true },
@@ -237,7 +239,7 @@ export default class CloudService {
     content: string,
     name: string = "Untitled",
     exposure: Exposure,
-    type: TextCategory,
+    textCategory: TextCategory,
     expiresAt: Date = new Date(Number.MAX_SAFE_INTEGER),
   ): Promise<File> {
     const folder = await this.prisma.folder.findFirst({
@@ -251,11 +253,11 @@ export default class CloudService {
     if (exists) throw ApiError.BadRequest("File already exists");
 
     const file = await this.prisma.file.create({
-      data: { name, folderId, userId, expiresAt, exposure, type },
+      data: { name, folderId, userId, expiresAt, exposure, textCategory },
     });
 
     await this.cache.flush("file", userId, { folderId });
-    if (type === TextCategory.POST) await this.cache.remove(["post"]);
+    if (textCategory === TextCategory.POST) await this.cache.remove(["post"]);
     await this.storage.writeFile(file.id, content);
     return file;
   }
@@ -270,7 +272,8 @@ export default class CloudService {
       folderId: file.folderId,
     });
 
-    if (file.type === TextCategory.POST) await this.cache.remove(["post"]);
+    if (file.textCategory === TextCategory.POST)
+      await this.cache.remove(["post"]);
     await this.storage.deleteFile(id);
     return this.prisma.file.delete({ where: { id } });
   }
@@ -361,7 +364,7 @@ export default class CloudService {
 
     const oldFile = await this.prisma.file.findUnique({
       where: { id },
-      select: { type: true, userId: true, folderId: true },
+      select: { textCategory: true, userId: true, folderId: true },
     });
     if (!oldFile) throw ApiError.BadRequest("File not found");
     if (oldFile.userId !== userId) throw ApiError.Forbidden();
@@ -371,7 +374,8 @@ export default class CloudService {
       fileId: id,
     });
 
-    if (oldFile.type === TextCategory.POST) await this.cache.remove(["post"]);
+    if (oldFile.textCategory === TextCategory.POST)
+      await this.cache.remove(["post"]);
 
     return this.prisma.file.update({ where: { id }, data: updateData });
   }

@@ -1,14 +1,16 @@
 import type { InputHTMLAttributes } from "react";
 import { twMerge } from "tailwind-merge";
 
+type InputProps = InputHTMLAttributes<HTMLInputElement> & {
+  error?: string;
+};
+
 export default function Input({
   className,
   name,
   error,
   ...props
-}: InputHTMLAttributes<HTMLInputElement> & {
-  error?: string;
-}) {
+}: InputProps) {
   return (
     <div className="flex flex-col">
       <input
@@ -16,7 +18,7 @@ export default function Input({
         name={name}
         placeholder={name || "Input"}
         className={twMerge(
-          "h-10 rounded-md text-md text-gray-700 dark:text-gray-300 outline-none transition-colors",
+          "h-10 rounded-md text-md text-gray-700 dark:text-gray-300 outline-none transition-colors text-xl",
           className,
         )}
       />

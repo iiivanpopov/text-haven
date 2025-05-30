@@ -52,13 +52,13 @@ model Folder {
 }
 
 model File {
-  id        String       @id @default(cuid())
-  userId    String
-  folderId  String
-  name      String       @default("Untitled")
-  exposure  Exposure     @default(PRIVATE)
-  expiresAt DateTime
-  type      TextCategory @default(NOTE)
+  id           String       @id @default(cuid())
+  userId       String
+  folderId     String
+  name         String       @default("Untitled")
+  exposure     Exposure     @default(PRIVATE)
+  expiresAt    DateTime
+  textCategory TextCategory @default(NOTE)
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   folder Folder @relation(fields: [folderId], references: [id], onDelete: Cascade)

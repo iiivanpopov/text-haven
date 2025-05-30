@@ -2,6 +2,7 @@
 
 - Implement file/folder deletion
 - Skeleton loaders
+- Error display (e.g. login, register, create file) using toasts
 - Notifications
 - Implement drag & drop between folders
 - Add trash bin and file recovery functionality

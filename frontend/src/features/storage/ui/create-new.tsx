@@ -31,7 +31,7 @@ export default function CreateNew({
     if (!title.trim()) return;
     await createFolder({
       name: title,
-      parentId: currentFolderId ?? null,
+      parentId: currentFolderId ?? undefined,
       exposure: "PRIVATE",
     });
 

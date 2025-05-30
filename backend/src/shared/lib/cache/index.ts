@@ -21,12 +21,12 @@ export class Cache {
 
     for (const key of eligibleKeys) {
       const value = args[key];
-      if (value) {
-        parts.push(String(value));
-        if (args.exposure) parts.push(args.exposure);
-        if (args.foreign != null) parts.push(String(args.foreign));
-        break; // only the first matching key is used
-      }
+      if (!value) continue;
+
+      parts.push(String(value));
+      if (args.exposure) parts.push(args.exposure);
+      if (args.foreign != null) parts.push(String(args.foreign));
+      break; // only the first matching key is used
     }
 
     return parts.length > 1 ? parts.join(":") : null;
@@ -68,7 +68,7 @@ export class Cache {
     value: unknown,
     expiration = config.CACHE_EXPIRE_TIME,
   ): Promise<void> {
-    const ttl = Number.isFinite(expiration) ? expiration : 3600_000;
+    const ttl = Number.isFinite(expiration) ? expiration : 86_400_000;
     await this.redis.set(key, JSON.stringify(value), "PX", ttl);
   }
 

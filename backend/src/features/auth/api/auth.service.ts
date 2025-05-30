@@ -8,13 +8,12 @@ export default class AuthService {
   async registration(email: string, username: string, password: string) {
     const candidate = await this.prisma.user.findFirst({
       where: {
-        email,
-        username,
+        OR: [{ email }, { username }],
       },
     });
 
     if (candidate) {
-      const conflictField = candidate.email == email ? "email" : "username";
+      const conflictField = candidate.email === email ? "email" : "username";
       throw ApiError.BadRequest(
         `User with this ${conflictField} already exists.`,
       );

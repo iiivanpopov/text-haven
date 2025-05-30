@@ -34,7 +34,7 @@ export default function RegisterForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className={"grid grid-rows-4 h-full"}
+      className={"grid grid-rows-4 h-full w-50"}
     >
       <Controller
         name="username"

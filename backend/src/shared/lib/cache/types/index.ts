@@ -36,6 +36,6 @@ export type CacheKeyFieldMap = {
   folder: ["folderId", "parentId", "userId"];
   settings: ["userId"];
   user: ["userId", "foreign"];
-  storage: ["userId"];
+  storage: ["folderId", "userId"];
   post: [];
 };

@@ -21,18 +21,19 @@ export default function Directory() {
   }
 
   const { isRoot } = data;
-  const folders = isRoot ? data.data : data.data.folders;
-  const files = isRoot ? [] : data.data.files;
+
+  const folders = data.folders;
+  const files = data.files;
 
   return (
     <main className="mt-20 w-3/5 pb-40">
       <h3 className="mb-5 text-5xl text-gray-800 dark:text-gray-100">
-        Storage {isRoot ? "root" : data.data.name}
+        Storage{isRoot ? " root" : ` ${data.name}`}
       </h3>
 
       <CreateNew
         canCreateFile={!isRoot}
-        currentFolderId={isRoot ? undefined : data.data.id}
+        currentFolderId={isRoot ? undefined : data.id}
       />
 
       {folders && <ItemList items={folders} Component={Folder} />}
