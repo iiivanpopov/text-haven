@@ -2,8 +2,8 @@
 
 import { setContent, setName } from "@features/text/model/slice";
 import { useAppDispatch, useAppSelector } from "@shared/hooks/redux";
-import Input from "@shared/ui/user-input/input";
 import Textarea from "@shared/ui/user-input/textarea";
+import ValidatedInput from "@shared/ui/user-input/validated-input";
 
 export default function EditForm() {
   const { text } = useAppSelector((state) => state.textReducer);
@@ -11,7 +11,7 @@ export default function EditForm() {
 
   return (
     <div className="flex flex-col">
-      <Input
+      <ValidatedInput
         name="Title"
         className="text-gray-800 dark:text-gray-100 text-4xl p-0"
         value={text.name}

@@ -25,7 +25,11 @@ export default function ChangeMode() {
   };
 
   return (
-    <Button name="Configure" className={"w-48"} onClick={handleClick}>
+    <Button
+      name="Configure"
+      className={"w-48"}
+      onClick={handleClick}
+    >
       {mode == "read" ? <Wrench size={32} /> : <Check size={32} />}
     </Button>
   );

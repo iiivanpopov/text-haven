@@ -4,8 +4,8 @@ import { useRouter } from "next/navigation";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useLoginMutation } from "@features/auth/model/api";
 import { setAccessToken } from "@shared/lib/local-storage";
-import ValidatedInput from "@shared/ui/user-input/input";
 import Submit from "@shared/ui/user-input/submit";
+import ValidatedInput from "@shared/ui/user-input/validated-input";
 
 type LoginFormFields = {
   email: string;
@@ -31,7 +31,7 @@ export default function LoginForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className={"grid grid-rows-3 h-full w-50"}
+      className={"grid grid-rows-3 w-50"}
     >
       <Controller
         name="email"
@@ -46,7 +46,9 @@ export default function LoginForm() {
         render={({ field, fieldState: { error } }) => (
           <ValidatedInput
             {...field}
-            error={error ? error.message : undefined}
+            label={"Email"}
+            placeholder={"example@email.com"}
+            error={error?.message}
           />
         )}
       />
@@ -59,8 +61,10 @@ export default function LoginForm() {
         render={({ field, fieldState: { error } }) => (
           <ValidatedInput
             {...field}
+            label={"Password"}
+            placeholder={"********"}
             type={"password"}
-            error={error ? error.message : undefined}
+            error={error?.message}
           />
         )}
       />

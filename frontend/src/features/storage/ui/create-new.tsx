@@ -6,7 +6,7 @@ import { useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { useCreateFolderMutation } from "@features/storage/model/api";
 import Button from "@shared/ui/user-input/button";
-import Input from "@shared/ui/user-input/input";
+import LabeledInput from "@shared/ui/user-input/validated-input.tsx";
 
 interface CreateNewProps {
   canCreateFile: boolean;
@@ -48,7 +48,10 @@ export default function CreateNew({
         "hover:bg-gray-200 dark:hover:bg-gray-900",
       )}
     >
-      <Plus size={32} className="text-gray-700 dark:text-gray-200" />
+      <Plus
+        size={32}
+        className="text-gray-700 dark:text-gray-200"
+      />
       <span className="pl-10">Add new</span>
 
       {!showInput && (
@@ -86,7 +89,7 @@ export default function CreateNew({
           role="dialog"
           aria-modal
         >
-          <Input
+          <LabeledInput
             className="w-full rounded-none bg-inherit"
             placeholder="Enter a new folder name"
             name="Input new folder name"

@@ -7,7 +7,6 @@ const userApi = $api.injectEndpoints({
     getUser: build.query<User, string | undefined, ApiResponse<User>>({
       query: (id) => `/user${id ? `/${id}` : ""}`,
       transformResponse: (response) => response.data,
-      providesTags: (result) => [{ type: "User", id: result?.id }],
     }),
     updateUser: build.mutation<User, Partial<User>, ApiResponse<User>>({
       query: (user) => ({
@@ -16,12 +15,8 @@ const userApi = $api.injectEndpoints({
         body: user,
       }),
       transformResponse: (response) => response.data,
-      invalidatesTags: (_result, _error, user) => [
-        { type: "User", id: user.id },
-      ],
     }),
   }),
 });
 
 export const { useGetUserQuery, useUpdateUserMutation } = userApi;
-export default userApi;

@@ -19,7 +19,10 @@ export default function Folder({
         className,
       )}
     >
-      <Icon size={32} className="text-gray-700 dark:text-gray-200" />
+      <Icon
+        size={32}
+        className="text-gray-700 dark:text-gray-200"
+      />
       <span className="pl-10">{name}</span>
     </Link>
   );

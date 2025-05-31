@@ -44,7 +44,7 @@ export default function EditForm() {
       theme: settings.theme,
       textCategory: settings.textCategory,
     });
-  }, [settings, reset]);
+  }, [settings]);
 
   useEffect(() => {
     if (!data) return;
@@ -53,7 +53,7 @@ export default function EditForm() {
       textCategory: data.textCategory,
     });
     setLocalSettings(data);
-  }, [data, reset]);
+  }, [data]);
 
   useEffect(() => {
     if (isFirstRender.current) {
@@ -76,13 +76,20 @@ export default function EditForm() {
       <div className="flex space-x-10 items-center">
         <h1 className="text-gray-800 dark:text-gray-100 text-5xl">Settings</h1>
         <Submit />
-        <Button type="button" name="Fetch" onClick={() => trigger()} />
+        <Button
+          type="button"
+          name="Fetch"
+          onClick={() => trigger()}
+        />
       </div>
 
       {isError && (
         <div className="text-red-500">
           Error loading settings.
-          <Button name="Retry" onClick={() => trigger()} />
+          <Button
+            name="Retry"
+            onClick={() => trigger()}
+          />
         </div>
       )}
 

@@ -1,5 +1,3 @@
-import type { Exposure } from "@prisma";
-
 export type CacheEntityType =
   | "file"
   | "folder"
@@ -10,21 +8,21 @@ export type CacheEntityType =
 
 export type UserCacheParams = Partial<{
   userId: string;
-  foreign: boolean;
+  protected: boolean;
 }>;
 
 export type FileCacheParams = Partial<{
   userId: string;
   folderId: string;
   fileId: string;
-  exposure: Exposure;
+  protected: boolean;
 }>;
 
 export type FolderCacheParams = Partial<{
   userId: string;
   folderId: string;
   parentId: string;
-  exposure: Exposure;
+  protected: boolean;
 }>;
 
 export type CacheKeyParams = UserCacheParams &
@@ -35,7 +33,7 @@ export type CacheKeyFieldMap = {
   file: ["fileId", "folderId", "userId"];
   folder: ["folderId", "parentId", "userId"];
   settings: ["userId"];
-  user: ["userId", "foreign"];
+  user: ["userId"];
   storage: ["folderId", "userId"];
   post: [];
 };

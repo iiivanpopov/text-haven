@@ -12,6 +12,11 @@ export default function ItemList({
   }>;
 }) {
   return items.map((item) => (
-    <Component key={item.id} id={item.id} name={item.name} className="px-5" />
+    <Component
+      key={item.id}
+      id={item.id}
+      name={item.name}
+      className="px-5"
+    />
   ));
 }

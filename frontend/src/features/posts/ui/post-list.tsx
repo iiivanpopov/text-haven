@@ -13,7 +13,10 @@ export default function PostList() {
   return (
     <div className="mt-5 grid grid-rows-3 h-full gap-y-10">
       {data.map((post) => (
-        <Post key={post.id} post={post} />
+        <Post
+          key={post.id}
+          post={post}
+        />
       ))}
     </div>
   );

@@ -6,6 +6,6 @@ export interface Text {
   id: string;
   name: string;
   exposure: Exposure;
-  type: TextCategory;
+  textCategory: TextCategory;
   createdAt: string | Date;
 }

@@ -19,13 +19,13 @@ export type File = {
   textCategory: TextCategory;
 };
 
-export type RootStorage = Folder & {
+type RootStorage = Folder & {
   isRoot: false;
   folders: { id: string; name: string }[];
   files: [];
 };
 
-export type IdStorage = {
+type IdStorage = {
   isRoot: true;
   folders: { id: string; name: string }[];
   files: { id: string; name: string }[];

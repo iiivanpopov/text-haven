@@ -1,7 +1,7 @@
 import type { PrismaClient } from "@prisma";
 import type { RedisClient } from "bun";
 import config from "@shared/config";
-import { EXPOSURES, KEYS } from "@shared/lib/cache/constants";
+import { KEYS, STATUSES } from "@shared/lib/cache/constants";
 import type { CacheEntityType, CacheKeyParams } from "@shared/lib/cache/types";
 import prisma from "@shared/lib/prisma";
 import redis from "@shared/lib/redis";
@@ -24,8 +24,7 @@ export class Cache {
       if (!value) continue;
 
       parts.push(String(value));
-      if (args.exposure) parts.push(args.exposure);
-      if (args.foreign != null) parts.push(String(args.foreign));
+      if (args.protected) parts.push("PROTECTED");
       break; // only the first matching key is used
     }
 
@@ -40,20 +39,20 @@ export class Cache {
     const keysToRemove = new Set<string>();
 
     if (type === "user") {
-      for (const foreign of [true, false]) {
-        const key = Cache.mapKey("user", { userId, foreign });
+      for (const val of [true, false]) {
+        const key = Cache.mapKey("user", { userId, protected: val });
         if (key) keysToRemove.add(key);
       }
     } else {
-      for (const exposure of EXPOSURES) {
-        const keyWithUser = Cache.mapKey(type, { userId, exposure });
+      for (const status of STATUSES) {
+        const keyWithUser = Cache.mapKey(type, { userId, protected: !!status });
         if (keyWithUser) keysToRemove.add(keyWithUser);
 
         for (const [key, value] of Object.entries(opts)) {
           if (value == null) continue;
           const paramKey = Cache.mapKey(type, {
             [key]: value,
-            exposure,
+            protected: !!status,
           });
           if (paramKey) keysToRemove.add(paramKey);
         }
@@ -104,15 +103,18 @@ export class Cache {
 
     const keysToRemove: (CacheEntityType | string)[] = ["post", "storage"];
 
-    for (const exposure of EXPOSURES) {
-      const userFiles = Cache.mapKey("file", { exposure, userId });
-      const userFolders = Cache.mapKey("folder", { exposure, userId });
+    for (const status of STATUSES) {
+      const userFiles = Cache.mapKey("file", { protected: !!status, userId });
+      const userFolders = Cache.mapKey("folder", {
+        protected: !!status,
+        userId,
+      });
       if (userFolders) keysToRemove.push(userFolders);
       if (userFiles) keysToRemove.push(userFiles);
 
       for (const folder of folderIds) {
         const folderKey = Cache.mapKey("folder", {
-          exposure,
+          protected: !!status,
           folderId: folder,
         });
         if (folderKey) keysToRemove.push(folderKey);
@@ -120,7 +122,7 @@ export class Cache {
 
       for (const file of fileIds) {
         const fileKey = Cache.mapKey("file", {
-          exposure,
+          protected: !!status,
           fileId: file,
         });
         if (fileKey) keysToRemove.push(fileKey);

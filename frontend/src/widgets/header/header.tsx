@@ -7,7 +7,10 @@ import ThemeButton from "./theme";
 export default function Header() {
   return (
     <header className="grid grid-cols-3 items-center">
-      <Link href="/" className="w-fit inline">
+      <Link
+        href="/"
+        className="w-fit inline"
+      >
         <h1 className="text-5xl text-gray-800 dark:text-gray-100 transition-all duration-100 delay-75 hover:font-bold ">
           Text Haven
         </h1>

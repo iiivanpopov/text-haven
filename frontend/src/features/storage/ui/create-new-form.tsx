@@ -13,10 +13,10 @@ import {
   TEXT_CATEGORIES,
 } from "@shared/constants/input-fields";
 import type { Exposure, SelectOptions, TextCategory } from "@shared/types";
-import Input from "@shared/ui/user-input/input";
 import ValidatedSelect from "@shared/ui/user-input/select";
 import Submit from "@shared/ui/user-input/submit";
 import Textarea from "@shared/ui/user-input/textarea";
+import LabeledInput from "@shared/ui/user-input/validated-input.tsx";
 
 interface NewFileFields {
   folderId: string;
@@ -71,13 +71,16 @@ export default function NewFileForm() {
 
   return (
     <div className="mt-20 grid grid-cols-[2fr_7fr]">
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col"
+      >
         <Controller
           control={control}
           name={"name"}
           rules={{ required: { message: "Name is required", value: true } }}
           render={({ field, fieldState: { error } }) => (
-            <Input
+            <LabeledInput
               {...field}
               error={error ? error.message : undefined}
               placeholder="Enter a name"

@@ -1,8 +1,13 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { Text } from "@features/text/types";
+import { Exposure, TextCategory } from "@shared/types";
 import { fetchFile, updateFile } from "./actions";
 
-type FileMode = "edit" | "read";
+export const FileMode = {
+  EDIT: "EDIT",
+  READ: "READ",
+} as const;
+export type FileMode = (typeof FileMode)[keyof typeof FileMode];
 
 interface TextState {
   error: string;
@@ -14,15 +19,15 @@ interface TextState {
 const initialState: TextState = {
   error: "",
   isLoading: false,
-  mode: "read",
+  mode: FileMode.READ,
   text: {
     content: "",
     id: "",
     name: "",
     userId: "",
     createdAt: "",
-    exposure: "PRIVATE",
-    type: "NOTE",
+    exposure: Exposure.PRIVATE,
+    textCategory: TextCategory.NOTE,
   },
 };
 

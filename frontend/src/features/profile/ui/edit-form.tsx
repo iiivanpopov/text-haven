@@ -2,17 +2,14 @@
 
 import { useEffect } from "react";
 import { Controller, type SubmitHandler, useForm } from "react-hook-form";
-import {
-  useGetUserQuery,
-  useUpdateUserMutation,
-} from "@features/profile/model/api";
+import { useUpdateUserMutation } from "@features/profile/model/api";
 import { User } from "@entities/user/types";
 import { EXPOSURES } from "@shared/constants/input-fields";
 import { useAppSelector } from "@shared/hooks/redux";
 import type { Exposure } from "@shared/types";
-import ValidatedInput from "@shared/ui/user-input/input";
 import ValidatedSelect from "@shared/ui/user-input/select";
 import Submit from "@shared/ui/user-input/submit";
+import ValidatedInput from "@shared/ui/user-input/validated-input.tsx";
 
 interface ProfileEditFields {
   username: string;

@@ -36,8 +36,18 @@ export default function Directory() {
         currentFolderId={isRoot ? undefined : data.id}
       />
 
-      {folders && <ItemList items={folders} Component={Folder} />}
-      {files && <ItemList items={files} Component={File} />}
+      {folders && (
+        <ItemList
+          items={folders}
+          Component={Folder}
+        />
+      )}
+      {files && (
+        <ItemList
+          items={files}
+          Component={File}
+        />
+      )}
     </main>
   );
 }

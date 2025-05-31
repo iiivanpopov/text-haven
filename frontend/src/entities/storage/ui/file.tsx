@@ -19,7 +19,10 @@ export default function File({
         className,
       )}
     >
-      <Icon size={32} className="text-blue-400 dark:text-blue-500" />
+      <Icon
+        size={32}
+        className="text-blue-400 dark:text-blue-500"
+      />
       <span className="pl-10">{name}</span>
     </Link>
   );

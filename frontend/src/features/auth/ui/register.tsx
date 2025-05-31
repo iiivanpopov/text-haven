@@ -4,8 +4,8 @@ import { useRouter } from "next/navigation";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useRegisterMutation } from "@features/auth/model/api";
 import { setAccessToken } from "@shared/lib/local-storage";
-import ValidatedInput from "@shared/ui/user-input/input";
 import Submit from "@shared/ui/user-input/submit";
+import ValidatedInput from "@shared/ui/user-input/validated-input";
 
 type RegisterForm = {
   email: string;
@@ -34,7 +34,7 @@ export default function RegisterForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className={"grid grid-rows-4 h-full w-50"}
+      className={"grid grid-rows-4 w-50"}
     >
       <Controller
         name="username"
@@ -45,7 +45,9 @@ export default function RegisterForm() {
         render={({ field, fieldState: { error } }) => (
           <ValidatedInput
             {...field}
-            error={error ? error.message : undefined}
+            placeholder={"user123"}
+            label={"Username"}
+            error={error?.message}
           />
         )}
       />
@@ -62,7 +64,9 @@ export default function RegisterForm() {
         render={({ field, fieldState: { error } }) => (
           <ValidatedInput
             {...field}
-            error={error ? error.message : undefined}
+            label={"Email"}
+            placeholder={"example@email.com"}
+            error={error?.message}
           />
         )}
       />
@@ -75,8 +79,10 @@ export default function RegisterForm() {
         render={({ field, fieldState: { error } }) => (
           <ValidatedInput
             {...field}
+            label={"Password"}
+            placeholder={"********"}
             type={"password"}
-            error={error ? error.message : undefined}
+            error={error?.message}
           />
         )}
       />

@@ -4,8 +4,17 @@ export type ApiResponse<T> = {
   error: Error | undefined;
 };
 
-export type Exposure = "PUBLIC" | "PRIVATE";
-export type TextCategory = "POST" | "NOTE";
+export const Exposure = {
+  PUBLIC: "PUBLIC",
+  PRIVATE: "PRIVATE",
+} as const;
+export type Exposure = (typeof Exposure)[keyof typeof Exposure];
+
+export const TextCategory = {
+  POST: "POST",
+  NOTE: "NOTE",
+} as const;
+export type TextCategory = (typeof TextCategory)[keyof typeof TextCategory];
 
 type SelectOption<T = string> = { name: string; value: T };
 export type SelectOptions<T = string> = SelectOption<T>[];

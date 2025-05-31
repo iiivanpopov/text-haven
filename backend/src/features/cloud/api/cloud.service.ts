@@ -182,7 +182,7 @@ export default class CloudService {
 
     return this.cache.withCache(
       "folder",
-      { userId: effUserId, parentId, exposure },
+      { userId: effUserId, parentId, protected: isOther },
       () =>
         this.prisma.folder.findMany({
           where: {
@@ -314,7 +314,7 @@ export default class CloudService {
 
     return this.cache.withCache(
       "file",
-      { userId: effUserId, folderId, exposure },
+      { userId: effUserId, folderId, protected: isOther },
       async () =>
         this.prisma.file.findMany({
           where: { userId: effUserId, folderId, exposure },
