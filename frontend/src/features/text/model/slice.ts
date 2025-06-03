@@ -1,78 +1,87 @@
-import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { Text } from "@features/text/types";
 import { Exposure, TextCategory } from "@shared/types";
-import { fetchFile, updateFile } from "./actions";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export const FileMode = {
   EDIT: "EDIT",
-  READ: "READ",
+  VIEW: "VIEW",
 } as const;
 export type FileMode = (typeof FileMode)[keyof typeof FileMode];
 
-interface TextState {
-  error: string;
-  isLoading: boolean;
+interface FileState {
   mode: FileMode;
-  text: Text;
+  text: {
+    id: string;
+    userId: string;
+    createdAt: string | Date;
+    name: string;
+    content: string;
+    exposure: Exposure;
+    textCategory: TextCategory;
+  };
+  editableText: {
+    name: string;
+    content: string;
+    exposure: Exposure;
+    textCategory: TextCategory;
+  };
 }
 
-const initialState: TextState = {
-  error: "",
-  isLoading: false,
-  mode: FileMode.READ,
+const initialState: FileState = {
+  mode: FileMode.VIEW,
   text: {
-    content: "",
     id: "",
-    name: "",
     userId: "",
     createdAt: "",
+    name: "",
+    content: "",
+    exposure: Exposure.PRIVATE,
+    textCategory: TextCategory.NOTE,
+  },
+  editableText: {
+    name: "",
+    content: "",
     exposure: Exposure.PRIVATE,
     textCategory: TextCategory.NOTE,
   },
 };
 
-const textSlice = createSlice({
-  name: "text",
+const fileSlice = createSlice({
+  name: "file",
   initialState,
   reducers: {
-    setContent: (state, action: PayloadAction<string>) => {
-      state.text.content = action.payload;
-    },
-    setName: (state, action: PayloadAction<string>) => {
-      state.text.name = action.payload;
-    },
-    setMode: (state, action: PayloadAction<FileMode>) => {
+    setMode(state, action: PayloadAction<FileMode>) {
       state.mode = action.payload;
     },
+    setFile(state, action: PayloadAction<FileState["text"]>) {
+      state.text = action.payload;
+      state.editableText = {
+        name: action.payload.name,
+        content: action.payload.content,
+        exposure: action.payload.exposure,
+        textCategory: action.payload.textCategory,
+      };
+    },
+    setEditableName(state, action: PayloadAction<string>) {
+      state.editableText.name = action.payload;
+    },
+    setEditableContent(state, action: PayloadAction<string>) {
+      state.editableText.content = action.payload;
+    },
+    setEditableExposure(state, action: PayloadAction<Exposure>) {
+      state.editableText.exposure = action.payload;
+    },
+    setEditableCategory(state, action: PayloadAction<TextCategory>) {
+      state.editableText.textCategory = action.payload;
+    },
   },
-  extraReducers: (builder) =>
-    builder
-      .addCase(fetchFile.fulfilled, (state, action) => {
-        state.text = action.payload;
-        state.error = "";
-        state.isLoading = false;
-      })
-      .addCase(fetchFile.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(fetchFile.rejected, (state, action) => {
-        state.error = action.error.message ?? "Unknown error";
-        state.isLoading = false;
-      })
-
-      .addCase(updateFile.fulfilled, (state, action) => {
-        state.text = action.payload;
-        state.error = "";
-        state.isLoading = false;
-      })
-      .addCase(updateFile.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(updateFile.rejected, (state, action) => {
-        state.error = action.error.message ?? "Unknown error";
-        state.isLoading = false;
-      }),
 });
 
-export default textSlice.reducer;
-export const { setContent, setName, setMode } = textSlice.actions;
+export const {
+  setMode,
+  setFile,
+  setEditableName,
+  setEditableContent,
+  setEditableExposure,
+  setEditableCategory,
+} = fileSlice.actions;
+export default fileSlice.reducer;

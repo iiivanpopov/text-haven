@@ -65,12 +65,12 @@ export default function Directory() {
         Storage
         {isRoot ? " root" : ` ${isStorage ? storageData.name : ""}`}
       </h3>
+
       <CreateNew
         canCreateFile={!isRoot}
         currentFolderId={currentFolderId}
         onCreateFolderAction={handleCreateFolder}
       />
-      `
       <StorageList
         files={files}
         folders={folders}

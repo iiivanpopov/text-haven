@@ -1,6 +1,6 @@
-import type { User } from "@entities/user/types";
 import { $api } from "@shared/api";
 import type { ApiResponse } from "@shared/types";
+import type { User } from "@features/profile/types";
 
 const userApi = $api.injectEndpoints({
   endpoints: (build) => ({

@@ -1,12 +1,10 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import textReducer from "@features/text/model/slice";
 import settingsReducer from "@entities/settings/model/slice";
-import userReducer from "@entities/user/model/slice";
 import { $api } from "@shared/api";
 
 const rootReducer = combineReducers({
   textReducer,
-  userReducer,
   settingsReducer,
   [$api.reducerPath]: $api.reducer,
 });

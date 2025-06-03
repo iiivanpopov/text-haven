@@ -3,8 +3,7 @@
 import { LogOut } from "lucide-react";
 import { memo } from "react";
 import { twMerge } from "tailwind-merge";
-import { logout } from "@features/auth/model/actions";
-import { useAppDispatch } from "@shared/hooks/redux";
+import { useLogoutMutation } from "@features/auth/model/api";
 
 interface LogOutProps {
   className?: string;
@@ -12,10 +11,10 @@ interface LogOutProps {
 }
 
 const LogOutBtn = ({ iconSize = 32, className }: LogOutProps) => {
-  const dispatch = useAppDispatch();
+  const [logout] = useLogoutMutation();
 
-  const handleLogout = () => {
-    dispatch(logout());
+  const handleLogout = async () => {
+    await logout();
   };
 
   return (

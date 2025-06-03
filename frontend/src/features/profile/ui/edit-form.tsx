@@ -2,14 +2,16 @@
 
 import { useEffect } from "react";
 import { Controller, type SubmitHandler, useForm } from "react-hook-form";
-import { useUpdateUserMutation } from "@features/profile/model/api";
-import type { User } from "@entities/user/types";
+import {
+  useGetUserQuery,
+  useUpdateUserMutation,
+} from "@features/profile/model/api";
 import { EXPOSURES } from "@shared/constants/input-fields";
-import { useAppSelector } from "@shared/hooks/redux";
 import type { Exposure } from "@shared/types";
 import ValidatedInput from "@shared/ui/user-input/input/validated-input";
 import ValidatedSelect from "@shared/ui/user-input/select/validated-select";
 import Submit from "@shared/ui/user-input/submit";
+import { User } from "@features/profile/types";
 
 interface ProfileEditFields {
   username: string;
@@ -22,12 +24,8 @@ type UpdateUserFields = Partial<Omit<User, "id"> & { password: string }>;
 
 export default function EditForm() {
   const [updateUser] = useUpdateUserMutation();
+  const { data, isLoading, isError } = useGetUserQuery(undefined);
   const { control, handleSubmit, setValue } = useForm<ProfileEditFields>();
-  const {
-    user: data,
-    isError,
-    isLoading,
-  } = useAppSelector((state) => state.userReducer);
 
   useEffect(() => {
     if (!data) return;

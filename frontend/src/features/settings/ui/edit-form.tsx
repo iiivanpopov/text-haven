@@ -1,70 +1,53 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import {
   useLazyGetSettingsQuery,
   useUpdateSettingsMutation,
 } from "@entities/settings/model/api";
-import type { Settings } from "@entities/settings/types";
 import { TEXT_CATEGORIES, THEMES } from "@shared/constants/input-fields";
-import { useAppSelector } from "@shared/hooks/redux";
 import { setLocalSettings } from "@shared/lib/local-storage";
-import { applyTheme } from "@shared/lib/theme";
 import { TextCategory, Theme } from "@shared/types";
 import Button from "@shared/ui/user-input/button";
 import ValidatedSelect from "@shared/ui/user-input/select/validated-select";
 import Submit from "@shared/ui/user-input/submit";
+import { setSettings } from "@entities/settings/model/slice";
+import { useAppDispatch, useAppSelector } from "@shared/hooks/redux";
 
 interface SettingsForm {
   textCategory: TextCategory;
   theme: Theme;
 }
 
-export default function EditForm() {
-  const { control, handleSubmit, watch, reset } = useForm<SettingsForm>({
-    defaultValues: {
-      theme: Theme.LIGHT,
-      textCategory: TextCategory.NOTE,
-    },
+export function EditForm() {
+  const dispatch = useAppDispatch();
+  const { settings, isLoaded } = useAppSelector(
+    (state) => state.settingsReducer,
+  );
+
+  const { control, handleSubmit, reset } = useForm<SettingsForm>({
+    defaultValues: settings,
   });
 
-  const watchedValues = watch();
+  useEffect(() => {
+    reset(settings);
+  }, [settings, reset]);
 
   const [trigger, { data, isError }] = useLazyGetSettingsQuery();
   const [updateSettings] = useUpdateSettingsMutation();
 
-  const { settings } = useAppSelector((state) => state.settingsReducer);
-
-  const isFirstRender = useRef(true);
-
-  useEffect(() => {
-    if (!settings) return;
-    reset({
-      theme: settings.theme,
-      textCategory: settings.textCategory,
-    });
-  }, [settings, reset]);
-
   useEffect(() => {
     if (!data) return;
-    reset({
-      theme: data.theme,
-      textCategory: data.textCategory,
-    });
-    setLocalSettings(data);
-  }, [data, reset]);
+    dispatch(setSettings(data));
+  }, [data, dispatch]);
 
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
-    applyTheme(watchedValues.theme);
-    setLocalSettings(watchedValues as Settings);
-  }, [watchedValues]);
+    if (isLoaded) setLocalSettings(settings);
+  }, [settings, isLoaded]);
 
   const onSubmit: SubmitHandler<SettingsForm> = async (formData) => {
+    dispatch(setSettings(formData));
     await updateSettings(formData);
   };
 

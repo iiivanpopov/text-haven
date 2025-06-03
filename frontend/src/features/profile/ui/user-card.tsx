@@ -1,4 +1,4 @@
-import { User } from "@entities/user/types";
+import { User } from "@features/profile/types";
 
 export default function UserCard({ user }: { user: User }) {
   return (

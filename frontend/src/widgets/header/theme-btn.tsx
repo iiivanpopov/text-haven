@@ -10,33 +10,34 @@ import { applyTheme } from "@shared/lib/theme";
 import { Theme } from "@shared/types";
 
 function ThemeBtn({ className }: { className: string }) {
-  const {
-    settings: { theme, ...settings },
-  } = useAppSelector((state) => state.settingsReducer);
+  const { settings } = useAppSelector((state) => state.settingsReducer);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    applyTheme(theme);
-  }, [theme]);
+    applyTheme(settings.theme);
+  }, [settings]);
 
   const handleTheme = () => {
-    if (!theme) return;
+    if (!settings.theme) return;
+    const newTheme = settings.theme === Theme.LIGHT ? Theme.DARK : Theme.LIGHT;
     setLocalSettings({
       ...settings,
-      theme: theme === Theme.LIGHT ? Theme.DARK : Theme.LIGHT,
+      theme: newTheme,
     });
-
-    dispatch(setTheme(theme == Theme.LIGHT ? Theme.DARK : Theme.LIGHT));
+    dispatch(setTheme(newTheme));
   };
 
-  const Icon = useMemo(() => (theme == Theme.LIGHT ? Sun : Moon), [theme]);
+  const Icon = useMemo(
+    () => (settings.theme == Theme.LIGHT ? Sun : Moon),
+    [settings],
+  );
 
   return (
     <button
       aria-label="Switch theme"
       title="Switch theme"
       role="switch"
-      aria-checked={theme === Theme.DARK}
+      aria-checked={settings.theme === Theme.DARK}
       onClick={handleTheme}
       className={twMerge(
         "group relative flex flex-col items-center text-gray-800 dark:text-gray-100 transition-colors duration-300",

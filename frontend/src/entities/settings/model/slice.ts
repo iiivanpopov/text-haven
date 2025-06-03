@@ -1,14 +1,18 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import settingsApi from "@entities/settings/model/api";
 import type { Settings } from "@entities/settings/types";
 import { TextCategory, Theme } from "@shared/types";
 
 interface SettingsState {
   settings: Settings;
+  isLoaded: boolean;
 }
 
 const initialState: SettingsState = {
-  settings: { theme: Theme.LIGHT, textCategory: TextCategory.NOTE },
+  settings: {
+    theme: Theme.LIGHT,
+    textCategory: TextCategory.NOTE,
+  },
+  isLoaded: false,
 };
 
 const settingsSlice = createSlice({
@@ -21,15 +25,11 @@ const settingsSlice = createSlice({
     setTheme: (state, action: PayloadAction<Theme>) => {
       state.settings.theme = action.payload;
     },
+    setIsLoaded: (state, action: PayloadAction<boolean>) => {
+      state.isLoaded = action.payload;
+    },
   },
-  extraReducers: (builder) =>
-    builder.addMatcher(
-      settingsApi.endpoints.getSettings.matchFulfilled,
-      (state, action) => {
-        state.settings = action.payload;
-      },
-    ),
 });
 
-export const { setSettings, setTheme } = settingsSlice.actions;
+export const { setSettings, setTheme, setIsLoaded } = settingsSlice.actions;
 export default settingsSlice.reducer;

@@ -1,5 +1,5 @@
-import type { User } from "@entities/user/types";
 import type { ApiResponse } from "@shared/types";
+import { User } from "@features/profile/types";
 
 export type AuthResponse = ApiResponse<{
   user: User;

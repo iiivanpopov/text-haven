@@ -4,7 +4,6 @@ import type {
   FetchBaseQueryError,
 } from "@reduxjs/toolkit/query";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-
 import { AuthResponse } from "@features/auth/types";
 import { removeAccessToken, setAccessToken } from "@shared/lib/local-storage";
 
@@ -26,29 +25,22 @@ const baseQueryWithReAuth: BaseQueryFn<
   FetchBaseQueryError
 > = async (args, api, extraOptions) => {
   let result = await baseQuery(args, api, extraOptions);
-
   if (result.error && result.error.status === 401) {
-    const refreshResult = await baseQuery(
-      { url: "/refresh", method: "GET" },
-      api,
-      extraOptions,
-    );
-
+    const refreshResult = await baseQuery("/refresh", api, extraOptions);
     if (refreshResult.data) {
-      setAccessToken(refreshResult as AuthResponse);
-
+      setAccessToken(refreshResult as unknown as AuthResponse);
       result = await baseQuery(args, api, extraOptions);
     } else {
       removeAccessToken();
     }
   }
-
   return result;
 };
 
 const $api = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithReAuth,
+  tagTypes: ["Text", "Profile"],
   endpoints: () => ({}),
 });
 
