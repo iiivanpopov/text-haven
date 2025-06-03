@@ -177,4 +177,5 @@ export class Cache {
   }
 }
 
-export default new Cache(redis, prisma);
+const instance = new Cache(redis, prisma);
+export default instance;

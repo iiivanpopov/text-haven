@@ -11,13 +11,15 @@ import BaseInput from "@shared/ui/user-input/input/base-input";
 interface CreateNewProps {
   canCreateFile: boolean;
   currentFolderId: string | undefined;
-  onCreateFolder: (folder: Omit<Folder, "id" | "userId" | "createdAt">) => void;
+  onCreateFolderAction: (
+    folder: Omit<Folder, "id" | "userId" | "createdAt">,
+  ) => void;
 }
 
 export default function CreateNew({
   canCreateFile,
   currentFolderId,
-  onCreateFolder,
+  onCreateFolderAction,
 }: CreateNewProps) {
   const [showInput, setShowInput] = useState(false);
   const [title, setTitle] = useState("");
@@ -30,7 +32,7 @@ export default function CreateNew({
   const handleSave = async () => {
     if (!title.trim()) return;
 
-    onCreateFolder({
+    onCreateFolderAction({
       name: title,
       parentId: currentFolderId ?? undefined,
       exposure: "PRIVATE",

@@ -3,7 +3,7 @@ import cache from "@shared/lib/cache";
 import prisma from "@shared/lib/prisma.ts";
 import storage from "@shared/lib/storage";
 
-declare var self: Worker; // prevent ts errors
+declare let self: Worker; // prevent ts errors
 
 const cloudService = new CloudService(prisma, storage, cache);
 

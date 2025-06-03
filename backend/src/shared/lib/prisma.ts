@@ -1,6 +1,7 @@
 import { Exposure, PrismaClient } from "@prisma";
 
-export default new PrismaClient();
+const instance = new PrismaClient();
+export default instance;
 
 export function canAccessResource(
   resource: { userId: string; exposure?: Exposure }, // targetUserId

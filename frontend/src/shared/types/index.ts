@@ -16,5 +16,11 @@ export const TextCategory = {
 } as const;
 export type TextCategory = (typeof TextCategory)[keyof typeof TextCategory];
 
+export const Theme = {
+  DARK: "dark",
+  LIGHT: "light",
+} as const;
+export type Theme = (typeof Theme)[keyof typeof Theme];
+
 type SelectOption<T = string> = { name: string; value: T };
 export type SelectOptions<T = string> = SelectOption<T>[];

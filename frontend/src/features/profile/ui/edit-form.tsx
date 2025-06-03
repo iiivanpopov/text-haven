@@ -35,7 +35,7 @@ export default function EditForm() {
     setValue("username", data.username);
     setValue("email", data.email);
     setValue("exposure", data.exposure);
-  }, [data]);
+  }, [data, setValue]);
 
   if (isLoading) return <div>Loading...</div>;
   if (isError || !data) return <div>Error loading profile</div>;

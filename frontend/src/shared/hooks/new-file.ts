@@ -37,14 +37,14 @@ export const useNewFileForm = () => {
   const [createFile] = useCreateFileMutation();
   const router = useRouter();
 
-  const FOLDERS: SelectOptions = useMemo(() => {
+  const folders: SelectOptions = useMemo(() => {
     if (!data) return [];
     return data.map((folder) => ({ name: folder.name, value: folder.id }));
   }, [data]);
 
   useEffect(() => {
     if (data) form.setValue("folderId", data[0].id);
-  }, [data]);
+  }, [data, form]);
 
   const onSubmit = async (data: NewFileFields) => {
     const response = await createFile({
@@ -56,5 +56,5 @@ export const useNewFileForm = () => {
     }
   };
 
-  return { form, onSubmit, FOLDERS, isLoading, isError };
+  return { form, onSubmit, folders, isLoading, isError };
 };

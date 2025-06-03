@@ -13,7 +13,7 @@ function getEnvVar(
   return value ?? defaultValue ?? "";
 }
 
-export default {
+const config = {
   // AWS
   BUCKET: getEnvVar("S3_BUCKET"),
   ACCESS_KEY_ID: getEnvVar("AWS_ACCESS_KEY"),
@@ -54,3 +54,5 @@ export default {
     return num;
   })(),
 };
+
+export default config;

@@ -1,6 +1,4 @@
-import type { TextCategory } from "@shared/types";
-
-export type Theme = "dark" | "light";
+import type { TextCategory, Theme } from "@shared/types";
 
 export interface Settings {
   theme: Theme;

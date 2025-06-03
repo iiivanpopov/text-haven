@@ -6,12 +6,12 @@ import {
   useLazyGetSettingsQuery,
   useUpdateSettingsMutation,
 } from "@entities/settings/model/api";
-import type { Settings, Theme } from "@entities/settings/types";
+import type { Settings } from "@entities/settings/types";
 import { TEXT_CATEGORIES, THEMES } from "@shared/constants/input-fields";
 import { useAppSelector } from "@shared/hooks/redux";
 import { setLocalSettings } from "@shared/lib/local-storage";
 import { applyTheme } from "@shared/lib/theme";
-import type { TextCategory } from "@shared/types";
+import { TextCategory, Theme } from "@shared/types";
 import Button from "@shared/ui/user-input/button";
 import ValidatedSelect from "@shared/ui/user-input/select/validated-select";
 import Submit from "@shared/ui/user-input/submit";
@@ -24,8 +24,8 @@ interface SettingsForm {
 export default function EditForm() {
   const { control, handleSubmit, watch, reset } = useForm<SettingsForm>({
     defaultValues: {
-      theme: "light",
-      textCategory: "NOTE",
+      theme: Theme.LIGHT,
+      textCategory: TextCategory.NOTE,
     },
   });
 
@@ -44,7 +44,7 @@ export default function EditForm() {
       theme: settings.theme,
       textCategory: settings.textCategory,
     });
-  }, [settings]);
+  }, [settings, reset]);
 
   useEffect(() => {
     if (!data) return;
@@ -53,7 +53,7 @@ export default function EditForm() {
       textCategory: data.textCategory,
     });
     setLocalSettings(data);
-  }, [data]);
+  }, [data, reset]);
 
   useEffect(() => {
     if (isFirstRender.current) {

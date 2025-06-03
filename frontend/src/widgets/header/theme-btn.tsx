@@ -7,8 +7,9 @@ import { setTheme } from "@entities/settings/model/slice";
 import { useAppDispatch, useAppSelector } from "@shared/hooks/redux";
 import { setLocalSettings } from "@shared/lib/local-storage";
 import { applyTheme } from "@shared/lib/theme";
+import { Theme } from "@shared/types";
 
-function Theme({ className }: { className: string }) {
+function ThemeBtn({ className }: { className: string }) {
   const {
     settings: { theme, ...settings },
   } = useAppSelector((state) => state.settingsReducer);
@@ -22,19 +23,20 @@ function Theme({ className }: { className: string }) {
     if (!theme) return;
     setLocalSettings({
       ...settings,
-      theme: theme == "light" ? "dark" : "light",
+      theme: theme === Theme.LIGHT ? Theme.DARK : Theme.LIGHT,
     });
 
-    dispatch(setTheme(theme == "light" ? "dark" : "light"));
+    dispatch(setTheme(theme == Theme.LIGHT ? Theme.DARK : Theme.LIGHT));
   };
 
-  const Icon = useMemo(() => (theme == "light" ? Sun : Moon), [theme]);
+  const Icon = useMemo(() => (theme == Theme.LIGHT ? Sun : Moon), [theme]);
 
   return (
     <button
       aria-label="Switch theme"
       title="Switch theme"
       role="switch"
+      aria-checked={theme === Theme.DARK}
       onClick={handleTheme}
       className={twMerge(
         "group relative flex flex-col items-center text-gray-800 dark:text-gray-100 transition-colors duration-300",
@@ -53,4 +55,4 @@ function Theme({ className }: { className: string }) {
   );
 }
 
-export default memo(Theme);
+export default memo(ThemeBtn);

@@ -42,4 +42,5 @@ export class Storage {
   }
 }
 
-export default new Storage(s3);
+const instance = new Storage(s3);
+export default instance;

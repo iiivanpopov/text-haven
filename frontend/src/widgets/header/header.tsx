@@ -2,7 +2,7 @@ import { Folder, Settings, User } from "lucide-react";
 import Link from "next/link";
 import LogOutBtn from "./log-out";
 import NavItem from "./nav-item";
-import ThemeButton from "./theme";
+import ThemeButton from "./theme-btn";
 
 export default function Header() {
   return (

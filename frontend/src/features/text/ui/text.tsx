@@ -24,7 +24,7 @@ export default function Text() {
 
   useEffect(() => {
     dispatch(fetchFile(id));
-  }, [id]);
+  }, [id, dispatch]);
 
   return (
     <div

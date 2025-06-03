@@ -17,7 +17,8 @@ export default function Textarea({
       ta.setRangeText("  ", selectionStart, selectionEnd, "end"); // insert \t
 
       const pos = selectionStart + 2;
-      ta.selectionStart = ta.selectionEnd = pos; // move cursor
+      ta.selectionStart = pos; // move cursor
+      ta.selectionEnd = pos;
 
       const event = new InputEvent("input", { bubbles: true });
       ta.dispatchEvent(event); // bind target to event and send one

@@ -36,7 +36,7 @@ export type SettingsCacheParams = {
   userId?: string;
 };
 
-export type PostCacheParams = {};
+export type PostCacheParams = object;
 
 export type CacheKeyMap = {
   FILE: FileCacheParams;

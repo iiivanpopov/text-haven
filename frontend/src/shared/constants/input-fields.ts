@@ -1,36 +1,35 @@
-import { Theme } from "@entities/settings/types";
-import type { Exposure, SelectOptions, TextCategory } from "@shared/types";
+import { Exposure, SelectOptions, TextCategory, Theme } from "@shared/types";
 
 export const TEXT_CATEGORIES: SelectOptions<TextCategory> = [
   {
     name: "Note",
-    value: "NOTE",
+    value: TextCategory.NOTE,
   },
   {
     name: "Post",
-    value: "POST",
+    value: TextCategory.POST,
   },
 ];
 
 export const EXPOSURES: SelectOptions<Exposure> = [
   {
     name: "Public",
-    value: "PUBLIC",
+    value: Exposure.PUBLIC,
   },
   {
     name: "Private",
-    value: "PRIVATE",
+    value: Exposure.PRIVATE,
   },
 ];
 
 export const THEMES: SelectOptions<Theme> = [
   {
     name: "Light",
-    value: "light",
+    value: Theme.LIGHT,
   },
   {
     name: "Dark",
-    value: "dark",
+    value: Theme.DARK,
   },
 ];
 

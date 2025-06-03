@@ -43,4 +43,5 @@ class Logger {
   }
 }
 
-export default new Logger();
+const instance = new Logger();
+export default instance;

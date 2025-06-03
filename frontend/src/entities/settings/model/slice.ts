@@ -1,13 +1,14 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import settingsApi from "@entities/settings/model/api";
-import type { Settings, Theme } from "@entities/settings/types";
+import type { Settings } from "@entities/settings/types";
+import { TextCategory, Theme } from "@shared/types";
 
 interface SettingsState {
   settings: Settings;
 }
 
 const initialState: SettingsState = {
-  settings: { theme: "light", textCategory: "NOTE" },
+  settings: { theme: Theme.LIGHT, textCategory: TextCategory.NOTE },
 };
 
 const settingsSlice = createSlice({

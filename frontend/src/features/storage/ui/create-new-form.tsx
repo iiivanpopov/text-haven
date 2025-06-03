@@ -5,7 +5,7 @@ import FileFormFields from "@features/storage/ui/file-form-fields";
 import { useNewFileForm } from "@shared/hooks/new-file";
 
 export default function NewFileForm() {
-  const { form, onSubmit, FOLDERS, isError, isLoading } = useNewFileForm();
+  const { form, onSubmit, folders, isError, isLoading } = useNewFileForm();
   const { handleSubmit, control } = form;
 
   if (isLoading) return <div>Loading...</div>;
@@ -19,7 +19,7 @@ export default function NewFileForm() {
       >
         <FileFormFields
           control={control}
-          FOLDERS={FOLDERS}
+          FOLDERS={folders}
         />
       </form>
       <FileContentTextarea control={control} />

@@ -1,16 +1,16 @@
 {
   "type": "module",
   "devDependencies": {
-    "@next/eslint-plugin-next": "^15.3.3",
-    "@uvarovag/eslint-config-feature-sliced-flat": "^1.0.11",
+    "@eslint/eslintrc": "^3.3.1",
     "eslint": "^9.28.0",
+    "eslint-config-next": "^15.3.3",
     "eslint-config-prettier": "^10.1.5",
-    "eslint-plugin-prettier": "^5.4.1",
+    "eslint-plugin-next": "^0.0.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
     "husky": "^9.1.7",
-    "lint-staged": "^16.1.0",
-    "prettier": "^3.5.3",
-    "typescript": "^5.8.3",
-    "typescript-eslint": "^8.33.1"
+    "next": "^15.3.3",
+    "prettier": "^3.5.3"
   },
   "scripts": {
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
