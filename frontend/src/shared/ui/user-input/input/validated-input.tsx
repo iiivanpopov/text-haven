@@ -1,4 +1,6 @@
-import LabeledInput, { type LabeledInputProps } from "./labeled-input";
+import LabeledInput, {
+  type LabeledInputProps,
+} from "@shared/ui/user-input/input/labeled-input";
 
 type InputProps = LabeledInputProps & {
   error?: string;

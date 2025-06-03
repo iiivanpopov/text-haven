@@ -2,8 +2,8 @@
 
 import { setContent, setName } from "@features/text/model/slice";
 import { useAppDispatch, useAppSelector } from "@shared/hooks/redux";
+import ValidatedInput from "@shared/ui/user-input/input/validated-input";
 import Textarea from "@shared/ui/user-input/textarea";
-import ValidatedInput from "@shared/ui/user-input/validated-input";
 
 export default function EditForm() {
   const { text } = useAppSelector((state) => state.textReducer);

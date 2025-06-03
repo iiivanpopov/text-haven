@@ -1,6 +1,10 @@
 import type { Exposure } from "@shared/types";
 
-type Role = "ADMIN" | "USER";
+const Role = {
+  ADMIN: "ADMIN",
+  USER: "USER",
+} as const;
+type Role = (typeof Role)[keyof typeof Role];
 
 export interface User {
   id: string;

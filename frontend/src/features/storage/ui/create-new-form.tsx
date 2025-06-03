@@ -1,73 +1,15 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect, useMemo } from "react";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import {
-  useCreateFileMutation,
-  useGetFoldersQuery,
-} from "@features/storage/model/api";
-import {
-  EXPIRY_OPTIONS,
-  EXPOSURES,
-  TEXT_CATEGORIES,
-} from "@shared/constants/input-fields";
-import type { Exposure, SelectOptions, TextCategory } from "@shared/types";
-import ValidatedSelect from "@shared/ui/user-input/select";
-import Submit from "@shared/ui/user-input/submit";
-import Textarea from "@shared/ui/user-input/textarea";
-import LabeledInput from "@shared/ui/user-input/validated-input.tsx";
-
-interface NewFileFields {
-  folderId: string;
-  exposure: Exposure;
-  content: string;
-  name: string;
-  textCategory: TextCategory;
-  expiresAt: string;
-}
+import FileContentTextarea from "@features/storage/ui/file-content-textarea";
+import FileFormFields from "@features/storage/ui/file-form-fields";
+import { useNewFileForm } from "@shared/hooks/new-file";
 
 export default function NewFileForm() {
-  const { control, handleSubmit, setValue } = useForm<NewFileFields>({
-    defaultValues: {
-      folderId: "",
-      exposure: EXPOSURES[0].value,
-      content: "",
-      name: "",
-      textCategory: TEXT_CATEGORIES[0].value,
-      expiresAt: EXPIRY_OPTIONS[0].value,
-    },
-  });
-  const [createFile] = useCreateFileMutation();
-  const { data, isError, isLoading } = useGetFoldersQuery();
-  const router = useRouter();
+  const { form, onSubmit, FOLDERS, isError, isLoading } = useNewFileForm();
+  const { handleSubmit, control } = form;
 
-  const FOLDERS: SelectOptions = useMemo(() => {
-    if (!data) return [];
-    return data.map((folder) => ({ name: folder.name, value: folder.id }));
-  }, [data]);
-
-  useEffect(() => {
-    if (data) setValue("folderId", data[0].id);
-  }, [data]);
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (isError || !data) {
-    return <div>Error loading storage</div>;
-  }
-
-  const onSubmit: SubmitHandler<NewFileFields> = async (data) => {
-    const response = await createFile({
-      ...data,
-      expiresAt: new Date(Date.now() + Number(data.expiresAt)).toISOString(),
-    });
-    if (!response.error) {
-      router.push(`/text/${response.data.id}`);
-    }
-  };
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error loading storage</div>;
 
   return (
     <div className="mt-20 grid grid-cols-[2fr_7fr]">
@@ -75,104 +17,12 @@ export default function NewFileForm() {
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col"
       >
-        <Controller
+        <FileFormFields
           control={control}
-          name={"name"}
-          rules={{ required: { message: "Name is required", value: true } }}
-          render={({ field, fieldState: { error } }) => (
-            <LabeledInput
-              {...field}
-              error={error ? error.message : undefined}
-              placeholder="Enter a name"
-              className="p-0"
-            />
-          )}
+          FOLDERS={FOLDERS}
         />
-
-        <div className="flex flex-wrap gap-4">
-          <Controller
-            control={control}
-            name={"exposure"}
-            rules={{
-              required: { message: "Exposure is required", value: true },
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <ValidatedSelect
-                {...field}
-                error={error ? error.message : undefined}
-                options={EXPOSURES}
-                className="p-0"
-              />
-            )}
-          />
-
-          <Controller
-            control={control}
-            name={"expiresAt"}
-            rules={{
-              required: { message: "Expiration time is required", value: true },
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <ValidatedSelect
-                {...field}
-                error={error ? error.message : undefined}
-                options={EXPIRY_OPTIONS}
-                className="p-0"
-              />
-            )}
-          />
-
-          <Controller
-            control={control}
-            name={"textCategory"}
-            rules={{
-              required: { message: "Text category is required", value: true },
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <ValidatedSelect
-                {...field}
-                error={error ? error.message : undefined}
-                options={TEXT_CATEGORIES}
-                className="p-0"
-              />
-            )}
-          />
-        </div>
-
-        <Controller
-          control={control}
-          name={"folderId"}
-          rules={{
-            required: { message: "Folder is required", value: true },
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <ValidatedSelect
-              {...field}
-              error={error ? error.message : undefined}
-              options={FOLDERS}
-              className="p-0"
-            />
-          )}
-        />
-
-        <Submit />
       </form>
-
-      <Controller
-        control={control}
-        name={"content"}
-        rules={{
-          required: { message: "Content is required", value: true },
-        }}
-        render={({ field, fieldState: { error } }) => (
-          <Textarea
-            {...field}
-            error={error ? error.message : undefined}
-            className="p-2 h-full"
-            placeholder="Enter your content"
-          />
-        )}
-      />
+      <FileContentTextarea control={control} />
     </div>
   );
 }

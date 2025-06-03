@@ -1,4 +1,4 @@
-import type { File, Folder, Storage } from "@entities/storage/types";
+import type { File, Folder, Storage } from "@features/storage/types";
 import { $api } from "@shared/api";
 import type { ApiResponse } from "@shared/types";
 
@@ -28,6 +28,14 @@ const storageApi = $api.injectEndpoints({
       query: (folder) => ({ url: `/folders`, method: "POST", body: folder }),
       transformResponse: (response) => response.data,
     }),
+    deleteFile: build.mutation<File, string, ApiResponse<File>>({
+      query: (id) => ({ url: `/files/${id}`, method: "DELETE" }),
+      transformResponse: (response) => response.data,
+    }),
+    deleteFolder: build.mutation<Folder, string, ApiResponse<Folder>>({
+      query: (id) => ({ url: `/folders/${id}`, method: "DELETE" }),
+      transformResponse: (response) => response.data,
+    }),
   }),
 });
 
@@ -36,4 +44,6 @@ export const {
   useCreateFileMutation,
   useGetFoldersQuery,
   useCreateFolderMutation,
+  useDeleteFileMutation,
+  useDeleteFolderMutation,
 } = storageApi;

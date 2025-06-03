@@ -13,7 +13,7 @@ import { setLocalSettings } from "@shared/lib/local-storage";
 import { applyTheme } from "@shared/lib/theme";
 import type { TextCategory } from "@shared/types";
 import Button from "@shared/ui/user-input/button";
-import ValidatedSelect from "@shared/ui/user-input/select";
+import ValidatedSelect from "@shared/ui/user-input/select/validated-select";
 import Submit from "@shared/ui/user-input/submit";
 
 interface SettingsForm {
@@ -93,41 +93,33 @@ export default function EditForm() {
         </div>
       )}
 
-      <div className="flex items-center gap-x-5">
-        <span className="font-semibold text-gray-800 dark:text-gray-100 text-2xl">
-          Theme
-        </span>
-        <Controller
-          name="theme"
-          control={control}
-          rules={{ required: "Theme is required" }}
-          render={({ field, fieldState }) => (
-            <ValidatedSelect
-              {...field}
-              options={THEMES}
-              error={fieldState.error?.message}
-            />
-          )}
-        />
-      </div>
+      <Controller
+        name="theme"
+        control={control}
+        rules={{ required: "Theme is required" }}
+        render={({ field, fieldState }) => (
+          <ValidatedSelect
+            {...field}
+            options={THEMES}
+            label={"Theme"}
+            error={fieldState.error?.message}
+          />
+        )}
+      />
 
-      <div className="flex items-center gap-x-5">
-        <span className="font-semibold text-gray-800 dark:text-gray-100 text-2xl">
-          Text default category
-        </span>
-        <Controller
-          name="textCategory"
-          control={control}
-          rules={{ required: "Text category is required" }}
-          render={({ field, fieldState }) => (
-            <ValidatedSelect
-              {...field}
-              options={TEXT_CATEGORIES}
-              error={fieldState.error?.message}
-            />
-          )}
-        />
-      </div>
+      <Controller
+        name="textCategory"
+        control={control}
+        rules={{ required: "Text category is required" }}
+        render={({ field, fieldState }) => (
+          <ValidatedSelect
+            {...field}
+            options={TEXT_CATEGORIES}
+            label={"Text category"}
+            error={fieldState.error?.message}
+          />
+        )}
+      />
     </form>
   );
 }

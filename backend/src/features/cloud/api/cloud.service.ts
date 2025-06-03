@@ -9,7 +9,7 @@ import { Post } from "@features/cloud/lib/types";
 import FileDto from "@entities/file/model/dto";
 import FolderDto from "@entities/folder/model/dto";
 import { Cache } from "@shared/lib/cache";
-import { CacheEntityType } from "@shared/lib/cache/types";
+import { CacheEntity } from "@shared/lib/cache/types";
 import ApiError from "@shared/lib/exceptions/ApiError";
 import logger from "@shared/lib/logger";
 import Logger from "@shared/lib/logger";
@@ -30,8 +30,9 @@ export default class CloudService {
     folders: Folder[];
     files: File[];
     isRoot: boolean;
+    user: { id: string };
   }> {
-    const key: CacheEntityType = "storage";
+    const key: CacheEntity = CacheEntity.STORAGE;
 
     if (folderId) {
       Logger.info(folderId);
@@ -44,7 +45,12 @@ export default class CloudService {
         if (!storage) throw ApiError.NotFound("Storage not found");
 
         const { children, ...rest } = storage;
-        return { ...rest, folders: children, isRoot: false };
+        return {
+          ...rest,
+          folders: children,
+          isRoot: false,
+          user: { id: userId },
+        };
       });
     }
 
@@ -52,7 +58,12 @@ export default class CloudService {
       const folders = await this.prisma.folder.findMany({
         where: { userId, parentId: null },
       });
-      return { folders, files: [], isRoot: true };
+      return {
+        folders,
+        files: [],
+        isRoot: true,
+        user: { id: userId },
+      };
     });
   }
 
@@ -74,7 +85,10 @@ export default class CloudService {
 
     const cacheTasks = expired.map(({ id, userId, folderId, textCategory }) => {
       if (textCategory === TextCategory.POST) clearPosts = true;
-      return this.cache.flush("file", userId, { fileId: id, folderId });
+      return this.cache.flush(CacheEntity.FILE, userId, {
+        fileId: id,
+        folderId,
+      });
     });
 
     if (clearPosts) cacheTasks.push(this.cache.remove(["post"]));
@@ -96,10 +110,7 @@ export default class CloudService {
         where: { parentId: folderId },
         select: { id: true },
       }),
-      this.prisma.file.findMany({
-        where: { folderId },
-        select: { id: true },
-      }),
+      this.prisma.file.findMany({ where: { folderId }, select: { id: true } }),
     ]);
 
     if (children.length > 0) {
@@ -120,7 +131,7 @@ export default class CloudService {
   }
 
   async getLatestPosts(): Promise<Post[]> {
-    return this.cache.withCache("post", {}, async () => {
+    return this.cache.withCache(CacheEntity.POST, {}, async () => {
       const latest = await this.prisma.file.findMany({
         where: { textCategory: TextCategory.POST },
         take: 3,
@@ -159,7 +170,7 @@ export default class CloudService {
     const [_, effUserId] = resolveUserContext(userId, targetUserId);
 
     return this.cache.withCache(
-      "folder",
+      CacheEntity.FOLDER,
       { folderId, userId: effUserId },
       async () => {
         const folder = await this.prisma.folder.findFirst({
@@ -177,19 +188,14 @@ export default class CloudService {
     { targetUserId, parentId }: { targetUserId?: string; parentId?: string },
   ): Promise<Folder[]> {
     const [isOther, effUserId] = resolveUserContext(userId, targetUserId);
-
     const exposure = isOther ? "PUBLIC" : "PRIVATE";
 
     return this.cache.withCache(
-      "folder",
+      CacheEntity.FILE,
       { userId: effUserId, parentId, protected: isOther },
       () =>
         this.prisma.folder.findMany({
-          where: {
-            userId: effUserId,
-            parentId,
-            exposure,
-          },
+          where: { userId: effUserId, parentId, exposure },
         }),
     );
   }
@@ -199,6 +205,7 @@ export default class CloudService {
     if (!folder) throw ApiError.BadRequest("Folder not found");
     if (folder.userId !== userId) throw ApiError.Forbidden();
 
+    await this.cache.flush(CacheEntity.STORAGE, userId, { folderId: id });
     await this.cache.clearCacheRecursive(userId, id);
     await this.deleteFolderRecursively(id);
     return folder;
@@ -207,7 +214,7 @@ export default class CloudService {
   async createFolder(
     userId: string,
     parentId?: string,
-    name: string = "Untitled",
+    name = "Untitled",
     exposure: Exposure = Exposure.PRIVATE,
   ): Promise<Folder> {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
@@ -229,7 +236,10 @@ export default class CloudService {
       data: { name, userId, parentId, exposure },
     });
 
-    await this.cache.flush("folder", userId);
+    await this.cache.flush(CacheEntity.STORAGE, userId, {
+      folderId: folder.id,
+    });
+    await this.cache.flush(CacheEntity.FOLDER, userId);
     return folder;
   }
 
@@ -237,10 +247,10 @@ export default class CloudService {
     userId: string,
     folderId: string,
     content: string,
-    name: string = "Untitled",
+    name = "Untitled",
     exposure: Exposure,
     textCategory: TextCategory,
-    expiresAt: Date = new Date(Number.MAX_SAFE_INTEGER),
+    expiresAt = new Date(Number.MAX_SAFE_INTEGER),
   ): Promise<File> {
     const folder = await this.prisma.folder.findFirst({
       where: { id: folderId },
@@ -256,7 +266,9 @@ export default class CloudService {
       data: { name, folderId, userId, expiresAt, exposure, textCategory },
     });
 
-    await this.cache.flush("file", userId, { folderId });
+    await this.cache.flush(CacheEntity.FILE, userId, { folderId });
+    await this.cache.flush(CacheEntity.STORAGE, userId, { folderId });
+
     if (textCategory === TextCategory.POST) await this.cache.remove(["post"]);
     await this.storage.writeFile(file.id, content);
     return file;
@@ -267,13 +279,15 @@ export default class CloudService {
     if (!file) throw ApiError.BadRequest("File not found");
     if (file.userId !== userId) throw ApiError.Forbidden();
 
-    await this.cache.flush("file", userId, {
+    await this.cache.flush(CacheEntity.FILE, userId, {
       fileId: id,
       folderId: file.folderId,
     });
-
     if (file.textCategory === TextCategory.POST)
       await this.cache.remove(["post"]);
+    await this.cache.flush(CacheEntity.STORAGE, userId, {
+      folderId: file.folderId,
+    });
     await this.storage.deleteFile(id);
     return this.prisma.file.delete({ where: { id } });
   }
@@ -296,7 +310,7 @@ export default class CloudService {
     userId: string,
     { fileId }: { fileId: string },
   ): Promise<File> {
-    return this.cache.withCache("file", { fileId }, async () => {
+    return this.cache.withCache(CacheEntity.FILE, { fileId }, async () => {
       const file = await this.prisma.file.findUnique({ where: { id: fileId } });
       if (!file) throw ApiError.BadRequest("File not found");
       if (!canAccessResource(file, userId)) throw ApiError.Forbidden();
@@ -309,13 +323,12 @@ export default class CloudService {
     { folderId, targetUserId }: { folderId?: string; targetUserId?: string },
   ): Promise<File[]> {
     const [isOther, effUserId] = resolveUserContext(userId, targetUserId);
-
     const exposure = isOther ? "PUBLIC" : "PRIVATE";
 
     return this.cache.withCache(
-      "file",
+      CacheEntity.FILE,
       { userId: effUserId, folderId, protected: isOther },
-      async () =>
+      () =>
         this.prisma.file.findMany({
           where: { userId: effUserId, folderId, exposure },
         }),
@@ -351,10 +364,11 @@ export default class CloudService {
     if (!oldFolder) throw ApiError.BadRequest("Folder not found");
     if (oldFolder.userId !== userId) throw ApiError.Forbidden();
 
-    await this.cache.flush("folder", userId, {
+    await this.cache.flush(CacheEntity.FOLDER, userId, {
       folderId: id,
       parentId: oldFolder.parentId ?? undefined,
     });
+    await this.cache.flush(CacheEntity.STORAGE, userId, { folderId: id });
 
     return this.prisma.folder.update({ where: { id }, data: updateData });
   }
@@ -369,13 +383,15 @@ export default class CloudService {
     if (!oldFile) throw ApiError.BadRequest("File not found");
     if (oldFile.userId !== userId) throw ApiError.Forbidden();
 
-    await this.cache.flush("file", userId, {
+    await this.cache.flush(CacheEntity.FILE, userId, {
       folderId: oldFile.folderId,
       fileId: id,
     });
-
     if (oldFile.textCategory === TextCategory.POST)
       await this.cache.remove(["post"]);
+    await this.cache.flush(CacheEntity.STORAGE, userId, {
+      folderId: oldFile.folderId,
+    });
 
     return this.prisma.file.update({ where: { id }, data: updateData });
   }

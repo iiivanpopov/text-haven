@@ -3,7 +3,7 @@
 import { Check, Wrench } from "lucide-react";
 import type { MouseEvent } from "react";
 import { updateFile } from "@features/text/model/actions";
-import { setMode } from "@features/text/model/slice";
+import { FileMode, setMode } from "@features/text/model/slice";
 import { useAppDispatch, useAppSelector } from "@shared/hooks/redux";
 import Button from "@shared/ui/user-input/button";
 
@@ -17,11 +17,11 @@ export default function ChangeMode() {
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
-    if (name && content && mode == "edit") {
+    if (name && content && mode === FileMode.EDIT && id) {
       dispatch(updateFile({ id, meta: { name }, content }));
     }
 
-    dispatch(setMode(mode == "edit" ? "read" : "edit"));
+    dispatch(setMode(mode === FileMode.EDIT ? FileMode.READ : FileMode.EDIT));
   };
 
   return (
@@ -30,7 +30,7 @@ export default function ChangeMode() {
       className={"w-48"}
       onClick={handleClick}
     >
-      {mode == "read" ? <Wrench size={32} /> : <Check size={32} />}
+      {mode === FileMode.READ ? <Wrench size={32} /> : <Check size={32} />}
     </Button>
   );
 }

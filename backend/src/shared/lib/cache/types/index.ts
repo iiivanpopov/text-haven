@@ -1,39 +1,52 @@
-export type CacheEntityType =
-  | "file"
-  | "folder"
-  | "settings"
-  | "user"
-  | "storage"
-  | "post";
+export const CacheEntity = {
+  FILE: "FILE",
+  FOLDER: "FOLDER",
+  SETTINGS: "SETTINGS",
+  USER: "USER",
+  STORAGE: "STORAGE",
+  POST: "POST",
+} as const;
+export type CacheEntity = (typeof CacheEntity)[keyof typeof CacheEntity];
 
-export type UserCacheParams = Partial<{
-  userId: string;
-  protected: boolean;
-}>;
+export type UserCacheParams = {
+  userId?: string;
+  protected?: boolean;
+};
 
-export type FileCacheParams = Partial<{
-  userId: string;
-  folderId: string;
-  fileId: string;
-  protected: boolean;
-}>;
+export type FileCacheParams = {
+  fileId?: string;
+  folderId?: string;
+  userId?: string;
+  protected?: boolean;
+};
 
-export type FolderCacheParams = Partial<{
-  userId: string;
-  folderId: string;
-  parentId: string;
-  protected: boolean;
-}>;
+export type FolderCacheParams = {
+  folderId?: string;
+  parentId?: string;
+  userId?: string;
+  protected?: boolean;
+};
 
-export type CacheKeyParams = UserCacheParams &
-  FileCacheParams &
-  FolderCacheParams;
+export type StorageCacheParams = {
+  folderId?: string;
+  userId?: string;
+};
+
+export type SettingsCacheParams = {
+  userId?: string;
+};
+
+export type PostCacheParams = {};
+
+export type CacheKeyMap = {
+  FILE: FileCacheParams;
+  FOLDER: FolderCacheParams;
+  SETTINGS: SettingsCacheParams;
+  USER: UserCacheParams;
+  STORAGE: StorageCacheParams;
+  POST: PostCacheParams;
+};
 
 export type CacheKeyFieldMap = {
-  file: ["fileId", "folderId", "userId"];
-  folder: ["folderId", "parentId", "userId"];
-  settings: ["userId"];
-  user: ["userId"];
-  storage: ["folderId", "userId"];
-  post: [];
+  [K in keyof CacheKeyMap]: (keyof CacheKeyMap[K])[];
 };

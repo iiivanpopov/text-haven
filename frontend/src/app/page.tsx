@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import PostList from "@features/posts/ui/post-list";
+import { Posts } from "@widgets/posts/ui/posts";
 
 export const metadata: Metadata = {
   title: "TextHaven",
@@ -30,12 +30,7 @@ export default function Home() {
         </Link>
       </section>
 
-      <section className="flex flex-col justify-between">
-        <h3 className="text-3xl sm:text-4xl md:text-5xl text-gray-800 dark:text-gray-100">
-          Latest posts
-        </h3>
-        <PostList />
-      </section>
+      <Posts />
     </main>
   );
 }

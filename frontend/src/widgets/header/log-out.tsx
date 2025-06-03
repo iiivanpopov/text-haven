@@ -5,7 +5,6 @@ import { memo } from "react";
 import { twMerge } from "tailwind-merge";
 import { logout } from "@features/auth/model/actions";
 import { useAppDispatch } from "@shared/hooks/redux";
-import { removeSettings } from "@shared/lib/local-storage";
 
 interface LogOutProps {
   className?: string;

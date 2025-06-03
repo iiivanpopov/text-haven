@@ -4,8 +4,8 @@ import { useRouter } from "next/navigation";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useLoginMutation } from "@features/auth/model/api";
 import { setAccessToken } from "@shared/lib/local-storage";
+import ValidatedInput from "@shared/ui/user-input/input/validated-input";
 import Submit from "@shared/ui/user-input/submit";
-import ValidatedInput from "@shared/ui/user-input/validated-input";
 
 type LoginFormFields = {
   email: string;

@@ -4,23 +4,23 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { twMerge } from "tailwind-merge";
-import { useCreateFolderMutation } from "@features/storage/model/api";
+import type { Folder } from "@features/storage/types";
 import Button from "@shared/ui/user-input/button";
-import LabeledInput from "@shared/ui/user-input/validated-input.tsx";
+import BaseInput from "@shared/ui/user-input/input/base-input";
 
 interface CreateNewProps {
   canCreateFile: boolean;
   currentFolderId: string | undefined;
+  onCreateFolder: (folder: Omit<Folder, "id" | "userId" | "createdAt">) => void;
 }
 
 export default function CreateNew({
   canCreateFile,
   currentFolderId,
+  onCreateFolder,
 }: CreateNewProps) {
   const [showInput, setShowInput] = useState(false);
   const [title, setTitle] = useState("");
-
-  const [createFolder] = useCreateFolderMutation();
 
   const handleCancel = () => {
     setTitle("");
@@ -29,7 +29,8 @@ export default function CreateNew({
 
   const handleSave = async () => {
     if (!title.trim()) return;
-    await createFolder({
+
+    onCreateFolder({
       name: title,
       parentId: currentFolderId ?? undefined,
       exposure: "PRIVATE",
@@ -89,10 +90,9 @@ export default function CreateNew({
           role="dialog"
           aria-modal
         >
-          <LabeledInput
+          <BaseInput
             className="w-full rounded-none bg-inherit"
             placeholder="Enter a new folder name"
-            name="Input new folder name"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             aria-label="New folder name"

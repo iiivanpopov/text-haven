@@ -13,7 +13,7 @@
     "build:dev": "bun build --entrypoints ./src/index.ts ./src/worker.ts --outdir ./dist --minify --sourcemap=inline --target bun"
   },
   "devDependencies": {
-    "@types/bun": "^1.2.14",
+    "@types/bun": "^1.2.15",
     "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.18",
     "@types/express": "^5.0.2",

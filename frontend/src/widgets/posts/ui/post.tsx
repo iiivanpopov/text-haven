@@ -1,8 +1,8 @@
 import Link from "next/link";
-import type { Post } from "@entities/post/types";
+import type { Post } from "@widgets/posts/types";
 import { calculateTimeAgo } from "@shared/lib/time";
 
-export default function Post({ post }: { post: Post }) {
+export default function PostItem({ post }: { post: Post }) {
   return (
     <div className=" border-gray-300 dark:border-gray-700 border-2 rounded-md p-2 px-3 bg-gray-100 dark:bg-gray-950 flex flex-col justify-between">
       <Link href={`/text/${post.id}`}>

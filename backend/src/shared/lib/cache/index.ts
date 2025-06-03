@@ -2,7 +2,7 @@ import type { PrismaClient } from "@prisma";
 import type { RedisClient } from "bun";
 import config from "@shared/config";
 import { KEYS, STATUSES } from "@shared/lib/cache/constants";
-import type { CacheEntityType, CacheKeyParams } from "@shared/lib/cache/types";
+import { CacheEntity, type CacheKeyMap } from "@shared/lib/cache/types";
 import prisma from "@shared/lib/prisma";
 import redis from "@shared/lib/redis";
 
@@ -12,9 +12,9 @@ export class Cache {
     private prisma: PrismaClient,
   ) {}
 
-  static mapKey(
-    type: CacheEntityType,
-    args: CacheKeyParams = {},
+  mapKey<T extends keyof CacheKeyMap>(
+    type: T,
+    args: Partial<CacheKeyMap[T]> = {},
   ): string | null {
     const eligibleKeys = KEYS[type];
     const parts: string[] = [type];
@@ -24,36 +24,42 @@ export class Cache {
       if (!value) continue;
 
       parts.push(String(value));
-      if (args.protected) parts.push("PROTECTED");
-      break; // only the first matching key is used
+      if ("protected" in args && args.protected) {
+        parts.push("PROTECTED");
+      }
+      break;
     }
 
     return parts.length > 1 ? parts.join(":") : null;
   }
 
   async flush(
-    type: Exclude<CacheEntityType, "post">,
+    type: CacheEntity,
     userId: string,
-    opts: Partial<Omit<CacheKeyParams, "userId" | "exposure" | "foreign">> = {},
+    opts: Partial<Record<string, string>> = {},
   ): Promise<void> {
     const keysToRemove = new Set<string>();
 
-    if (type === "user") {
+    if (type === CacheEntity.USER) {
       for (const val of [true, false]) {
-        const key = Cache.mapKey("user", { userId, protected: val });
+        const key = this.mapKey(CacheEntity.USER, { userId, protected: val });
         if (key) keysToRemove.add(key);
       }
+    } else if (type === CacheEntity.POST) {
+      keysToRemove.add("POST");
     } else {
       for (const status of STATUSES) {
-        const keyWithUser = Cache.mapKey(type, { userId, protected: !!status });
-        if (keyWithUser) keysToRemove.add(keyWithUser);
+        const userKey = this.mapKey(type, { userId, protected: !!status });
+        if (userKey) keysToRemove.add(userKey);
 
         for (const [key, value] of Object.entries(opts)) {
-          if (value == null) continue;
-          const paramKey = Cache.mapKey(type, {
+          if (!value) continue;
+
+          const paramKey = this.mapKey(type, {
             [key]: value,
             protected: !!status,
           });
+
           if (paramKey) keysToRemove.add(paramKey);
         }
       }
@@ -88,32 +94,30 @@ export class Cache {
     const folderIds = await this.getAllDescendantFolderIds(folderId);
     folderIds.push(folderId);
 
-    const fileIds: string[] = [];
+    const fileIds = await this.prisma.file
+      .findMany({
+        where: { folderId: { in: folderIds } },
+        select: { id: true },
+      })
+      .then((res) => res.map((f) => f.id));
 
-    const files = await this.prisma.file.findMany({
-      where: {
-        folderId: { in: folderIds },
-      },
-      select: { id: true },
-    });
-
-    for (const file of files) {
-      fileIds.push(file.id);
-    }
-
-    const keysToRemove: (CacheEntityType | string)[] = ["post", "storage"];
+    const keysToRemove: string[] = ["POST", "STORAGE"];
 
     for (const status of STATUSES) {
-      const userFiles = Cache.mapKey("file", { protected: !!status, userId });
-      const userFolders = Cache.mapKey("folder", {
+      const userFiles = this.mapKey(CacheEntity.FILE, {
         protected: !!status,
         userId,
       });
+      const userFolders = this.mapKey(CacheEntity.FOLDER, {
+        protected: !!status,
+        userId,
+      });
+
       if (userFolders) keysToRemove.push(userFolders);
       if (userFiles) keysToRemove.push(userFiles);
 
       for (const folder of folderIds) {
-        const folderKey = Cache.mapKey("folder", {
+        const folderKey = this.mapKey(CacheEntity.FOLDER, {
           protected: !!status,
           folderId: folder,
         });
@@ -121,7 +125,7 @@ export class Cache {
       }
 
       for (const file of fileIds) {
-        const fileKey = Cache.mapKey("file", {
+        const fileKey = this.mapKey(CacheEntity.FILE, {
           protected: !!status,
           fileId: file,
         });
@@ -155,16 +159,14 @@ export class Cache {
   }
 
   async withCache<T>(
-    type: CacheEntityType,
-    keyOpts: CacheKeyParams,
+    type: CacheEntity,
+    keyOpts: Partial<CacheKeyMap[typeof type]>,
     loader: () => Promise<T>,
   ): Promise<T> {
-    const cacheKey = Cache.mapKey(type, keyOpts);
+    const cacheKey = this.mapKey(type, keyOpts);
     if (cacheKey) {
       const cached = await this.get<T>(cacheKey);
-      if (cached) {
-        return cached;
-      }
+      if (cached) return cached;
     }
 
     const result = await loader();

@@ -1,7 +1,7 @@
 "use client";
 
 import { type InputHTMLAttributes, useId } from "react";
-import BaseInput from "@shared/ui/user-input/base-input";
+import BaseInput from "@shared/ui/user-input/input/base-input";
 
 export type LabeledInputProps = InputHTMLAttributes<HTMLInputElement> & {
   label?: string;

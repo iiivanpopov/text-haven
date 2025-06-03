@@ -1,4 +1,4 @@
-import type { Post } from "@entities/post/types";
+import type { Post } from "@widgets/posts/types";
 import { $api } from "@shared/api";
 import type { ApiResponse } from "@shared/types";
 
