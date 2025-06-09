@@ -1,8 +1,17 @@
+"use client";
+
 import Link from "next/link";
 import type { Post } from "@widgets/posts/types";
 import { calculateTimeAgo } from "@shared/lib/time";
+import { useEffect, useState } from "react";
 
 export default function PostItem({ post }: { post: Post }) {
+  const [timeAgo, setTimeAgo] = useState<string>("");
+
+  useEffect(() => {
+    setTimeAgo(calculateTimeAgo(post.createdAt));
+  }, [post.createdAt]);
+
   return (
     <div className=" border-gray-300 dark:border-gray-700 border-2 rounded-md p-2 px-3 bg-gray-100 dark:bg-gray-950 flex flex-col justify-between">
       <Link href={`/text/${post.id}`}>
@@ -25,7 +34,7 @@ export default function PostItem({ post }: { post: Post }) {
         aria-label="Time past after creation"
         className="text-gray-400 dark:text-gray-500 text-sm"
       >
-        {calculateTimeAgo(post.createdAt)}
+        {timeAgo || "\u00A0"}
       </span>
     </div>
   );

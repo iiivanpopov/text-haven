@@ -12,6 +12,7 @@ import ValidatedInput from "@shared/ui/user-input/input/validated-input";
 import ValidatedSelect from "@shared/ui/user-input/select/validated-select";
 import Submit from "@shared/ui/user-input/submit";
 import { User } from "@features/profile/types";
+import { UserSkeleton } from "@features/profile/ui/user-skeleton";
 
 interface ProfileEditFields {
   username: string;
@@ -35,7 +36,7 @@ export default function EditForm() {
     setValue("exposure", data.exposure);
   }, [data, setValue]);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <UserSkeleton />;
   if (isError || !data) return <div>Error loading profile</div>;
 
   const onSubmit: SubmitHandler<ProfileEditFields> = async (data) => {

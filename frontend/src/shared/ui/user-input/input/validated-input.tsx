@@ -2,9 +2,9 @@ import LabeledInput, {
   type LabeledInputProps,
 } from "@shared/ui/user-input/input/labeled-input";
 
-type InputProps = LabeledInputProps & {
+interface InputProps extends LabeledInputProps {
   error?: string;
-};
+}
 
 export default function ValidatedInput({ error, ...props }: InputProps) {
   return (

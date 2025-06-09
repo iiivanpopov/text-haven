@@ -27,11 +27,11 @@ type RootStorage = {
   files: StorageListElement[];
 };
 
-type IdStorage = Folder & {
+interface IdStorage extends Folder {
   isRoot: false;
   folders: StorageListElement[];
   files: [];
-};
+}
 
 export type Storage = (RootStorage | IdStorage) & {
   user: {

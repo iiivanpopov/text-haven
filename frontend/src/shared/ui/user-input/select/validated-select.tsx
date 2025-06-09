@@ -2,9 +2,9 @@ import LabeledSelect, {
   type LabeledSelectProps,
 } from "@shared/ui/user-input/select/labeled-select";
 
-type ValidatedSelectProps = LabeledSelectProps & {
+interface ValidatedSelectProps extends LabeledSelectProps {
   error?: string;
-};
+}
 
 export default function ValidatedSelect({
   error,

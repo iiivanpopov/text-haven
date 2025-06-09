@@ -13,6 +13,7 @@ import { StorageList } from "@features/storage/ui/storage-list";
 import { useStorage } from "@shared/hooks/storage";
 import { isIdStorage } from "@shared/lib/type-guards";
 import CreateNew from "./create-new";
+import { StorageSkeleton } from "@features/storage/ui/storage-skeleton";
 
 export default function Directory() {
   const { id } = useParams<{ id?: string }>();
@@ -28,7 +29,7 @@ export default function Directory() {
   const { folders, files, removeFile, removeFolder, addFolder } =
     useStorage(storageData);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <StorageSkeleton />;
   if (isError || !storageData || !userData) return <div>Missing data</div>;
 
   const { isRoot, user: owner } = storageData;

@@ -2,11 +2,12 @@
 
 import { useGetPostsQuery } from "@widgets/posts/model/api";
 import PostList from "@widgets/posts/ui/post-list";
+import { PostsSkeleton } from "@widgets/posts/ui/posts-skeleton";
 
 export const Posts = () => {
   const { data, isLoading, isError } = useGetPostsQuery();
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <PostsSkeleton />;
   if (isError) return <div>Error loading posts</div>;
   if (!data || (data && data.length == 0)) return null;
 
