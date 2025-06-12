@@ -17,10 +17,12 @@ import { StorageSkeleton } from "@features/storage/ui/storage-skeleton";
 
 export default function Directory() {
   const { id } = useParams<{ id?: string }>();
-  const { data: storageData, isLoading, isError } = useGetStorageQuery(id);
-  const { data: userData } = useGetUserQuery(storageData?.user.id ?? "", {
+  const { data: storageResponse, isLoading, isError } = useGetStorageQuery(id);
+  const storageData = storageResponse?.data;
+  const { data: userResponse } = useGetUserQuery(storageData?.user.id ?? "", {
     skip: !storageData?.user.id,
   });
+  const userData = userResponse?.data;
 
   const [deleteFolder] = useDeleteFolderMutation();
   const [deleteFile] = useDeleteFileMutation();
@@ -50,7 +52,7 @@ export default function Directory() {
   ) => {
     const response = await createFolder(folder);
 
-    const createdFolder = response?.data;
+    const createdFolder = response?.data?.data;
     if (createdFolder) {
       const { id, name } = createdFolder;
       if (id && name) addFolder({ id, name });

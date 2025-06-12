@@ -31,7 +31,7 @@ export default function FileFormFields({
         )}
       />
 
-      <div className="flex flex-wrap gap-4">
+      <div className="flex flex-wrap gap-4 justify-between">
         <Controller
           control={control}
           name="exposure"

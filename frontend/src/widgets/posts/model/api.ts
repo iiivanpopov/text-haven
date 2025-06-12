@@ -4,9 +4,8 @@ import type { ApiResponse } from "@shared/types";
 
 const postsApi = $api.injectEndpoints({
   endpoints: (build) => ({
-    getPosts: build.query<Post[], void, ApiResponse<Post[]>>({
+    getPosts: build.query<ApiResponse<Post[]>, void>({
       query: () => `/posts`,
-      transformResponse: (response) => response.data,
     }),
   }),
 });

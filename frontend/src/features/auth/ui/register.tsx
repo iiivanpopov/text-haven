@@ -6,6 +6,8 @@ import { useRegisterMutation } from "@features/auth/model/api";
 import { setAccessToken } from "@shared/lib/local-storage";
 import ValidatedInput from "@shared/ui/user-input/input/validated-input";
 import Submit from "@shared/ui/user-input/submit";
+import { responseIsError } from "@shared/lib/type-guards";
+import toaster from "react-hot-toast";
 
 type RegisterForm = {
   email: string;
@@ -26,9 +28,16 @@ export default function RegisterForm() {
   const router = useRouter();
 
   const onSubmit: SubmitHandler<RegisterForm> = async (data) => {
-    const response = await register(data).unwrap();
-    setAccessToken(response);
-    router.push("/");
+    try {
+      const response = await register(data).unwrap();
+
+      setAccessToken(response);
+      router.push("/");
+    } catch (e) {
+      if (responseIsError(e)) {
+        toaster.error(e.data.message);
+      }
+    }
   };
 
   return (

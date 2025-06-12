@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   env: {
-    API_URL: "https://localhost:3013/api",
+    NEXT_PUBLIC_API_URL: "https://localhost:3013/api",
   },
   eslint: {
     ignoreDuringBuilds: true,

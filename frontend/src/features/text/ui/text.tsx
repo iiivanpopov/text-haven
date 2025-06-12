@@ -24,7 +24,8 @@ export default function Text() {
     (state) => state.textReducer,
   );
 
-  const { data: user } = useGetUserQuery(undefined);
+  const { data: userResponse } = useGetUserQuery(undefined);
+  const userData = userResponse?.data;
 
   const { data, error, isLoading } = useFetchFileQuery(id);
   const [updateFile] = useUpdateFileMutation();
@@ -59,10 +60,10 @@ export default function Text() {
     <div
       className={twMerge(
         "mt-10 grid",
-        user?.id === text.userId ? "grid-rows-[5vh_1fr]" : "grid-rows-1",
+        userData?.id === text.userId ? "grid-rows-[5vh_1fr]" : "grid-rows-1",
       )}
     >
-      {user?.id === text.userId && <ModeBtn onSaveAction={onSave} />}
+      {userData?.id === text.userId && <ModeBtn onSaveAction={onSave} />}
       {mode === FileMode.VIEW ? (
         <LazyPreview data={data} />
       ) : (

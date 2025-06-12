@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import EditForm from "@features/profile/ui/edit-form";
+import UserEditForm from "@features/profile/ui/user-edit-form";
 
 export const metadata: Metadata = {
   title: "Profile Edit | TextHaven",
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function ProfileEditPage() {
-  return <EditForm />;
+  return <UserEditForm />;
 }

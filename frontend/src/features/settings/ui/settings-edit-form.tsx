@@ -14,13 +14,15 @@ import ValidatedSelect from "@shared/ui/user-input/select/validated-select";
 import Submit from "@shared/ui/user-input/submit";
 import { setSettings } from "@entities/settings/model/slice";
 import { useAppDispatch, useAppSelector } from "@shared/hooks/redux";
+import { responseIsError } from "@shared/lib/type-guards";
+import toaster from "react-hot-toast";
 
 interface SettingsForm {
   textCategory: TextCategory;
   theme: Theme;
 }
 
-export function EditForm() {
+export function SettingsEditForm() {
   const dispatch = useAppDispatch();
   const { settings, isLoaded } = useAppSelector(
     (state) => state.settingsReducer,
@@ -35,20 +37,27 @@ export function EditForm() {
   }, [settings, reset]);
 
   const [trigger, { data, isError }] = useLazyGetSettingsQuery();
+  const settingsData = data?.data;
   const [updateSettings] = useUpdateSettingsMutation();
 
   useEffect(() => {
-    if (!data) return;
-    dispatch(setSettings(data));
-  }, [data, dispatch]);
+    if (!settingsData) return;
+    dispatch(setSettings(settingsData));
+  }, [settingsData, dispatch]);
 
   useEffect(() => {
     if (isLoaded) setLocalSettings(settings);
   }, [settings, isLoaded]);
 
   const onSubmit: SubmitHandler<SettingsForm> = async (formData) => {
-    dispatch(setSettings(formData));
-    await updateSettings(formData);
+    try {
+      dispatch(setSettings(formData));
+      await updateSettings(formData);
+    } catch (e) {
+      if (responseIsError(e)) {
+        toaster.error(e.data.message);
+      }
+    }
   };
 
   return (

@@ -23,7 +23,7 @@ export function StorageItemList({ items, type, canDelete, onDelete }: Props) {
     <ItemList
       items={extendedItems}
       Component={StorageItem}
-      getKey={(item) => item.id}
+      getKey={(item) => `${item.id}:${item.name}`}
     />
   );
 }

@@ -8,7 +8,7 @@ import { AuthResponse } from "@features/auth/types";
 import { removeAccessToken, setAccessToken } from "@shared/lib/local-storage";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: process.env.API_URL,
+  baseUrl: process.env.NEXT_PUBLIC_API_URL,
   credentials: "include",
   prepareHeaders: (headers) => {
     const token = localStorage.getItem("accessToken");

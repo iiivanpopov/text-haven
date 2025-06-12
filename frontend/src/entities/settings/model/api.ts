@@ -4,9 +4,8 @@ import type { ApiResponse } from "@shared/types";
 
 const settingsApi = $api.injectEndpoints({
   endpoints: (build) => ({
-    getSettings: build.query<Settings, void, ApiResponse<Settings>>({
+    getSettings: build.query<ApiResponse<Settings>, void>({
       query: () => `/user/settings`,
-      transformResponse: (response) => response.data,
     }),
     updateSettings: build.mutation<
       Settings,
@@ -18,7 +17,6 @@ const settingsApi = $api.injectEndpoints({
         method: "PATCH",
         body: user,
       }),
-      transformResponse: (response) => response.data,
     }),
   }),
 });

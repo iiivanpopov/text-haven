@@ -9,7 +9,7 @@ export default function BaseInput({
     <input
       {...props}
       className={twMerge(
-        "h-10 rounded-md text-md text-gray-700 dark:text-gray-300 outline-none transition-colors text-xl",
+        "h-10 rounded-md text-md text-gray-700 dark:text-gray-300 outline-none text-xl",
         className,
       )}
     />

@@ -1,4 +1,5 @@
-import { type ReactNode } from "react";
+import { Toaster } from "react-hot-toast";
+import type { ReactNode } from "react";
 import "@shared/styles/globals.css";
 import Footer from "@widgets/footer";
 import Header from "@widgets/header";
@@ -9,6 +10,7 @@ export default async function Layout({ children }: { children: ReactNode }) {
     <html lang="en">
       <body className="bg-gray-100 dark:bg-gray-950 text-gray-800 dark:text-gray-100 font-urbanist">
         <div className="max-w-screen-xl mx-auto grid grid-rows-[10vh_80vh]">
+          <Toaster position="bottom-right" />
           <StoreProvider>
             <Header />
             {children}

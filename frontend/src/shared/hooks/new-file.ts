@@ -11,6 +11,8 @@ import {
   TEXT_CATEGORIES,
 } from "@shared/constants/input-fields";
 import type { Exposure, SelectOptions, TextCategory } from "@shared/types";
+import toaster from "react-hot-toast";
+import { responseIsError } from "@shared/lib/type-guards";
 
 export interface NewFileFields {
   folderId: string;
@@ -34,26 +36,37 @@ export const useNewFileForm = () => {
   });
 
   const { data, isLoading, isError } = useGetFoldersQuery();
+  const foldersData = data?.data;
+
   const [createFile] = useCreateFileMutation();
   const router = useRouter();
 
   const folders: SelectOptions = useMemo(() => {
-    if (!data) return [];
-    return data.map((folder) => ({ name: folder.name, value: folder.id }));
-  }, [data]);
+    if (!foldersData) return [];
+    return foldersData.map((folder) => ({
+      name: folder.name,
+      value: folder.id,
+    }));
+  }, [foldersData]);
 
   useEffect(() => {
-    if (data) form.setValue("folderId", data[0].id);
-  }, [data, form]);
+    if (foldersData) form.setValue("folderId", foldersData[0].id);
+  }, [foldersData, form]);
 
   const onSubmit = async (data: NewFileFields) => {
     const response = await createFile({
       ...data,
       expiresAt: new Date(Date.now() + Number(data.expiresAt)).toISOString(),
     });
-    if (!response.error) {
-      router.push(`/text/${response.data.id}`);
+
+    if (response.error) {
+      if (responseIsError(response.error))
+        toaster.error(`Failed to create file. ${response.error.data.message}`);
+      return;
     }
+
+    router.push(`/text/${response.data.data.id}`);
+    toaster.success(`Created file "${data.name}"`);
   };
 
   return { form, onSubmit, folders, isLoading, isError };

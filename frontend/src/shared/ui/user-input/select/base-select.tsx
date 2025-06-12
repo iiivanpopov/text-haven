@@ -14,7 +14,7 @@ export default function BaseSelect({
     <select
       {...props}
       className={twMerge(
-        "bg-gray-100 dark:bg-gray-950 h-10 rounded-md text-md text-gray-700 dark:text-gray-300 outline-none transition-colors duration-300 cursor-pointer",
+        "bg-gray-100 dark:bg-gray-950 h-10 rounded-md text-md text-gray-700 dark:text-gray-300 outline-none cursor-pointer",
         className,
       )}
     >

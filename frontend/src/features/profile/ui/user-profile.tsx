@@ -9,9 +9,10 @@ export default function UserProfile() {
   const { id } = useParams<{ id: string | undefined }>();
 
   const { data, isLoading, isError } = useGetUserQuery(id);
+  const userData = data?.data;
 
   if (isLoading) return <UserSkeleton />;
-  if (isError || !data) return <div>Error loading profile</div>;
+  if (isError || !userData) return <div>Error loading profile</div>;
 
-  return <UserCard user={data} />;
+  return <UserCard user={userData} />;
 }

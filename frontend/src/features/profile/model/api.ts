@@ -4,17 +4,15 @@ import type { User } from "@features/profile/types";
 
 const userApi = $api.injectEndpoints({
   endpoints: (build) => ({
-    getUser: build.query<User, string | undefined, ApiResponse<User>>({
+    getUser: build.query<ApiResponse<User>, string | undefined>({
       query: (id) => `/user${id ? `/${id}` : ""}`,
-      transformResponse: (response) => response.data,
     }),
-    updateUser: build.mutation<User, Partial<User>, ApiResponse<User>>({
+    updateUser: build.mutation<ApiResponse<User>, Partial<User>>({
       query: (user) => ({
         url: `user`,
         method: "PATCH",
         body: user,
       }),
-      transformResponse: (response) => response.data,
     }),
   }),
 });

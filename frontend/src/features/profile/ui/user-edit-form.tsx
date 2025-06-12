@@ -13,6 +13,8 @@ import ValidatedSelect from "@shared/ui/user-input/select/validated-select";
 import Submit from "@shared/ui/user-input/submit";
 import { User } from "@features/profile/types";
 import { UserSkeleton } from "@features/profile/ui/user-skeleton";
+import { responseIsError } from "@shared/lib/type-guards";
+import toaster from "react-hot-toast";
 
 interface ProfileEditFields {
   username: string;
@@ -23,18 +25,19 @@ interface ProfileEditFields {
 
 type UpdateUserFields = Partial<Omit<User, "id"> & { password: string }>;
 
-export default function EditForm() {
+export default function UserEditForm() {
   const [updateUser] = useUpdateUserMutation();
   const { data, isLoading, isError } = useGetUserQuery(undefined);
   const { control, handleSubmit, setValue } = useForm<ProfileEditFields>();
+  const userData = data?.data;
 
   useEffect(() => {
-    if (!data) return;
+    if (!userData) return;
 
-    setValue("username", data.username);
-    setValue("email", data.email);
-    setValue("exposure", data.exposure);
-  }, [data, setValue]);
+    setValue("username", userData.username);
+    setValue("email", userData.email);
+    setValue("exposure", userData.exposure);
+  }, [userData, setValue]);
 
   if (isLoading) return <UserSkeleton />;
   if (isError || !data) return <div>Error loading profile</div>;
@@ -51,7 +54,13 @@ export default function EditForm() {
       .filter(([_, value]) => value != "" || value != undefined)
       .map(([key, value]) => ({ [key]: value })) as UpdateUserFields;
 
-    await updateUser(filteredUser);
+    try {
+      await updateUser(filteredUser);
+    } catch (e) {
+      if (responseIsError(e)) {
+        toaster.error(e.data.message);
+      }
+    }
   };
 
   return (

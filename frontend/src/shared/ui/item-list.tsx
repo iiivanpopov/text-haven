@@ -7,14 +7,10 @@ interface ItemListProps<T> {
 }
 
 export function ItemList<T>({ Component, items, getKey }: ItemListProps<T>) {
-  return (
-    <>
-      {items.map((item) => (
-        <Component
-          key={getKey(item)}
-          {...item}
-        />
-      ))}
-    </>
-  );
+  return items.map((item) => (
+    <Component
+      key={getKey(item)}
+      {...item}
+    />
+  ));
 }

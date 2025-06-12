@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { EditForm } from "@features/settings/ui/edit-form";
+import { SettingsEditForm } from "@features/settings/ui/settings-edit-form";
 
 export const metadata: Metadata = {
   title: "Settings | TextHaven",
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function SettingsPage() {
-  return <EditForm />;
+  return <SettingsEditForm />;
 }
